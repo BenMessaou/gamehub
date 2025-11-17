@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backoffice Admin - GameHub Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+</head>
+<body class="admin-body">
+<script src="styles.js"></script>
+
+        <!-- HEADER ADMIN -->
+    <header class="admin-header">
+        <div class="container">
+        <div class="admin-logo">
+            <img src="../images/logo.png" alt="GameHub Pro Admin">
+            <span>Backoffice</span>
+        </div>
+        <nav class="admin-nav">
+            <a href="#games-pending" class="nav-link">Jeux en attente</a>
+            <a href="#games-published" class="nav-link">Jeux publiés</a>
+            <a href="#developers" class="nav-link">Développeurs</a>
+            <a href="#stats" class="nav-link">Statistiques</a>
+            <a href="#settings" class="nav-link">Paramètres</a>
+        </nav>
+        <a href="../index.html" class="logout-btn">Déconnexion</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main container">
+
+        <!-- SECTION 1 : JEUX EN ATTENTE -->
+        <section id="games-pending" class="admin-section">
+        <h2>Jeux soumis (en attente de validation)</h2>
+        <p class="section-subtitle">Vérifiez et validez les soumissions des développeurs</p>
+        <div class="table-container">
+            <table class="admin-table">
+            <thead>
+                <tr>
+                <th>ID</th>
+                <th>Nom du jeu</th>
+                <th>Développeur</th>
+                <th>Date soumission</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Exemple de jeu en attente -->
+                <tr>
+                <td>101</td>
+                <td>Cyber Runner 2077</td>
+                <td>Ahmed Ben Ali</td>
+                <td>15/11/2025</td>
+                <td>Action</td>
+                <td class="actions">
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="101">
+                    <button type="submit" class="btn-validate">Valider</button>
+                    </form>
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="101">
+                    <button type="submit" class="btn-reject">Refuser</button>
+                    </form>
+                    <form action="../control/crud.php" method="GET" style="display:inline;">
+                    <input type="hidden" name="game_id" value="101">
+                    <button type="submit" class="btn-edit">Modifier</button>
+                    </form>
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="101">
+                    <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce jeu ?')">Supprimer</button>
+                    </form>
+                </td>
+                </tr>
+                <!-- Ajouter d'autres jeux ici -->
+            </tbody>
+            </table>
+        </div>
+        </section>
+
+        <!-- SECTION 1.5 : JEUX PUBLIÉS -->
+        <section id="games-published" class="admin-section">
+        <h2>Jeux publiés sur le site</h2>
+        <p class="section-subtitle">Liste complète des jeux validés et disponibles au public</p>
+        <div class="table-container">
+            <table class="admin-table">
+            <thead>
+                <tr>
+                <th>ID</th>
+                <th>Nom du jeu</th>
+                <th>Développeur</th>
+                <th>Publié le</th>
+                <th>Catégorie</th>
+                <th>Téléchargements</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Exemple de jeu publié -->
+                <tr>
+                <td>1001</td>
+                <td>Cyber Runner 2077</td>
+                <td>Ahmed Ben Ali</td>
+                <td>20/03/2025</td>
+                <td>Action</td>
+                <td><strong>3 210</strong></td>
+                <td class="actions">
+                    <a href="../detail.html?id=1001" target="_blank" class="btn-view">Voir</a>
+                    <form action="../control/crud.php" method="GET" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1001">
+                    <button type="submit" class="btn-edit">Modifier</button>
+                    </form>
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1001">
+                    <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce jeu publié ?')">Supprimer</button>
+                    </form>
+                </td>
+                </tr>
+                <tr>
+                <td>1002</td>
+                <td>Mystery of the Lost Temple</td>
+                <td>Sara Miled</td>
+                <td>22/06/2025</td>
+                <td>Aventure</td>
+                <td><strong>2 890</strong></td>
+                <td class="actions">
+                    <a href="../detail.html?id=1002" target="_blank" class="btn-view">Voir</a>
+                    <form action="../control/crud.php" method="GET" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1002">
+                    <button type="submit" class="btn-edit">Modifier</button>
+                    </form>
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1002">
+                    <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce jeu publié ?')">Supprimer</button>
+                    </form>
+                </td>
+                </tr>
+                <tr>
+                <td>1003</td>
+                <td>Space Defender X</td>
+                <td>Karim Ben Salah</td>
+                <td>10/11/2025</td>
+                <td>Shooter</td>
+                <td><strong>1 950</strong></td>
+                <td class="actions">
+                    <a href="../detail.html?id=1003" target="_blank" class="btn-view">Voir</a>
+                    <form action="../control/crud.php" method="GET" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1003">
+                    <button type="submit" class="btn-edit">Modifier</button>
+                    </form>
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="game_id" value="1003">
+                    <button type="submit" class="btn-delete" onclick="return confirm('Supprimer ce jeu publié ?')">Supprimer</button>
+                    </form>
+                </td>
+                </tr>
+                <!-- Ajouter d'autres jeux publiés ici -->
+            </tbody>
+            </table>
+        </div>
+        </section>
+
+        <!-- SECTION 2 : GESTION DES DÉVELOPPEURS -->
+        <section id="developers" class="admin-section">
+        <h2>Gestion des développeurs</h2>
+        <p class="section-subtitle">Gérer les comptes et les permissions</p>
+        <div class="table-container">
+            <table class="admin-table">
+            <thead>
+                <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Jeux soumis</th>
+                <th>Inscrit le</th>
+                <th>Statut</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td>12</td>
+                <td>Ahmed Ben Ali</td>
+                <td>ahmed@neonpulse.com</td>
+                <td>3</td>
+                <td>01/10/2025</td>
+                <td><span class="status active">Actif</span></td>
+                <td class="actions">
+                    <form action="../control/crud.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="dev_id" value="12">
+                    <button type="submit" class="btn-suspend">Suspendre</button>
+                    </form>
+                    <form action="../control/crud.php" method="GET" style="display:inline;">
+                    <input type="hidden" name="dev_id" value="12">
+                    <button type="submit" class="btn-edit">Modifier</button>
+                    </form>
+                </td>
+                </tr>
+                <!-- Ajouter d'autres développeurs ici -->
+            </tbody>
+            </table>
+        </div>
+        </section>
+
+        <!-- SECTION 3 : STATISTIQUES -->
+        <section id="stats" class="admin-section">
+        <h2>atomic</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+            <h3>247</h3>
+            <p>Jeux publiés</p>
+            </div>
+            <div class="stat-card">
+            <h3>89</h3>
+            <p>Développeurs inscrits</p>
+            </div>
+            <div class="stat-card">
+            <h3>12 450</h3>
+            <p>Téléchargements totaux</p>
+            </div>
+            <div class="stat-card">
+            <h3>8</h3>
+            <p>Jeux en attente</p>
+            </div>
+        </div>
+
+        <h3>Top 5 jeux les plus téléchargés</h3>
+        <ol class="top-games">
+            <li><strong>Cyber Runner 2077</strong> — 3 210 téléchargements</li>
+            <li><strong>Mystery Temple</strong> — 2 890 téléchargements</li>
+            <li><strong>Space Defender X</strong> — 1 950 téléchargements</li>
+            <li><strong>Pixel Quest</strong> — 1 620 téléchargements</li>
+            <li><strong>Neon Drift</strong> — 1 430 téléchargements</li>
+        </ol>
+        </section>
+
+        <!-- SECTION 4 : PARAMÈTRES DU SITE -->
+        <section id="settings" class="admin-section">
+        <h2>Paramètres du site</h2>
+
+        <!-- Catégories / Genres -->
+        <div class="setting-group">
+            <h3>Catégories de jeux</h3>
+            <form action="../control/update_categories.php" method="POST">
+            <textarea name="categories" rows="5" placeholder="Une catégorie par ligne...">Action
+            Aventure
+        RPG
+        Stratégie
+        Puzzle
+        Plateforme
+        Simulation
+        Course
+        Horreur
+        Sport
+        Combat
+        Autres</textarea>
+            <button type="submit" class="btn-save">Mettre à jour</button>
+            </form>
+        </div>
+
+        <!-- Logo & Bannière -->
+        <div class="setting-group">
+            <h3>Logo & Bannière</h3>
+            <form action="../control/upload_logo.php" method="POST" enctype="multipart/form-data">
+            <label>Logo du site (PNG, 200x60 recommandé)</label>
+            <input type="file" name="logo" accept="image/png">
+            <button type="submit" class="btn-upload">Changer le logo</button>
+            </form>
+
+            <form action="../control/upload_banner.php" method="POST" enctype="multipart/form-data" class="mt-3">
+            <label>Bannière d’accueil (1920x600 recommandé)</label>
+            <input type="file" name="banner" accept="image/*">
+            <button type="submit" class="btn-upload">Changer la bannière</button>
+            </form>
+        </div>
+
+        <!-- Contenu statique -->
+        <div class="setting-group">
+            <h3>Contenu statique (À propos, CGU, etc.)</h3>
+            <form action="../control/update_static.php" method="POST">
+            <label>Page "À propos"</label>
+            <textarea name="about_text" rows="6">GameHub Pro connecte les développeurs indépendants aux joueurs du monde entier...</textarea>
+            <button type="submit" class="btn-save">Enregistrer</button>
+            </form>
+        </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="admin-footer">
+        <div class="container">
+        <p>© 2025 GameHub Pro | Backoffice Administrateur | Tunis, Tunisie</p>
+        </div>
+    </footer>
+</script>
+
+</body>
+</html>

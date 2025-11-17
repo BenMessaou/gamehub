@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un jeu - GameHub Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="c.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+</head>
+<body>
+    <script src="c.js"></script>
+            <!-- HEADER -->
+            <header class="header">
+                <a href="index.html">
+                <img src="assests/l1ogo.png" alt="GameHub Pro" class="logo">
+                </a>
+                <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="index.html#new-games">Jeux récents</a></li>
+                    <li><a href="index.html#about">À propos</a></li>
+                    <li><a href="index.html#team">Équipe</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li><a href="addgame.html" class="add-game-btn active"><span>Add your game</span></a></li>
+                </ul>
+                </nav>
+                <div class="burger-container">
+                <div class="burger"></div>
+                </div>
+            </header>
+
+            <!-- SECTION AJOUT DE JEU -->
+            <section class="add-game-section">
+                <div class="container">
+                <h1 class="section-title">Publier votre jeu sur GameHub Pro</h1>
+                <p class="section-description">
+                    Remplissez le formulaire ci-dessous pour soumettre votre jeu à la validation. 
+                    Tous les champs marqués d’un <span class="required">*</span> sont obligatoires.
+                </p>
+
+                <!-- FORMULAIRE (enctype pour upload fichier) -->
+                <form action="control/add_game.php" method="POST" enctype="multipart/form-data" class="game-form">
+
+                    <!-- Nom du jeu -->
+                    <div class="form-group">
+                    <label for="nom">Nom du jeu <span class="required">*</span></label>
+                    <input type="text" id="nom" name="nom" required placeholder="Ex: Eternal Quest" maxlength="100">
+                    </div>
+
+                    <!-- Développeur / Studio -->
+                    <div class="form-group">
+                    <label for="developpeur">Développeur ou Studio <span class="required">*</span></label>
+                    <input type="text" id="developpeur" name="developpeur" required placeholder="Ex: Alex Dupont / Pixel Studio" maxlength="100">
+                    </div>
+
+                    <!-- Date de création -->
+                    <div class="form-group">
+                    <label for="date_creation">Date de création <span class="required">*</span></label>
+                    <input type="date" id="date_creation" name="date_creation" required>
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="form-group">
+                    <label for="categorie">Catégorie <span class="required">*</span></label>
+                    <select id="categorie" name="categorie" required>
+                        <option value="" disabled selected>Choisir une catégorie</option>
+                        <option value="Action">Action</option>
+                        <option value="Aventure">Aventure</option>
+                        <option value="RPG">RPG</option>
+                        <option value="Stratégie">Stratégie</option>
+                        <option value="Puzzle">Puzzle</option>
+                        <option value="Plateforme">Plateforme</option>
+                        <option value="Simulation">Simulation</option>
+                        <option value="Course">Course</option>
+                        <option value="Horreur">Horreur</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Combat">Combat</option>
+                        <option value="Autres">Autres</option>
+                    </select>
+                    </div>
+
+                    <!-- Âge recommandé -->
+                    <div class="form-group">
+                    <label for="age_recommande">Âge recommandé</label>
+                    <select id="age_recommande" name="age_recommande">
+                        <option value="" selected>Aucun</option>
+                        <option value="3+">3+</option>
+                        <option value="7+">7+</option>
+                        <option value="12+">12+</option>
+                        <option value="16+">16+</option>
+                        <option value="18+">18+</option>
+                    </select>
+                    </div>
+
+                    <!-- Lieu de développement -->
+                    <div class="form-group">
+                    <label for="lieu">Lieu de développement</label>
+                    <input type="text" id="lieu" name="lieu" placeholder="Ex: Tunis, Tunisie" maxlength="100">
+                    </div>
+
+                    <!-- Description détaillée -->
+                    <div class="form-group">
+                    <label for="description">Description complète <span class="required">*</span></label>
+                    <textarea id="description" name="description" rows="6" required 
+                                placeholder="Décrivez votre jeu : histoire, gameplay, univers, mécaniques, public cible... (min. 150 caractères)"></textarea>
+                    </div>
+
+                    <!-- Image de couverture -->
+                    <div class="form-group">
+                    <label for="image">Image de couverture <span class="required">*</span></label>
+                    <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif" required>
+                    <small>Formats : JPG, PNG, GIF | Max : 5 Mo | Recommandé : 1200x600 px</small>
+                    </div>
+
+                    <!-- Captures d’écran -->
+                    <div class="form-group">
+                    <label for="screenshots">Captures d’écran (jusqu’à 5)</label>
+                    <input type="file" id="screenshots" name="screenshots[]" accept="image/jpeg,image/png" multiple>
+                    <small>Max : 3 Mo par image</small>
+                    </div>
+
+                    <!-- Trailer YouTube -->
+                    <div class="form-group">
+                    <label for="trailer">Lien du trailer YouTube <span class="required">*</span></label>
+                    <input type="url" id="trailer" name="trailer" required 
+                            placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+
+                    <!-- Lien de téléchargement -->
+                    <div class="form-group">
+                    <label for="lien_telechargement">Lien de téléchargement (.zip, .exe, itch.io...)</label>
+                    <input type="url" id="lien_telechargement" name="lien_telechargement" 
+                            placeholder="https://monjeu.com/download">
+                    </div>
+
+                    <!-- Plateformes -->
+                    <div class="form-group">
+                    <label>Plateformes disponibles <span class="required">*</span></label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="plateformes[]" value="Windows"> Windows</label>
+                        <label><input type="checkbox" name="plateformes[]" value="Mac"> Mac</label>
+                        <label><input type="checkbox" name="plateformes[]" value="Linux"> Linux</label>
+                        <label><input type="checkbox" name="plateformes[]" value="Android"> Android</label>
+                        <label><input type="checkbox" name="plateformes[]" value="iOS"> iOS</label>
+                        <label><input type="checkbox" name="plateformes[]" value="Web"> Web</label>
+                    </div>
+                    </div>
+
+                    <!-- Mots-clés -->
+                    <div class="form-group">
+                    <label for="tags">Mots-clés (séparés par virgule)</label>
+                    <input type="text" id="tags" name="tags" 
+                            placeholder="Ex: fantasy, open-world, coop, pixel art">
+                    <small>Max. 10 mots-clés</small>
+                    </div>
+
+                    <!-- CGU -->
+                    <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="cgu" required>
+                        J’accepte les <a href="cgu.html" target="_blank">conditions d’utilisation</a> et confirme que mon jeu respecte les règles de la plateforme.
+                    </label>
+                    </div>
+
+                    <!-- BOUTONS -->
+                    <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        Soumettre pour validation
+                    </button>
+                    <a href="index.html" class="cancel-btn">
+                        Annuler
+                    </a>
+                    </div>
+                </form>
+
+                <!-- AIDE -->
+                <div class="help-box">
+                    <h3>Besoin d’aide ?</h3>
+                    <p>
+                    <i class="fas fa-envelope"></i> <a href="mailto:support@gamehubpro.com">support@gamehubpro.com</a><br>
+                    <i class="fas fa-book"></i> <a href="guide-soumission.html" target="_blank">Guide de soumission</a>
+                    </p>
+                </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="footer">
+                <div class="container">
+                <p>© 2025 GameHub Pro | Tous droits réservés | Tunis, Tunisie</p>
+                </div>
+            </footer>
+</script>
+
+</body>
+</html>
