@@ -7,14 +7,45 @@ class ProjectController {
     // ======================
     // LISTE DES PROJECTS
     // ======================
-    public function listProjects() {
-        $sql = "SELECT * FROM projects";
-        $db = config::getConnexion();
-        try {
-            $list = $db->query($sql);
-            return $list;
-        } catch (Exception $e) {
-            die('Error:' . $e->getMessage());
+    public function listProjects($statut = null) {
+        if ($statut) {
+            $sql = "SELECT * FROM projects WHERE statut = :statut ORDER BY date_creation DESC";
+            $db = config::getConnexion();
+            try {
+                $query = $db->prepare($sql);
+                $query->execute(['statut' => $statut]);
+                return $query;
+            } catch (Exception $e) {
+                die('Error:' . $e->getMessage());
+            }
+        } else {
+            $sql = "SELECT * FROM projects";
+            $db = config::getConnexion();
+            try {
+                $list = $db->query($sql);
+                return $list;
+            } catch (Exception $e) {
+                die('Error:' . $e->getMessage());
+            }
+        }
+    }
+
+    // ======================
+    // LISTER PROJECTS PAR STATUT
+    // ======================
+    public function listProjectsByStatus($statut = null) {
+        if ($statut) {
+            $sql = "SELECT * FROM projects WHERE statut = :statut ORDER BY date_creation DESC";
+            $db = config::getConnexion();
+            try {
+                $query = $db->prepare($sql);
+                $query->execute(['statut' => $statut]);
+                return $query;
+            } catch (Exception $e) {
+                die('Error:' . $e->getMessage());
+            }
+        } else {
+            return $this->listProjects();
         }
     }
 
@@ -36,12 +67,12 @@ class ProjectController {
     // ======================
     // AJOUTER PROJECT
     // ======================
-    public function addProject(Project $project) {
+    public function addProject(Project $project, $statut = 'publie') {
 
         $sql = "INSERT INTO projects 
-        (nom, developpeur, date_creation, categorie, description, image, trailer, developpeur_id, age_recommande, lieu, lien_telechargement, plateformes, tags, screenshots)
+        (nom, developpeur, date_creation, categorie, description, image, trailer, developpeur_id, age_recommande, lieu, lien_telechargement, plateformes, tags, screenshots, statut, date_soumission)
         VALUES 
-        (:nom, :developpeur, :date_creation, :categorie, :description, :image, :trailer, :developpeur_id, :age_recommande, :lieu, :lien_telechargement, :plateformes, :tags, :screenshots)";
+        (:nom, :developpeur, :date_creation, :categorie, :description, :image, :trailer, :developpeur_id, :age_recommande, :lieu, :lien_telechargement, :plateformes, :tags, :screenshots, :statut, :date_soumission)";
 
         $db = config::getConnexion();
 
@@ -62,11 +93,30 @@ class ProjectController {
                 'lien_telechargement' => $project->getLienTelechargement(),
                 'plateformes'         => json_encode($project->getPlateformes()),
                 'tags'                => json_encode($project->getTags()),
-                'screenshots'         => json_encode($project->getScreenshots())
+                'screenshots'         => json_encode($project->getScreenshots()),
+                'statut'              => $statut,
+                'date_soumission'     => date('Y-m-d H:i:s')
             ]);
 
         } catch (Exception $e) {
             echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+    // ======================
+    // APPROUVER PROJECT
+    // ======================
+    public function approveProject($id) {
+        $sql = "UPDATE projects SET statut = 'publie', date_publication = :date_publication WHERE id = :id";
+        $db = config::getConnexion();
+        $req = $db->prepare($sql);
+        $req->bindValue(':id', $id);
+        $req->bindValue(':date_publication', date('Y-m-d H:i:s'));
+        try {
+            $req->execute();
+            return true;
+        } catch (Exception $e) {
+            die('Error:' . $e->getMessage());
         }
     }
 
@@ -137,4 +187,5 @@ class ProjectController {
         }
     }
 }
+
 ?>

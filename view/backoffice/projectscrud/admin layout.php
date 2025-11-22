@@ -19,9 +19,9 @@ if (!isset($_SESSION['admin'])) {
     <h2>GAMEHUB PRO</h2>
 
     <a href="admindashboard.php">🏠 Dashboard</a>
-    <a href="listprjt.php">📄 Liste des jeux</a>
-    <a href="addprjt.php">➕ Ajouter un jeu</a>
-    <a href="verifprjt.php">✔️ Vérifications</a>
+    <a href="projectlist.php">📄 Liste des jeux</a>
+    <a href="addProject.php">➕ Ajouter un jeu</a>
+    <a href="projectlist.php?status=en_attente">✔️ Vérifications</a>
     <a href="logout.php" style="background:#d50000;">🚪 Logout</a>
 </div>
 

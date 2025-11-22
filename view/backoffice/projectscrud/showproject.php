@@ -1,5 +1,5 @@
 <?php
-include '../../controller/ProjectController.php';
+include '../../../controller/ProjectController.php';
 
 $projectC = new ProjectController();
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
@@ -130,11 +130,11 @@ if ($project) {
 <header class="admin-header">
     <div class="container">
         <div class="admin-logo">
-            <img src="../frontoffice/assests/logo.png" alt="GameHub Logo">
+            <img src="../../frontoffice/assests/logo.png" alt="GameHub Logo">
             GameHub Admin
         </div>
         <nav class="admin-nav">
-            <a href="admindashboard.php" class="nav-link">Dashboard</a>
+            <a href="index1.html" class="nav-link">Dashboard</a>
             <a href="projectlist.php" class="nav-link">Projects</a>
             <a href="addProject.php" class="nav-link">Add Project</a>
         </nav>
@@ -224,7 +224,7 @@ if ($project) {
                         <i class="lni lni-play"></i> Voir trailer
                     </a>
                 <?php endif; ?>
-                <form action="updateProject.php" method="POST">
+                <form action="updateproject.php" method="POST">
                     <input type="hidden" name="id" value="<?= $project['id']; ?>">
                     <button type="submit" class="btn-outline"><i class="lni lni-pencil"></i> Modifier</button>
                 </form>

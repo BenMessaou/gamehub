@@ -1,6 +1,6 @@
 <?php
-include '../../controller/ProjectController.php';
-require_once __DIR__ . '/../../model/Project.php';
+include '../../../controller/ProjectController.php';
+require_once __DIR__ . '/../../../model/Project.php';
 
 $error = "";
 $projectC = new ProjectController();
@@ -43,7 +43,7 @@ if (
                 
                 if (move_uploaded_file($file['tmp_name'], $targetPath)) {
                     // Chemin relatif pour la base de données (accessible depuis frontoffice)
-                    $imagePath = '../backoffice/uploads/' . $fileName;
+                    $imagePath = '../backoffice/projectscrud/uploads/' . $fileName;
                 } else {
                     $error = "Erreur lors de l'upload de l'image.";
                 }
@@ -82,7 +82,7 @@ if (
 
             $projectC->addProject($project);
 
-            header('Location: projectList.php');
+            header('Location: projectlist.php');
             exit;
         }
     } else {
@@ -217,11 +217,11 @@ if (
 <header class="admin-header">
     <div class="container">
         <div class="admin-logo">
-            <img src="../frontoffice/assests/logo.png" alt="GameHub Logo">
+            <img src="../../frontoffice/assests/logo.png" alt="GameHub Logo">
             GameHub Admin
         </div>
         <nav class="admin-nav">
-            <a href="admindashboard.php" class="nav-link">Dashboard</a>
+            <a href="index1.html" class="nav-link">Dashboard</a>
             <a href="projectlist.php" class="nav-link">Projects</a>
             <a href="addProject.php" class="nav-link active">Add Project</a>
         </nav>

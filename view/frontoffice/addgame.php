@@ -1,3 +1,7 @@
+<?php
+// Démarrer la session pour les messages
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +14,6 @@
 </head>
 <body>
     <script src="c.js"></script>
-    <script src="validation.js"></script>
             <!-- HEADER -->
             <header class="header">
                 <a href="index.php">
@@ -37,12 +40,19 @@
                 <h1 class="section-title">Publish Your Game on GameHub Pro</h1>
                 <p class="section-description">
                     Fill out the form below to submit your game for validation. 
+                    All fields marked with <span class="required">*</span> are required.
                 </p>
-
-                <!-- Success/Error Messages -->
-                <div id="message-container" style="display: none; margin-bottom: 24px; padding: 16px; border-radius: 8px;">
-                    <div id="message-content"></div>
-                </div>
+                <?php if (isset($_GET['success']) && $_GET['success'] == '1'): ?>
+                    <div style="background: rgba(0, 255, 234, 0.1); border: 1px solid rgba(0, 255, 234, 0.5); color: #00ffea; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                        <strong>✓ Project submitted successfully!</strong><br>
+                        Your project is pending validation by the administrator. You will be notified once it is approved.
+                    </div>
+                <?php endif; ?>
+                <?php if (isset($_GET['error']) && !empty($_GET['error'])): ?>
+                    <div style="background: rgba(255, 51, 92, 0.1); border: 1px solid rgba(255, 51, 92, 0.5); color: #ff6b81; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                        <strong>✗ Error:</strong> <?= htmlspecialchars($_GET['error']); ?>
+                    </div>
+                <?php endif; ?>
 
                 <!-- FORMULAIRE (enctype pour upload fichier) -->
                 <form action="control/add_game.php" method="POST" enctype="multipart/form-data" class="game-form">
@@ -90,6 +100,7 @@
                     <label for="age_recommande"></label>
                     <select id="age_recommande" name="age_recommande">
                         <option value="" selected>None</option>
+                        <option value="3+">3+</option>
                         <option value="7+">7+</option>
                         <option value="12+">12+</option>
                         <option value="16+">16+</option>
@@ -176,43 +187,12 @@
             </footer>
 
 <script>
-// Handle success/error messages and placeholder removal
+// Forcer la suppression du placeholder dès qu'on tape
 document.addEventListener('DOMContentLoaded', function() {
-  // Handle success/error messages from URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const messageContainer = document.getElementById('message-container');
-  const messageContent = document.getElementById('message-content');
-  
-  if (urlParams.get('success') === '1') {
-    messageContainer.style.display = 'block';
-    messageContainer.style.background = 'rgba(0, 255, 234, 0.1)';
-    messageContainer.style.border = '1px solid rgba(0, 255, 234, 0.5)';
-    messageContent.style.color = '#00ffea';
-    messageContent.innerHTML = '<strong>✓ Project submitted successfully!</strong><br>Your project is pending validation by the administrator. You will be notified once it is approved.';
-    
-    // Clear URL parameters after showing message
-    setTimeout(() => {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }, 5000);
-  } else if (urlParams.get('error')) {
-    const errorMsg = decodeURIComponent(urlParams.get('error'));
-    messageContainer.style.display = 'block';
-    messageContainer.style.background = 'rgba(255, 51, 92, 0.1)';
-    messageContainer.style.border = '1px solid rgba(255, 51, 92, 0.5)';
-    messageContent.style.color = '#ff6b81';
-    messageContent.innerHTML = '<strong>✗ Error:</strong> ' + errorMsg;
-    
-    // Clear URL parameters after showing message
-    setTimeout(() => {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }, 5000);
-  }
-
-  // Force placeholder removal when typing
   const inputs = document.querySelectorAll('.form-group input, .form-group textarea');
   
   inputs.forEach(input => {
-    // Remove placeholder on focus
+    // Supprimer le placeholder au focus
     input.addEventListener('focus', function() {
       if (this.placeholder) {
         this.setAttribute('data-placeholder-backup', this.placeholder);
@@ -221,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Remove placeholder during input
+    // Supprimer le placeholder pendant la saisie
     input.addEventListener('input', function() {
       if (this.value && this.value.trim() !== '') {
         if (this.placeholder) {
@@ -230,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
           this.setAttribute('data-has-value', 'true');
         }
       } else {
-        // Restore if empty
+        // Restaurer si vide
         if (this.hasAttribute('data-placeholder-backup')) {
           this.placeholder = this.getAttribute('data-placeholder-backup');
           this.removeAttribute('data-placeholder-backup');
@@ -239,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Restore on blur only if empty
+    // Restaurer au blur seulement si vide
     input.addEventListener('blur', function() {
       if (this.value === '' || this.value.trim() === '') {
         if (this.hasAttribute('data-placeholder-backup')) {
@@ -250,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Check if input already has a value on load
+    // Vérifier si l'input a déjà une valeur au chargement
     if (input.value && input.value.trim() !== '') {
       if (input.placeholder) {
         input.setAttribute('data-placeholder-backup', input.placeholder);
@@ -261,8 +241,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
-<script src="validation.js"></script>
-
 
 </body>
 </html>

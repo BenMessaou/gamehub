@@ -72,14 +72,69 @@ filterButtons.forEach(btn => {
 /* ============================
    LABEL FLOTTANT POUR LES INPUTS
 ============================ */
-document.querySelectorAll(".form-group input, .form-group textarea").forEach(input => {
-  input.addEventListener("focus", () => {
-    input.classList.add("active");
-  });
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".form-group input, .form-group textarea, .form-group select").forEach(input => {
+    // Sauvegarder le placeholder original
+    if (input.placeholder) {
+      input.setAttribute("data-placeholder-original", input.placeholder);
+    }
 
-  input.addEventListener("blur", () => {
-    if (input.value === "") {
-      input.classList.remove("active");
+    // Fonction pour cacher le placeholder
+    const hidePlaceholder = () => {
+      if (input.placeholder) {
+        input.setAttribute("data-placeholder", input.placeholder);
+        input.placeholder = "";
+        input.setAttribute("data-has-value", "true");
+      }
+    };
+
+    // Fonction pour restaurer le placeholder
+    const showPlaceholder = () => {
+      if (input.hasAttribute("data-placeholder")) {
+        input.placeholder = input.getAttribute("data-placeholder");
+        input.removeAttribute("data-placeholder");
+        input.removeAttribute("data-has-value");
+      } else if (input.hasAttribute("data-placeholder-original")) {
+        input.placeholder = input.getAttribute("data-placeholder-original");
+        input.removeAttribute("data-has-value");
+      }
+    };
+
+    // Au focus - cacher immédiatement le placeholder
+    input.addEventListener("focus", () => {
+      input.classList.add("active");
+      hidePlaceholder();
+    });
+
+    // Pendant la saisie - s'assurer que le placeholder reste caché
+    input.addEventListener("input", () => {
+      if (input.value && input.value.trim() !== "") {
+        hidePlaceholder();
+      } else {
+        showPlaceholder();
+      }
+    });
+
+    // Au blur - restaurer seulement si vide
+    input.addEventListener("blur", () => {
+      if (input.value === "" || input.value.trim() === "") {
+        input.classList.remove("active");
+        showPlaceholder();
+      }
+    });
+
+    // Au changement (pour les selects)
+    input.addEventListener("change", () => {
+      if (input.value && input.value !== "" && input.value !== "0") {
+        hidePlaceholder();
+      } else {
+        showPlaceholder();
+      }
+    });
+
+    // Vérifier au chargement si l'input a déjà une valeur
+    if (input.value && input.value !== "" && input.value !== "0") {
+      hidePlaceholder();
     }
   });
 });
@@ -185,4 +240,58 @@ window.addEventListener("scroll", () => {
 
 scrollTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+/* ============================
+   SIDEBAR TOGGLE - Admin Dashboard Template
+============================ */
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const mainContent = document.getElementById('main-content');
+
+if (sidebarToggle && sidebar && mainContent) {
+  sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+    mainContent.classList.toggle('shifted');
+  });
+
+  // Smooth scrolling for sidebar navigation (séparé du smooth scroll général)
+  const sidebarLinks = sidebar.querySelectorAll('a[href^="#"]');
+  sidebarLinks.forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }
+      // Close sidebar on mobile after clicking a link
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('show');
+        mainContent.classList.remove('shifted');
+      }
+    });
+  });
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+      sidebar.classList.remove('show');
+      mainContent.classList.remove('shifted');
+    }
+  });
+}
+
+/* ============================
+   DASHBOARD INTERACTIONS - Admin Dashboard Template
+============================ */
+// Dashboard interactions (placeholder for future features)
+const statCards = document.querySelectorAll('.stat-card');
+statCards.forEach(card => {
+  card.addEventListener('click', () => {
+    // Placeholder for card click interaction
+    console.log('Stat card clicked:', card.querySelector('h3').textContent);
+  });
 });

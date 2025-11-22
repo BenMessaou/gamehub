@@ -12,40 +12,39 @@ html {
 }
 
 body {
-  font-family: 'Exo 2', 'Rajdhani', 'Inter', sans-serif;
+  font-family: 'Arial', sans-serif;
   line-height: 1.6;
-  background: linear-gradient(135deg, #0a001a 0%, #1a0033 50%, #0f0022 100%);
-  color: #e0e0ff;
+  color: #333;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Halo néon en arrière-plan */
 body::before {
-  content: "";
+  content: '';
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(255, 0, 199, 0.15), transparent 55%),
-    radial-gradient(circle at 80% 20%, rgba(0, 255, 234, 0.15), transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(128, 0, 255, 0.15), transparent 60%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 255, 150, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(150, 0, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
   z-index: -1;
-  animation: rgbShift 14s ease-in-out infinite alternate;
+  animation: rgbShift 10s ease-in-out infinite alternate;
 }
 
 @keyframes rgbShift {
-  0% { filter: hue-rotate(0deg); opacity: 0.7; }
-  100% { filter: hue-rotate(360deg); opacity: 1; }
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 
 .container {
-  max-width: 1300px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 0 20px;
-  position: relative;
-  z-index: 1;
 }
 
 /* =========================
@@ -62,51 +61,50 @@ h2 { font-size: 2.6rem; }
 h3 { font-size: 1.6rem; }
 
 /* =========================
-   HEADER (BASE TEMPLATE 1 + STYLE TEMPLATE 2)
+   HEADER - Admin Dashboard Template Style
 ========================= */
 header {
-  background: rgba(20, 10, 50, 0.8);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(255, 100, 255, 0.3);
-  padding: 15px 0;
-  transition: all 0.4s;
-}
-
-header.scrolled {
-  background: rgba(15, 5, 40, 0.9);
-  padding: 10px 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.3);
 }
 
 header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  padding: 1rem 20px;
 }
 
-/* LOGO + IMAGE */
+/* LOGO - Admin Dashboard Template Style */
+.logo {
+  color: #00ff88;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88; }
+  to { text-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88, 0 0 40px #00ff88; }
+}
+
+/* Logo avec image (pour compatibilité) */
 header .logo1 {
   display: flex;
   align-items: center;
   gap: 12px;
   font-family: 'Orbitron', sans-serif;
   font-size: 2rem;
-  font-weight: 900;
-  color: transparent;
-  background: linear-gradient(90deg, #ff00c7, #00ffea, #ff00c7);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(255, 0, 199, 0.4);
-  transition: all 0.4s ease;
-  cursor: pointer;
-  position: relative;
-  z-index: 10;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+  animation: glow 2s ease-in-out infinite alternate;
 }
 
 header .logo1 img {
@@ -114,20 +112,14 @@ header .logo1 img {
   height: 60px;
   border-radius: 12px;
   object-fit: contain;
-  border: 2px solid transparent;
-  background: linear-gradient(45deg, #ff00c7, #00ffea) padding-box,
-              linear-gradient(45deg, #ff00c7, #00ffea) border-box;
-  box-shadow: 0 0 25px rgba(255, 0, 199, 0.5),
-              0 0 40px rgba(0, 255, 234, 0.3);
+  border: none;
+  background: none;
+  box-shadow: none;
   transition: all 0.4s ease;
-  animation: logoPulse 3s infinite alternate;
 }
 
 header .logo1:hover img {
   transform: scale(1.08) rotate(4deg);
-  box-shadow: 0 0 35px rgba(255, 0, 199, 0.7),
-              0 0 50px rgba(0, 255, 234, 0.5);
-  border-color: #ff00c7;
 }
 
 header .logo1:hover {
@@ -149,13 +141,88 @@ header .logo1:hover {
 /* NAVIGATION */
 nav ul {
   display: flex;
-  gap: 24px;
-  align-items: center;
-  flex-wrap: wrap;
   list-style: none;
 }
 
-nav a {
+nav ul li {
+  margin-left: 2rem;
+}
+
+/* SUPER BUTTON STYLE - From Admin Dashboard Template */
+nav a.super-button,
+.super-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 1;
+  text-decoration: none;
+}
+
+nav a.super-button::before,
+.super-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+  animation: rotate 4s linear infinite;
+  z-index: -2;
+}
+
+nav a.super-button::after,
+.super-button::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+nav a.super-button:hover,
+.super-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+  color: #90EE90;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rainbow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Navigation links standard (non super-button) */
+nav a:not(.super-button) {
   color: #ddd;
   font-weight: 600;
   font-size: 1rem;
@@ -164,11 +231,11 @@ nav a {
   text-decoration: none;
   position: relative;
   background: rgba(30, 20, 60, 0.6);
-  border: 1px solid rgba(255, 0, 199, 0.35);
+  border: 1px solid rgba(0, 255, 136, 0.35);
   transition: all 0.3s ease;
 }
 
-nav a::after {
+nav a:not(.super-button)::after {
   content: '';
   position: absolute;
   bottom: -4px;
@@ -176,52 +243,122 @@ nav a::after {
   width: 0;
   height: 2px;
   transform: translateX(-50%);
-  background: linear-gradient(90deg, #ff00c7, #00ffea);
+  background: linear-gradient(90deg, #00ff88, #00ffff);
   transition: 0.3s;
 }
 
-nav a:hover {
-  color: #ff00c7;
-  background: rgba(40, 20, 80, 0.9);
-  box-shadow: 0 0 18px rgba(255, 0, 199, 0.5);
+nav a:not(.super-button):hover {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.5);
   transform: translateY(-2px);
 }
 
-nav a:hover::after {
+nav a:not(.super-button):hover::after {
   width: 80%;
 }
 
-/* BOUTON "ADD GAME" (Structure template 1, style template 2) */
+/* BOUTON "ADD GAME" - Style Super Button */
 .add-game-btn {
-  background: linear-gradient(90deg, #ff00c7, #00ffea);
-  color: rgb(255, 255, 255);
-  border: none;
-  padding: 10px 24px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.95rem;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 20px rgba(255, 0, 199, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.35s;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 1;
+  text-decoration: none;
 }
 
 .add-game-btn::before {
   content: "";
   position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  transition: 0.8s;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+  animation: rotate 4s linear infinite;
+  z-index: -2;
 }
 
-.add-game-btn:hover::before {
-  left: 100%;
+.add-game-btn::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: -1;
 }
 
 .add-game-btn:hover {
-  transform: translateY(-2px) scale(1.04);
-  box-shadow: 0 0 30px rgba(255, 0, 199, 0.8);
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+  color: #90EE90;
+}
+
+/* DASHBOARD BUTTON - Style Super Button */
+.dashboard-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 1;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.dashboard-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ff88, #00ffff, #00ff88);
+  animation: rotate 4s linear infinite;
+  z-index: -2;
+}
+
+.dashboard-btn::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.dashboard-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.2);
+  color: #90EE90;
 }
 
 /* BURGER MENU (Structure 1, couleurs 2) */
@@ -1032,13 +1169,34 @@ nav a:hover::after {
 
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label,
+.form-group input[data-has-value] + label,
 .form-group textarea:focus + label,
-.form-group textarea:not(:placeholder-shown) + label {
+.form-group textarea:not(:placeholder-shown) + label,
+.form-group textarea[data-has-value] + label {
   top: -10px;
   left: 16px;
   font-size: 0.8rem;
   color: #00ffea;
   font-weight: 700;
+}
+
+/* Cacher le placeholder quand on tape - FORCER L'INVISIBILITÉ */
+.form-group input:focus::placeholder,
+.form-group textarea:focus::placeholder,
+.form-group input[data-has-value]::placeholder,
+.form-group textarea[data-has-value]::placeholder,
+.form-group input[data-has-value="true"]::placeholder,
+.form-group textarea[data-has-value="true"]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
+  transition: opacity 0.1s ease;
+}
+
+/* S'assurer que le placeholder est vraiment invisible */
+.form-group input[placeholder=""]::placeholder,
+.form-group textarea[placeholder=""]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
 }
 
 /* File input custom */
@@ -1271,6 +1429,13 @@ nav a:hover::after {
     gap: 16px;
   }
 
+  .dashboard-btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: auto;
+    display: inline-block;
+  }
+
   .hero-section {
     padding-top: 120px;
   }
@@ -1438,13 +1603,34 @@ nav a:hover::after {
 
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label,
+.form-group input[data-has-value] + label,
 .form-group textarea:focus + label,
-.form-group textarea:not(:placeholder-shown) + label {
+.form-group textarea:not(:placeholder-shown) + label,
+.form-group textarea[data-has-value] + label {
   top: -10px;
   left: 16px;
   font-size: 0.8rem;
   color: #00ffea;
   font-weight: 700;
+}
+
+/* Cacher le placeholder quand on tape - FORCER L'INVISIBILITÉ */
+.form-group input:focus::placeholder,
+.form-group textarea:focus::placeholder,
+.form-group input[data-has-value]::placeholder,
+.form-group textarea[data-has-value]::placeholder,
+.form-group input[data-has-value="true"]::placeholder,
+.form-group textarea[data-has-value="true"]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
+  transition: opacity 0.1s ease;
+}
+
+/* S'assurer que le placeholder est vraiment invisible */
+.form-group input[placeholder=""]::placeholder,
+.form-group textarea[placeholder=""]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
 }
 
 /* File input */
@@ -1691,13 +1877,34 @@ nav a:hover::after {
 .form-group select:focus + label,
 .form-group textarea:focus + label,
 .form-group input:not(:placeholder-shown) + label,
+.form-group input[data-has-value] + label,
 .form-group textarea:not(:placeholder-shown) + label,
+.form-group textarea[data-has-value] + label,
 .form-group select:not([value=""]) + label {
   top: -10px;
   left: 16px;
   font-size: 0.8rem;
   color: #00ffea;
   font-weight: 700;
+}
+
+/* Cacher le placeholder quand on tape - FORCER L'INVISIBILITÉ */
+.form-group input:focus::placeholder,
+.form-group textarea:focus::placeholder,
+.form-group input[data-has-value]::placeholder,
+.form-group textarea[data-has-value]::placeholder,
+.form-group input[data-has-value="true"]::placeholder,
+.form-group textarea[data-has-value="true"]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
+  transition: opacity 0.1s ease;
+}
+
+/* S'assurer que le placeholder est vraiment invisible */
+.form-group input[placeholder=""]::placeholder,
+.form-group textarea[placeholder=""]::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
 }
 
 /* Spécial SELECT (corrige le bug) */
@@ -1716,19 +1923,109 @@ select + label {
 }
 
 /* =========================
-   CHECKBOXES
+   CHECKBOXES ORGANISÉES
 ========================= */
-
 .checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+  padding: 20px;
+  background: rgba(20, 10, 50, 0.4);
+  border: 1px solid rgba(0, 255, 234, 0.2);
+  border-radius: 12px;
+}
+
+.checkbox-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 8px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(30, 20, 60, 0.6);
+  border: 2px solid rgba(255, 0, 199, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkbox-item:hover {
+  background: rgba(0, 255, 234, 0.1);
+  border-color: rgba(0, 255, 234, 0.6);
+  box-shadow: 0 0 15px rgba(0, 255, 234, 0.3);
+  transform: translateY(-2px);
+}
+
+.checkbox-item input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 255, 234, 0.5);
+  border-radius: 4px;
+  background: rgba(20, 10, 50, 0.8);
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #00ffea, #00c7ff);
+  border-color: #00ffea;
+  box-shadow: 0 0 10px rgba(0, 255, 234, 0.6);
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.checkbox-text {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+.checkbox-item input[type="checkbox"]:checked ~ .checkbox-text {
+  color: #00ffea;
+  font-weight: 600;
 }
 
 .checkbox-label {
   font-size: 0.9rem;
   color: #ccc;
+}
+
+/* Responsive pour les checkboxes */
+@media (max-width: 768px) {
+  .checkbox-group {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .checkbox-item {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkbox-group {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================
@@ -1800,7 +2097,225 @@ select + label {
    RESPONSIVE
 ========================= */
 
+/* =========================
+   SIDEBAR - Admin Dashboard Template Style
+========================= */
+.sidebar {
+  position: fixed;
+  top: 80px;
+  left: -250px;
+  width: 250px;
+  height: calc(100vh - 80px);
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(0, 255, 136, 0.3);
+  transition: left 0.3s ease;
+  z-index: 90;
+}
+
+.sidebar.show {
+  left: 0;
+}
+
+.sidebar nav ul {
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.sidebar nav ul li {
+  margin: 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+}
+
+.sidebar nav ul li a {
+  display: block;
+  padding: 1rem 2rem;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.sidebar nav ul li a:hover {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+/* Sidebar Toggle */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #00ff88;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 0;
+  margin-top: 80px;
+  padding: 2rem 0;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.shifted {
+  margin-left: 250px;
+}
+
+/* =========================
+   DASHBOARD - Admin Dashboard Template Style
+========================= */
+.dashboard h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.stats-cards {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+  animation: rotate 4s linear infinite;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+}
+
+.stat-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 10px #00ff88;
+}
+
+/* =========================
+   WIDGETS - Admin Dashboard Template Style
+========================= */
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.widget {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.widget h3 {
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.user-table th, .user-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.user-table th {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+}
+
+.chart-placeholder {
+  height: 200px;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* =========================
+   RESPONSIVE - Admin Dashboard Template Style
+========================= */
 @media (max-width: 768px) {
+  .stats-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-widgets {
+    grid-template-columns: 1fr;
+  }
+
+  nav ul {
+    display: none;
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .main-content.shifted {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    left: -250px;
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
   .add-game-section {
     margin: 120px 20px 80px;
     padding: 40px 24px;

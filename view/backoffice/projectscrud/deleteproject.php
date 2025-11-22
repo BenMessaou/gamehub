@@ -1,5 +1,5 @@
 <?php
-include '../../controller/ProjectController.php';
+include '../../../controller/ProjectController.php';
 
 $projectC = new ProjectController();
 
@@ -9,7 +9,7 @@ if (isset($_GET["id"]) && !empty($_GET["id"])) {
     $projectC->deleteProject($_GET["id"]);
 
     // Redirection vers la liste
-    header('Location: projectList.php');
+    header('Location: projectlist.php');
     exit;
 
 } else {

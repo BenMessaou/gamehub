@@ -18,11 +18,11 @@ $primaryDetailLink = $primaryProjectId ? 'detail.php?id=' . urlencode($primaryPr
 $placeholderImage = 'assests/game1.png';
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub Pro - Plateforme de jeux indépendants</title>
+    <title>GameHub Pro - Independent Games Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="c.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
@@ -37,14 +37,16 @@ $placeholderImage = 'assests/game1.png';
         <div class="logo">GameHub Pro</div>
         <nav>
             <ul>
-                <li><a href="#home">Accueil</a></li>
-                <li><a href="#new-games">Jeux récents</a></li>
-                <li><a href="#about">À propos</a></li>
-                <li><a href="#team">Équipe</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#new-games">Recent Games</a></li>
+                <li><a href="eventsp.php">🎮 Events</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#team">Team</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="addgame.html" class="add-game-btn"><span>Add your game</span></a></li>
             </ul>
         </nav>
+        <a href="#" class="dashboard-btn" id="dashboardBtn">Dashboard</a>
         <div class="burger-container">
             <div class="burger"></div>
         </div>
@@ -53,107 +55,109 @@ $placeholderImage = 'assests/game1.png';
     <!-- HERO SECTION -->
     <section id="home" class="hero-section">
         <div class="hero-content">
-            <h1>Bienvenue sur <span>GameHub Pro</span></h1>
-            <p>Découvrez, jouez et partagez les meilleurs jeux indépendants créés par des développeurs passionnés du monde entier.</p>
-            <a href="<?= $primaryDetailLink; ?>" class="cta-btn">
-                <?= $primaryProjectId ? 'Voir le projet mis en avant' : 'Voir les jeux'; ?>
-            </a>
+            <h1>Welcome to <span>GameHub Pro</span></h1>
+            <p>Discover, play and share the best independent games created by passionate developers from around the world.</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="<?= $primaryDetailLink; ?>" class="cta-btn">
+                    <?= $primaryProjectId ? 'View Featured Project' : 'View Games'; ?>
+                </a>
+                <a href="eventsp.php" class="cta-btn" style="background: linear-gradient(120deg, #ff00c7, #7c00ff);">
+                    🎮 Explore Events
+                </a>
+            </div>
         </div>
         <div class="hero-image">
-            <img src="assests/logo.png" alt="Jeu en vedette">
+            <img src="assests/logo.png" alt="Featured Game">
         </div>
     </section>
 
     <!-- NEW GAMES SECTION -->
     <section id="new-games" class="games-section">
         <div class="section-header">
-            <h2>Jeux récents</h2>
-            <p>Les dernières pépites ajoutées à la plateforme</p>
+            <h2>Recent Games</h2>
+            <p>The latest gems added to the platform</p>
         </div>
         <div class="games-grid">
             <?php if (count($featuredProjects) === 0): ?>
-                <p class="empty-state">Aucun projet n'a encore été publié. Revenez vite&nbsp;!</p>
+                <p class="empty-state">No projects have been published yet. Come back soon!</p>
             <?php else: ?>
                 <?php foreach ($featuredProjects as $project): ?>
                     <?php
                         $image = !empty($project['image']) ? $project['image'] : $placeholderImage;
                         $age = isset($project['age_recommande']) && $project['age_recommande'] !== '' ? $project['age_recommande'] . '+' : '--';
-                        $location = $project['lieu'] ?? 'Lieu non renseigné';
+                        $location = $project['lieu'] ?? 'Location not specified';
                         $dateCreation = $project['date_creation'] ?? '--';
-                        $category = $project['categorie'] ?? 'Catégorie inconnue';
+                        $category = $project['categorie'] ?? 'Unknown category';
                     ?>
                     <article class="game-card">
                         <img src="<?= htmlspecialchars($image); ?>" alt="<?= htmlspecialchars($project['nom'] ?? 'Jeu'); ?>">
                         <div class="game-info">
-                            <h3><?= htmlspecialchars($project['nom'] ?? 'Projet sans nom'); ?></h3>
+                            <h3><?= htmlspecialchars($project['nom'] ?? 'Unnamed Project'); ?></h3>
                             <p class="category"><?= htmlspecialchars($category); ?></p>
                             <p class="age"><?= htmlspecialchars($age); ?></p>
                             <p class="location"><?= htmlspecialchars($location); ?></p>
                             <p class="date"><?= htmlspecialchars($dateCreation); ?></p>
                         </div>
-                        <a href="detail.php?id=<?= urlencode($project['id']); ?>" class="play-btn">Voir</a>
+                        <a href="detail.php?id=<?= urlencode($project['id']); ?>" class="play-btn">View</a>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>
-        <div class="view-more">
-            <a href="../backoffice/projectlist.php" class="secondary-btn">Voir tous les jeux</a>
         </div>
     </section>
 
     <!-- ABOUT SECTION -->
     <section id="about" class="about-section">
         <div class="about-content">
-            <h2>À propos de GameHub Pro</h2>
-            <p>GameHub Pro est une plateforme dédiée aux jeux indépendants. Nous croyons que chaque développeur a une histoire unique à raconter à travers ses créations.</p>
+            <h2>About GameHub Pro</h2>
+            <p>GameHub Pro is a platform dedicated to independent games. We believe that every developer has a unique story to tell through their creations.</p>
             <ul>
-                <li>Accès gratuit pour tous les joueurs</li>
-                <li>Soumission simplifiée pour les développeurs</li>
-                <li>Validation humaine de chaque jeu</li>
-                <li>Communauté active et passionnée</li>
+                <li>Free access for all players</li>
+                <li>Simplified submission for developers</li>
+                <li>Human validation of each game</li>
+                <li>Active and passionate community</li>
             </ul>
-            <a href="addgame.html" class="secondary-btn">Soumettre votre jeu</a>
+            <a href="addgame.html" class="secondary-btn">Submit Your Game</a>
         </div>
         <div class="about-image">
-            <img src="images/about-illustration.png" alt="À propos">
+            <img src="images/about-illustration.png" alt="About">
         </div>
     </section>
 
     <!-- TEAM SECTION -->
     <section id="team" class="team-section">
-        <h2>Notre équipe</h2>
+        <h2>Our Team</h2>
         <div class="team-grid">
             <div class="team-member">
-                <img src="images/team1.jpg" alt="Membre 1">
+                <img src="images/team1.jpg" alt="Member 1">
                 <h3>Alexandre Dupont</h3>
-                <p>Fondateur & CEO</p>
+                <p>Founder & CEO</p>
             </div>
             <div class="team-member">
-                <img src="images/team2.jpg" alt="Membre 2">
+                <img src="images/team2.jpg" alt="Member 2">
                 <h3>Sophie Martin</h3>
-                <p>Responsable Community</p>
+                <p>Community Manager</p>
             </div>
             <div class="team-member">
-                <img src="images/team3.jpg" alt="Membre 3">
+                <img src="images/team3.jpg" alt="Member 3">
                 <h3>Karim Ben Salah</h3>
-                <p>Développeur Principal</p>
+                <p>Lead Developer</p>
             </div>
             <div class="team-member">
-                <img src="images/team4.jpg" alt="Membre 4">
+                <img src="images/team4.jpg" alt="Member 4">
                 <h3>Leila Ammar</h3>
-                <p>Designer UI/UX</p>
+                <p>UI/UX Designer</p>
             </div>
         </div>
     </section>
 
     <!-- CONTACT SECTION -->
     <section id="contact" class="contact-section">
-        <h2>Contactez-nous</h2>
+        <h2>Contact Us</h2>
         <form class="contact-form">
-            <input type="text" placeholder="Votre nom" required>
-            <input type="email" placeholder="Votre email" required>
-            <textarea placeholder="Votre message" rows="5" required></textarea>
-            <button type="submit" class="submit-btn">Envoyer</button>
+            <input type="text" placeholder="Your name" required>
+            <input type="email" placeholder="Your email" required>
+            <textarea placeholder="Your message" rows="5" required></textarea>
+            <button type="submit" class="submit-btn">Send</button>
         </form>
     </section>
 
@@ -162,20 +166,21 @@ $placeholderImage = 'assests/game1.png';
         <div class="footer-content">
             <div class="footer-section about">
                 <h3>GameHub Pro</h3>
-                <p>La plateforme qui connecte les développeurs indépendants aux joueurs du monde entier.</p>
+                <p>The platform that connects independent developers with players from around the world.</p>
             </div>
             <div class="footer-section links">
-                <h3>Liens rapides</h3>
+                <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#home">Accueil</a></li>
-                    <li><a href="#new-games">Jeux récents</a></li>
-                    <li><a href="#about">À propos</a></li>
-                    <li><a href="#team">Équipe</a></li>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#new-games">Recent Games</a></li>
+                    <li><a href="eventsp.php">🎮 Events</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#team">Team</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-section social">
-                <h3>Suivez-nous</h3>
+                <h3>Follow Us</h3>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -186,10 +191,40 @@ $placeholderImage = 'assests/game1.png';
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 GameHub Pro | Tous droits réservés | Tunis, Tunisie</p>
+            <p>&copy; 2025 GameHub Pro | All rights reserved | Tunis, Tunisia</p>
         </div>
     </footer>
 <script src="c.js"></script>
+<script>
+// Dashboard button management with code verification
+document.addEventListener('DOMContentLoaded', function() {
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    
+    if (dashboardBtn) {
+        dashboardBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Display alert indicating admin login
+            alert('You are logged in as administrator.\n\nTo access the Dashboard, please enter the access code.');
+            
+            // Request the code
+            const code = prompt('Enter the Dashboard access code:');
+            
+            // Verify the code
+            if (code === '0000') {
+                // Correct code, redirect to dashboard
+                window.location.href = '../backoffice/projectscrud/projectlist.php';
+            } else if (code === null) {
+                // User cancelled
+                return;
+            } else {
+                // Incorrect code
+                alert('Incorrect code. Access denied.');
+            }
+        });
+    }
+});
+</script>
 
 </body>
 </html>

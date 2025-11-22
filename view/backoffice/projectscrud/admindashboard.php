@@ -1,6 +1,6 @@
 <?php
 require_once "admin layout.php";
-require_once "../../control/crud.php";
+require_once "../../../controller/ProjectController.php";
 
 $controller = new ProjectController();
 $projects = $controller->listProjects();
@@ -47,7 +47,7 @@ ob_start();
         <td><?= $p['statut'] ?></td>
         <td><?= $p['developpeur'] ?></td>
         <td>
-            <a href="showprjt.php?id=<?= $p['id'] ?>" class="btn btn-primary">Voir</a>
+            <a href="showproject.php?id=<?= $p['id'] ?>" class="btn btn-primary">Voir</a>
         </td>
     </tr>
     <?php endforeach; ?>

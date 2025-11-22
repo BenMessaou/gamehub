@@ -1,6 +1,6 @@
 <?php
-include '../../controller/ProjectController.php';
-require_once __DIR__ . '/../../model/Project.php';
+include '../../../controller/ProjectController.php';
+require_once __DIR__ . '/../../../model/Project.php';
 
 $error = '';
 $project = null;
@@ -9,9 +9,11 @@ $tagsValue = '';
 $screensValue = '';
 $projectC = new ProjectController();
 
-// Récupérer les données du projet
-if (isset($_POST['id'])) {
-    $project = $projectC->showProject($_POST['id']);
+// Récupérer les données du projet (from GET or POST)
+$projectId = $_GET['id'] ?? $_POST['id'] ?? null;
+
+if ($projectId) {
+    $project = $projectC->showProject($projectId);
     if ($project) {
         $plateformesValue = implode(", ", json_decode($project['plateformes'] ?? '[]', true) ?? []);
         $tagsValue = implode(", ", json_decode($project['tags'] ?? '[]', true) ?? []);
@@ -54,7 +56,7 @@ if (
 
         $projectC->updateProject($project, $_POST['id']);
 
-        header('Location: projectList.php');
+        header('Location: projectlist.php');
         exit();
     } else {
         $error = 'Please fill all required fields.';
@@ -157,11 +159,11 @@ if (
 <header class="admin-header">
     <div class="container">
         <div class="admin-logo">
-            <img src="../frontoffice/assests/logo.png" alt="GameHub Logo">
+            <img src="../../frontoffice/assests/logo.png" alt="GameHub Logo">
             GameHub Admin
         </div>
         <nav class="admin-nav">
-            <a href="admindashboard.php" class="nav-link">Dashboard</a>
+            <a href="index1.html" class="nav-link">Dashboard</a>
             <a href="projectlist.php" class="nav-link">Projects</a>
             <a href="addProject.php" class="nav-link">Add Project</a>
         </nav>
@@ -178,6 +180,10 @@ if (
             <?php if (!empty($error)) { ?>
                 <div class="alert alert-danger"><?= $error ?></div>
             <?php } ?>
+
+            <?php if (!$project) { ?>
+                <div class="alert alert-warning">Project not found. <a href="projectlist.php">Return to project list</a></div>
+            <?php } else { ?>
 
             <form method="POST" class="form-neon">
                 <input type="hidden" name="id" value="<?= $project['id'] ?? '' ?>">
@@ -199,12 +205,13 @@ if (
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Catégorie</label>
-                            <select class="form-select neon-field" name="categorie">
+                            <select class="form-select neon-field" name="categorie" required>
+                                <option value="" disabled>Choose a category</option>
                                 <?php
-                                $categories = ["Jeu","Application","Outil","Projet Web"];
+                                $categories = ["Action", "Aventure", "RPG", "Stratégie", "Puzzle", "Plateforme", "Simulation", "Course", "Horreur", "Sport", "Combat", "Autres"];
                                 foreach ($categories as $cat) {
                                     $sel = ($project['categorie'] ?? '') === $cat ? 'selected' : '';
-                                    echo "<option $sel>$cat</option>";
+                                    echo "<option value=\"$cat\" $sel>$cat</option>";
                                 }
                                 ?>
                             </select>
@@ -265,6 +272,7 @@ if (
                     <a href="projectlist.php" class="btn-ghost">Annuler</a>
                 </div>
             </form>
+            <?php } ?>
         </section>
 
     </div>
