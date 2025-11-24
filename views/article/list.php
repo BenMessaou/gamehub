@@ -1,8 +1,7 @@
-// views/article/list.php (CODE COMPLET CORRIGÉ)
-
 <?php
-// list.php
-// Front Office pour afficher la liste des articles (Vue dynamique)
+// views/article/list.php (CODE COMPLET)
+
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 ?>
 
 <!DOCTYPE html>
@@ -34,14 +33,22 @@
             <a href="#articles-list" class="shop-now-btn">Voir les Articles</a>
         </div>
     </section>
-
+    
+    <?php 
+    if (isset($_SESSION['article_error'])): ?>
+        <div class="message-box error-box">
+            <p><?php echo htmlspecialchars($_SESSION['article_error']); ?></p>
+        </div>
+        <?php unset($_SESSION['article_error']);
+    endif;
+    ?>
     <section id="articles-list" class="deals">
         <div class="container">
             <h3>Derniers Articles</h3>
             <div class="deal-cards article-cards">
                 
                 <?php 
-                if (isset($articles) && is_array($articles)) : 
+                if (isset($articles) && is_array($articles) && !empty($articles)) : 
                     foreach ($articles as $article) : 
                 ?>
                     <div class="card article-card">
@@ -58,7 +65,7 @@
                     endforeach; 
                 else : 
                 ?>
-                    <p>Aucun article trouvé pour le moment.</p>
+                    <p style="text-align: center; color: #fff;">Aucun article trouvé pour le moment. Créez-en un dans l'Admin !</p>
                 <?php endif; ?>
 
             </div>

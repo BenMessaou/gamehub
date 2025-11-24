@@ -1,6 +1,6 @@
-// models/Article.php (CODE COMPLET AVEC delete)
-
 <?php
+// models/Article.php (MODIFIÉ)
+
 require_once 'Database.php';
 
 class Article {
@@ -12,7 +12,7 @@ class Article {
         $this->conn = $database->getConnection();
     }
 
-    // Fonction 1 : Lire tous les articles pour le Front Office
+    // Fonction 1 : Lire tous les articles pour le Front Office (list.php)
     public function readAll() {
         $query = 'SELECT a.id, a.title, a.created_at, u.nom as author_name 
                   FROM ' . $this->table . ' a
@@ -24,7 +24,7 @@ class Article {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    // Fonction 2 : Lire tous les articles pour le Back Office
+    // Fonction 2 : Lire tous les articles pour le Back Office (dashboard.php)
     public function readDashboardArticles() {
         $query = 'SELECT 
                     a.id, 
@@ -41,27 +41,35 @@ class Article {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    // Fonction 3 : Crée un nouvel article (C - Create)
+    // Fonction 3 : Créer un nouvel article (C - Create)
     public function create($title, $content, $user_id) {
         $query = 'INSERT INTO ' . $this->table . ' 
                   SET
                     title = :title, 
                     content = :content, 
                     user_id = :user_id';
+        
         $stmt = $this->conn->prepare($query);
         $title = htmlspecialchars(strip_tags($title));
-        $content = strip_tags($content); 
+        $content = $content; // Laisser les balises si vous utilisez un éditeur WYSIWYG
+        
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
-        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        
         return $stmt->execute();
     }
     
-    // Fonction 4 : Lire un seul article par son ID (R - Read One)
+    // Fonction 4 : Lire un seul article pour l'affichage (R - Read One)
     public function readOne($id) {
         $query = 'SELECT 
-                    a.id, a.title, a.content, a.user_id, a.created_at,
-                    u.nom as author_name 
+                    a.id, 
+                    a.title, 
+                    a.content, 
+                    a.created_at, 
+                    a.user_id,
+                    u.nom as author_name,
+                    u.role as author_role
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
                   WHERE a.id = :id 
@@ -83,7 +91,7 @@ class Article {
                     id = :id';
         $stmt = $this->conn->prepare($query);
         $title = htmlspecialchars(strip_tags($title));
-        $content = strip_tags($content); 
+        $content = $content; 
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
@@ -91,16 +99,49 @@ class Article {
         return $stmt->execute();
     }
     
-    /**
-     * Fonction 6 : Supprimer un article par son ID (D - Delete)
-     */
+    // Fonction 6 : Supprimer un article par son ID (D - Delete)
     public function delete($id) {
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->conn->prepare($query);
-        
-        // Liaison sécurisée de l'ID
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        
         return $stmt->execute();
+    }
+    
+    // Fonction 7 : Compte le nombre total d'articles
+    public function countTotalArticles() {
+        $query = 'SELECT COUNT(*) as total FROM ' . $this->table;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
+
+    // Fonction 8 : Compte le nombre d'auteurs uniques
+    public function countUniqueAuthors() {
+        $query = 'SELECT COUNT(DISTINCT user_id) as total FROM ' . $this->table;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
+
+    // Fonction 9 : Compte les articles publiés aujourd'hui
+    public function countPublishedToday() {
+        $query = 'SELECT COUNT(*) as total FROM ' . $this->table . ' WHERE DATE(created_at) = CURDATE()';
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
+
+    // Fonction 10 : Compte le nombre total de commentaires. (NOUVEAU)
+    public function countTotalComments() {
+        $comment_table_name = 'commentaires'; // Nom de table que vous avez défini
+        
+        $query = 'SELECT COUNT(*) as total FROM ' . $comment_table_name; 
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
     }
 }

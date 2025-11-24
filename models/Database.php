@@ -1,5 +1,3 @@
-// models/Database.php
-
 <?php
 
 /**
@@ -10,12 +8,15 @@ class Database {
     private static $instance = null;
     private $conn;
 
-    // ATTENTION : LES VALEURS DE CONNEXION CORRECTES
+    // --- VOS VALEURS DE CONNEXION ---
     private $host = 'localhost';
-    private $db_name = 'gamehub';     // <<< CORRIGÉ : UTILISE LE NOM DE VOTRE BASE
-    private $username = 'root';     // VOTRE NOM D'UTILISATEUR MYSQL
-    private $password = '';         // VOTRE MOT DE PASSE MYSQL
+    private $db_name = 'gamehub';     
+    private $username = 'root';     
+    private $password = '';         // VÉRIFIEZ VOTRE MOT DE PASSE MYSQL
 
+    /**
+     * Constructeur privé.
+     */
     private function __construct() {
         try {
             $this->conn = new PDO(
@@ -27,11 +28,13 @@ class Database {
             $this->conn->exec("set names utf8");
         } catch (PDOException $exception) {
             echo "Erreur de connexion : " . $exception->getMessage();
-            // On utilise die() pour arrêter l'exécution si la connexion échoue
             die(); 
         }
     }
 
+    /**
+     * Obtient l'instance unique de la connexion.
+     */
     public static function getInstance() {
         if (self::$instance == null) {
             self::$instance = new Database();
@@ -39,6 +42,9 @@ class Database {
         return self::$instance;
     }
 
+    /**
+     * Récupère la connexion PDO.
+     */
     public function getConnection() {
         return $this->conn;
     }
