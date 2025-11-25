@@ -1,17 +1,16 @@
 <?php
 // views/article/edit.php
-// Nettoyé de toute validation HTML5 (ex: 'required').
-
 if (session_status() === PHP_SESSION_NONE) { 
     session_start(); 
 }
+// Récupération des erreurs PHP
 $errors = $_SESSION['article_errors'] ?? []; 
 $input = $_SESSION['article_input'] ?? []; 
-unset($_SESSION['article_errors'], $_SESSION['article_input']);
+$global_error = $_SESSION['error'] ?? null; 
+unset($_SESSION['article_errors'], $_SESSION['article_input'], $_SESSION['error']);
 
 // $article est censé être passé par ArticleController::edit()
 if (!isset($article) || empty($article)) {
-    // Redirection si l'article n'existe pas
     header('Location: ArticleController.php?action=dashboard');
     exit;
 }
@@ -28,6 +27,8 @@ $content_value = $input['content'] ?? $article['content'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub Admin | Éditer Article</title>
     <link rel="stylesheet" href="../assets/css/style.css"> 
+    <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
+    <style>.error-message { color: #ff0055; margin-top: 5px; font-size: 0.9em; }</style>
 </head>
 <body>
     <header>
@@ -47,7 +48,11 @@ $content_value = $input['content'] ?? $article['content'];
             <div class="form-section">
                 <h2>Éditer l'Article: <?php echo htmlspecialchars($article['title']); ?></h2>
                 
-                <form action="ArticleController.php?action=update" method="POST">
+                <?php if ($global_error): ?>
+                    <p class="message error-global"><?php echo $global_error; ?></p>
+                <?php endif; ?>
+                
+                <form action="ArticleController.php?action=update" method="POST" novalidate>
                     
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($article['id']); ?>">
                     
