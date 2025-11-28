@@ -40,6 +40,7 @@ $placeholderImage = 'assests/game1.png';
                 <li><a href="#home">Home</a></li>
                 <li><a href="#new-games">Recent Games</a></li>
                 <li><a href="eventsp.php">🎮 Events</a></li>
+                <li><a href="collaborations.php">🤝 Collaborations</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#team">Team</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -63,6 +64,9 @@ $placeholderImage = 'assests/game1.png';
                 </a>
                 <a href="eventsp.php" class="cta-btn" style="background: linear-gradient(120deg, #ff00c7, #7c00ff);">
                     🎮 Explore Events
+                </a>
+                <a href="collaborations.php" class="cta-btn" style="background: linear-gradient(120deg, #00ffea, #0099cc);">
+                    🤝 Collaborations
                 </a>
             </div>
         </div>
@@ -174,6 +178,7 @@ $placeholderImage = 'assests/game1.png';
                     <li><a href="#home">Home</a></li>
                     <li><a href="#new-games">Recent Games</a></li>
                     <li><a href="eventsp.php">🎮 Events</a></li>
+                    <li><a href="collaborations.php">🤝 Collaborations</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#team">Team</a></li>
                     <li><a href="#contact">Contact</a></li>
