@@ -6,25 +6,21 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../models/Article.php';
-// ✅ CONSEIL : Inclure le modèle Comment ici si vous utilisez le CommentModel dans __construct
 require_once '../models/Comment.php'; 
 
 class ArticleController {
     private $articleModel;
-    // ✅ CONSEIL : Ajoutez une propriété pour le modèle Comment et initialisez-le dans __construct
-    // private $commentModel;
+    // private $commentModel; // Non nécessaire si on l'instancie uniquement dans delete() et show()
 
     public function __construct() {
         $this->articleModel = new Article();
-        // $this->commentModel = new Comment(); // Décommentez si vous ajoutez la propriété
     }
 
     // Affiche la liste des articles (Front Office).
     public function list() {
         $articles = $this->articleModel->readAll();
         // Le modèle Comment est nécessaire pour lire les commentaires dans show.php
-        require_once '../models/Comment.php'; // Peut être déplacé en haut
-        $commentModel = new Comment(); // Peut être instancié dans __construct
+        $commentModel = new Comment(); 
         
         // La vue list.php est maintenant la fonction index()
         include '../views/article/list.php';
@@ -48,7 +44,6 @@ class ArticleController {
         }
 
         // Récupérer les commentaires associés
-        require_once '../models/Comment.php';
         $commentModel = new Comment();
         $comments = $commentModel->readByArticleId($id);
         
@@ -98,7 +93,6 @@ class ArticleController {
         // 2. Validation : Contenu OBLIGATOIRE et MIN 50 (selon votre consigne)
         if (empty($content)) {
             $errors['content'] = "Le contenu est obligatoire.";
-        // ✅ CORRECTION APPLIQUÉE : MINIMUM 50 caractères
         } elseif (strlen($content) < 50) { 
              $errors['content'] = "Le contenu doit contenir au moins 50 caractères.";
         }
@@ -149,6 +143,9 @@ class ArticleController {
         $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
         $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Contenu peut être long
         
+        // ✅ CORRECTION APPLIQUÉE : L'ID utilisateur est le 4e argument attendu par Article::update()
+        $user_id = 1; 
+        
         // Si l'ID est invalide, on ne peut pas continuer
         if (!$id) {
             $_SESSION['success'] = "Erreur: ID de l'article à modifier est invalide.";
@@ -168,7 +165,6 @@ class ArticleController {
         // 2. Validation : Contenu OBLIGATOIRE et MIN 50 (selon votre consigne)
         if (empty($content)) {
             $errors['content'] = "Le contenu est obligatoire.";
-        // ✅ CORRECTION APPLIQUÉE : MINIMUM 50 caractères
         } elseif (strlen($content) < 50) { 
              $errors['content'] = "Le contenu doit contenir au moins 50 caractères.";
         }
@@ -184,7 +180,8 @@ class ArticleController {
         }
         
         // Succès: Appel au modèle
-        if ($this->articleModel->update($id, $title, $content)) {
+        // 🚨 LIGNE CORRIGÉE : Passage de $id, $title, $content, ET $user_id (4 arguments)
+        if ($this->articleModel->update($id, $title, $content, $user_id)) {
             $_SESSION['success'] = "L'article ID {$id} a été mis à jour avec succès.";
         } else {
             $_SESSION['error'] = "Erreur lors de la mise à jour de l'article ID {$id}.";
@@ -201,10 +198,9 @@ class ArticleController {
         if (!$id) {
             $_SESSION['error'] = "Erreur: ID de l'article à supprimer est invalide.";
         } else {
-            // ✅ CONSEIL : Ajoutez la suppression des commentaires ici
-            // require_once '../models/Comment.php';
-            // $commentModel = new Comment();
-            // $commentModel->deleteByArticleId($id);
+            // ✅ AMÉLIORATION : Suppression des commentaires liés à l'article
+            $commentModel = new Comment();
+            $commentModel->deleteByArticleId($id); // Assure la suppression en cascade des commentaires
 
             if ($this->articleModel->delete($id)) {
                 $_SESSION['success'] = "L'article ID {$id} a été supprimé avec succès.";

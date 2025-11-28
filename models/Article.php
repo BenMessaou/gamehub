@@ -1,5 +1,5 @@
 <?php
-// models/Article.php (MODIFIÉ)
+// models/Article.php 
 
 require_once 'Database.php';
 
@@ -86,7 +86,8 @@ class Article {
                   SET
                     title = :title, 
                     content = :content, 
-                    user_id = :user_id
+                    user_id = :user_id,
+                    updated_at = NOW()  /* ✅ AJOUTÉ : Mise à jour de la date de modification */
                   WHERE 
                     id = :id';
         $stmt = $this->conn->prepare($query);
