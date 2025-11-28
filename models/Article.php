@@ -87,7 +87,7 @@ class Article {
                     title = :title, 
                     content = :content, 
                     user_id = :user_id,
-                    updated_at = NOW()  /* ✅ AJOUTÉ : Mise à jour de la date de modification */
+                    updated_at = NOW() 
                   WHERE 
                     id = :id';
         $stmt = $this->conn->prepare($query);
@@ -137,12 +137,29 @@ class Article {
 
     // Fonction 10 : Compte le nombre total de commentaires. (NOUVEAU)
     public function countTotalComments() {
-        $comment_table_name = 'commentaires'; // Nom de table que vous avez défini
+        $comment_table_name = 'commentaires'; 
         
         $query = 'SELECT COUNT(*) as total FROM ' . $comment_table_name; 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'] ?? 0;
+    }
+
+    /**
+     * Fonction 11 (Metier 2) : Lit les articles pour une date spécifique (Tri par Date).
+     */
+    public function readByDate($date) {
+        $query = 'SELECT a.id, a.title, a.created_at, u.nom as author_name 
+                  FROM ' . $this->table . ' a
+                  INNER JOIN users u ON a.user_id = u.id_user
+                  WHERE DATE(a.created_at) = :date
+                  ORDER BY a.created_at DESC';
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':date', $date); 
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
