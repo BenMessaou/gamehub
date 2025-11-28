@@ -7,7 +7,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
-// Récupère les erreurs de validation PHP du formulaire de commentaire
 $errors = $_SESSION['comment_errors'] ?? []; 
 $input = $_SESSION['comment_input'] ?? []; 
 unset($_SESSION['success'], $_SESSION['error'], $_SESSION['comment_errors'], $_SESSION['comment_input']);
@@ -19,6 +18,9 @@ if (!isset($article) || empty($article)) {
     exit;
 }
 $comments = $comments ?? [];
+
+// ID de l'utilisateur actuellement "connecté" (À adapter à votre logique de session/authentification)
+$CURRENT_USER_ID = 1; 
 ?>
 
 <!DOCTYPE html>
@@ -28,57 +30,71 @@ $comments = $comments ?? [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub | <?php echo htmlspecialchars($article['title']); ?></title>
     <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
-    <style>.error-message { color: #ff0055; margin-top: 5px; font-size: 0.9em; }</style>
+    <style>
+        /* Styles spécifiques au show.php */
+        .comment-actions { margin-top: 5px; font-size: 0.8rem; }
+        .action-btn {
+            display: inline-block; padding: 5px 10px; margin-right: 5px; 
+            border-radius: 5px; text-decoration: none; color: #fff; 
+            cursor: pointer; transition: background-color 0.3s; border: none;
+        }
+        .edit-btn { background-color: #007bff; }
+        .delete-btn { background-color: #dc3545; }
+        .edit-btn:hover { background-color: #0056b3; }
+        .delete-btn:hover { background-color: #a71d2a; }
+        .comment-item {
+            background: rgba(0, 0, 0, 0.5); padding: 15px; margin-bottom: 15px;
+            border-radius: 10px; border-left: 5px solid #00ff88;
+        }
+        .error-message { color: #ff4d4d; font-size: 0.9em; margin-top: 5px; }
+        .article-header-nav a {
+            color: #00ff88; margin-right: 20px; text-decoration: none;
+        }
+        .article-header-nav { margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-
     <header>
-        <div class="container">
-            <h1 class="logo">GameHub</h1>
-            <nav>
-                <ul>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Accueil</a></li>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Admin Dashboard</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+        </header>
 
-    <main>
-        <div class="container">
-            <div class="article-view">
-                <a href="ArticleController.php?action=list" class="back-link">← Retour aux articles</a>
-                
+    <main class="container">
+        <div class="article-header-nav">
+             <a href="ArticleController.php?action=list">⬅️ Retour à la liste des articles</a>
+        </div>
+
+        <?php if ($success): ?>
+            <div class="alert success"><?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert error"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        
+        <div class="article-view">
+            <article class="article-content">
                 <h1><?php echo htmlspecialchars($article['title']); ?></h1>
                 <p class="article-meta">
-                    Publié le <?php echo date('d/m/Y', strtotime($article['created_at'])); ?> par <?php echo htmlspecialchars($article['author_name']); ?>
+                    Publié le <?php echo date('d/m/Y', strtotime($article['created_at'])); ?> 
+                    par **<?php echo htmlspecialchars($article['author_name'] ?? 'Inconnu'); ?>**
                 </p>
-
-                <div class="article-content">
+                <div class="article-body">
                     <?php echo nl2br(htmlspecialchars($article['content'])); ?>
                 </div>
-            </div>
+            </article>
 
-            <div class="comments-section">
-                
-                <div class="comment-form">
-                    <h3>Laisser un commentaire</h3>
-
-                    <?php if ($success): ?>
-                        <p class="message success"><?php echo $success; ?></p>
-                    <?php endif; ?>
-                    <?php if ($error): ?>
-                        <p class="message error-global"><?php echo $error; ?></p>
-                    <?php endif; ?>
-
-                    <form action="CommentController.php?action=store&article_id=<?php echo $article['id']; ?>" method="POST" novalidate>
+            <div class="comment-section">
+                <div class="comment-form-box">
+                    <h3>Poster un Commentaire</h3>
+                    <form action="../controllers/CommentController.php?action=store" method="POST">
+                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                        
                         <div class="form-group">
-                            <label for="content">Votre commentaire :</label>
-                            <textarea name="content" id="content" class="form-control" rows="5"><?php echo htmlspecialchars($input['content'] ?? ''); ?></textarea>
+                            <label for="content">Votre Commentaire:</label>
+                            <textarea id="content" name="content" rows="4"><?php echo htmlspecialchars($input['content'] ?? ''); ?></textarea>
                             <?php if (isset($errors['content'])): ?>
                                 <p class="error-message"><?php echo $errors['content']; ?></p>
                             <?php endif; ?>
                         </div>
+                        
                         <button type="submit" class="super-button submit-btn">Poster le Commentaire</button>
                     </form>
                 </div>
@@ -95,10 +111,28 @@ $comments = $comments ?? [];
                                 <p class="comment-content">
                                     <?php echo nl2br(htmlspecialchars($comment['content'])); ?>
                                 </p>
+                                
+                                <?php 
+                                // Affiche les boutons si l'utilisateur est l'auteur (ou un admin)
+                                if ($comment['user_id'] == $CURRENT_USER_ID): 
+                                ?>
+                                <div class="comment-actions">
+                                    <a href="../controllers/CommentController.php?action=edit&id=<?php echo $comment['id']; ?>" class="action-btn edit-btn">
+                                        Modifier
+                                    </a>
+                                    
+                                    <form action="../controllers/CommentController.php?action=delete" method="POST" style="display:inline-block;" 
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                        <input type="hidden" name="id" value="<?php echo $comment['id']; ?>">
+                                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                                        <button type="submit" class="action-btn delete-btn">Supprimer</button>
+                                    </form>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p style="color: #fff; text-align: center; padding: 20px;">Soyez le premier à commenter cet article !</p>
+                        <p style="color: #fff;">Soyez le premier à commenter cet article !</p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -110,5 +144,6 @@ $comments = $comments ?? [];
             <p>&copy; 2025 GameHub. Tous droits réservés.</p>
         </div>
     </footer>
+    <script src="../assets/js/frontscript.js"></script> 
 </body>
 </html>

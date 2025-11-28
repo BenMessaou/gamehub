@@ -1,10 +1,15 @@
 <?php
-// views/comment/index.php (NOUVEAU)
+// views/comment/index.php
 
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-// $comments est passé par CommentController::index()
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $success = $_SESSION['success'] ?? null;
-unset($_SESSION['success']); 
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
+
+// $comments est passé par CommentController::index()
+$comments = $comments ?? [];
 ?>
 
 <!DOCTYPE html>
@@ -12,93 +17,109 @@ unset($_SESSION['success']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modération Commentaires - GameHub Admin</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Modération des Commentaires</title>
+    <link rel="stylesheet" href="../assets/css/style.css"> 
     <style>
-        /* Styles pour la page de modération */
-        .comments-list-section { padding: 50px 0; }
-        .data-table.comment-table { width: 100%; border-collapse: collapse; }
-        .data-table.comment-table th { background: rgba(255, 0, 150, 0.1); color: #ff0096; }
-        .data-table.comment-table td { max-width: 400px; white-space: normal; word-wrap: break-word; }
-        .action-btn.delete { background-color: #dc3545; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 0.9em; transition: background-color 0.3s; }
-        .action-btn.delete:hover { background-color: #c82333; }
+        /* Styles spécifiques pour cette vue */
+        .comment-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff;
+        }
+        .comment-table th, .comment-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            vertical-align: top;
+        }
+        .comment-table th {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .delete-btn {
+            background-color: #dc3545; 
+            color: #fff; 
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .delete-btn:hover { background-color: #a71d2a; }
+        .dashboard-nav a { 
+            color: #00ff88; text-decoration: none; padding: 10px 15px; 
+            border: 1px solid #00ff88; border-radius: 5px; margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        .dashboard-nav a:hover { background-color: rgba(0, 255, 136, 0.1); }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1 class="logo">GameHub Admin</h1>
-            <nav>
-                <ul>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Dashboard</a></li>
-                    <li><a href="ArticleController.php?action=create" class="super-button">+ Créer un Article</a></li>
-                    <li><a href="CommentController.php?action=index" class="super-button">Modérer Commentaires</a></li>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Retour Front Office</a></li>
-                </ul>
-            </nav>
-            <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
-        </div>
-    </header>
-    
-    <aside id="sidebar" class="sidebar">
-        <nav>
-            <ul>
-                <li><a href="ArticleController.php?action=dashboard">Dashboard</a></li>
-                <li><a href="ArticleController.php?action=create">Créer un Article</a></li>
-                <li><a href="CommentController.php?action=index">Modérer Commentaires</a></li>
-                <li><a href="ArticleController.php?action=list">Retour Front Office</a></li>
-            </ul>
-        </nav>
-    </aside>
+        </header>
 
-    <main id="main-content">
-        <?php if (!empty($success)): ?>
-            <div class="message success"><?php echo htmlspecialchars($success); ?></div>
+    <main class="container">
+        <div class="dashboard-nav">
+             <a href="ArticleController.php?action=dashboard">⬅️ Retour au Dashboard</a>
+        </div>
+
+        <h1>Modération des Commentaires</h1>
+
+        <?php if ($success): ?>
+            <div class="alert success"><?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
         
-        <section class="comments-list-section">
-            <div class="container">
-                <h2>Modération des Commentaires (<?php echo count($comments ?? []); ?>)</h2>
-                
-                <div class="widget wide-widget">
-                    <h3>Liste des Commentaires à Modérer</h3>
-                    <table class="data-table comment-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Auteur</th>
-                                <th>Article</th>
-                                <th>Contenu</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            if (!empty($comments) && is_array($comments)) {
-                                foreach ($comments as $comment) {
-                                    echo "<tr>
-                                        <td>" . htmlspecialchars($comment['id']) . "</td>
-                                        <td>" . htmlspecialchars($comment['author_name']) . "</td>
-                                        <td><a href='ArticleController.php?action=show&id={$comment['article_id']}' style='color: #00ff88;'> " . htmlspecialchars($comment['article_title']) . "</a></td>
-                                        <td>" . htmlspecialchars(substr($comment['content'], 0, 100)) . (strlen($comment['content']) > 100 ? '...' : '') . "</td>
-                                        <td>" . date('d/m/Y H:i', strtotime($comment['created_at'])) . "</td> 
-                                        <td>
-                                            <a href='CommentController.php?action=delete&id={$comment['id']}' class='action-btn delete' onclick=\"return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?');\">Supprimer</a>
-                                        </td>
-                                    </tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='6'>Aucun commentaire à modérer.</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <div class="widget">
+            <h3>Commentaires Récents (<?php echo count($comments); ?>)</h3>
+            
+            <?php if (empty($comments)): ?>
+                <p style="color: #ccc;">Aucun commentaire à modérer.</p>
+            <?php else: ?>
+            <table class="comment-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Article</th>
+                        <th>Auteur</th>
+                        <th>Contenu</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($comments as $comment): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($comment['id']); ?></td>
+                        <td>
+                            <a href="ArticleController.php?action=show&id=<?php echo htmlspecialchars($comment['article_id']); ?>" style="color: #00ff88; text-decoration: none;">
+                                <?php echo htmlspecialchars($comment['article_title']); ?>
+                            </a>
+                        </td>
+                        <td><?php echo htmlspecialchars($comment['author_name']); ?></td>
+                        <td><?php echo htmlspecialchars(substr($comment['content'], 0, 80)) . (strlen($comment['content']) > 80 ? '...' : ''); ?></td>
+                        <td><?php echo date('d/m/Y H:i', strtotime($comment['created_at'])); ?></td>
+                        <td>
+                            <form action="CommentController.php?action=delete" method="GET" style="display:inline-block;"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($comment['id']); ?>">
+                                <button type="submit" class="delete-btn">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+        </div>
     </main>
 
-    <script src="../assets/js/script.js"></script>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 GameHub. Tous droits réservés.</p>
+        </div>
+    </footer>
 </body>
 </html>

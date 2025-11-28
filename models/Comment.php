@@ -1,11 +1,11 @@
 <?php
-// models/Comment.php (MODIFIÉ)
+// models/Comment.php
 
 require_once 'Database.php';
 
 class Comment {
     private $conn;
-    private $table = 'commentaires';
+    private $table = 'commentaires'; // Assurez-vous que le nom de la table est correct
 
     public function __construct() {
         $database = Database::getInstance();
@@ -15,10 +15,7 @@ class Comment {
     /**
      * C - Crée un nouveau commentaire (Front Office).
      */
-    public function create($content, $article_id) {
-        // !!! IMPORTANT : Remplacez '1' par l'ID de l'utilisateur connecté réel
-        $user_id = 1; 
-
+    public function create($content, $article_id, $user_id) {
         $query = 'INSERT INTO ' . $this->table . ' 
                   SET
                     content = :content,
@@ -26,7 +23,7 @@ class Comment {
                     user_id = :user_id';
 
         $stmt = $this->conn->prepare($query);
-        $content = htmlspecialchars(strip_tags($content)); // Nettoyage strict
+        $content = strip_tags($content); 
         
         $stmt->bindParam(':content', $content);
         $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);
@@ -41,48 +38,94 @@ class Comment {
     public function readByArticleId($article_id) {
         $query = 'SELECT 
                     c.id,              
-                    c.content,
-                    c.created_at,
-                    u.nom as author_name  
+                    c.content, 
+                    c.created_at, 
+                    u.nom as author_name,
+                    c.user_id,         
+                    c.article_id       
                   FROM ' . $this->table . ' c
                   INNER JOIN users u ON c.user_id = u.id_user
                   WHERE c.article_id = :article_id
                   ORDER BY c.created_at DESC';
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * R - Lit un seul commentaire par ID.
+     */
+    public function readOne($id) {
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE id = :id LIMIT 0,1';
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     /**
-     * R - Lit tous les commentaires pour la modération (Back Office) avec jointures Article et User.
+     * U - Met à jour un commentaire existant.
+     */
+    public function update($id, $content) { 
+        $query = 'UPDATE ' . $this->table . ' 
+                  SET 
+                    content = :content,
+                    updated_at = NOW() 
+                  WHERE id = :id';
+
+        $stmt = $this->conn->prepare($query);
+
+        $content = strip_tags($content); 
+        
+        $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * R - Lit tous les commentaires pour la modération (Back Office).
      */
     public function readAllComments() {
-        $query = 'SELECT 
-                    c.id, 
+         $query = 'SELECT 
+                    c.id,              
                     c.content, 
                     c.created_at, 
-                    a.title as article_title,
-                    u.nom as author_name 
+                    c.article_id,
+                    u.nom as author_name,
+                    a.title as article_title
                   FROM ' . $this->table . ' c
-                  INNER JOIN articles a ON c.article_id = a.id
                   INNER JOIN users u ON c.user_id = u.id_user
+                  INNER JOIN articles a ON c.article_id = a.id
                   ORDER BY c.created_at DESC';
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * D - Supprime un commentaire (Back Office).
+     * D - Supprime un commentaire.
      */
     public function delete($id) {
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+    
+    /**
+     * D - Supprime les commentaires liés à un article (utilisé lors de la suppression d'article).
+     */
+    public function deleteByArticleId($article_id) {
+        $query = 'DELETE FROM ' . $this->table . ' WHERE article_id = :article_id';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }
