@@ -31,26 +31,28 @@ $placeholderImage = 'assests/game1.png';
 
     <!-- HEADER -->
     <header>
-        <div class="logo1">
-            <img src="assests/logo.png" alt="Logo GameHub Pro">
+        <div class="header-left">
+            <div class="logo1">
+                <img src="assests/logo.png" alt="Logo GameHub Pro">
+            </div>
+            <div class="logo">GameHub Pro</div>
         </div>
-        <div class="logo">GameHub Pro</div>
-        <nav>
+        <nav class="header-nav">
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#new-games">Recent Games</a></li>
-                <li><a href="eventsp.php">🎮 Events</a></li>
                 <li><a href="collaborations.php">🤝 Collaborations</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#team">Team</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="addgame.html" class="add-game-btn"><span>Add your game</span></a></li>
             </ul>
         </nav>
-        <a href="#" class="dashboard-btn" id="dashboardBtn">Dashboard</a>
-        <div class="burger-container">
-            <div class="burger"></div>
+        <div class="header-right">
+            <div class="burger-container">
+                <div class="burger"></div>
+            </div>
         </div>
+        <a href="#" class="dashboard-btn" id="dashboardBtn">Dashboard</a>
     </header>
 
     <!-- HERO SECTION -->
@@ -61,9 +63,6 @@ $placeholderImage = 'assests/game1.png';
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <a href="<?= $primaryDetailLink; ?>" class="cta-btn">
                     <?= $primaryProjectId ? 'View Featured Project' : 'View Games'; ?>
-                </a>
-                <a href="eventsp.php" class="cta-btn" style="background: linear-gradient(120deg, #ff00c7, #7c00ff);">
-                    🎮 Explore Events
                 </a>
                 <a href="collaborations.php" class="cta-btn" style="background: linear-gradient(120deg, #00ffea, #0099cc);">
                     🤝 Collaborations
@@ -78,7 +77,10 @@ $placeholderImage = 'assests/game1.png';
     <!-- NEW GAMES SECTION -->
     <section id="new-games" class="games-section">
         <div class="section-header">
-            <h2>Recent Games</h2>
+            <div class="section-header-top">
+                <h2>Recent Games</h2>
+                <a href="addgame.html" class="add-game-btn"><span>Add your game</span></a>
+            </div>
             <p>The latest gems added to the platform</p>
         </div>
         <div class="games-grid">
@@ -177,7 +179,6 @@ $placeholderImage = 'assests/game1.png';
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#new-games">Recent Games</a></li>
-                    <li><a href="eventsp.php">🎮 Events</a></li>
                     <li><a href="collaborations.php">🤝 Collaborations</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#team">Team</a></li>

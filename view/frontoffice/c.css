@@ -71,6 +71,31 @@ header {
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 1rem 20px;
+  gap: 1rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.header-nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-shrink: 0;
 }
 
 header .container {
@@ -116,10 +141,12 @@ header .logo1 img {
   background: none;
   box-shadow: none;
   transition: all 0.4s ease;
+  filter: brightness(1.4) contrast(1.3) drop-shadow(0 0 10px rgba(0, 255, 136, 0.6));
 }
 
 header .logo1:hover img {
   transform: scale(1.08) rotate(4deg);
+  filter: brightness(1.6) contrast(1.4) drop-shadow(0 0 15px rgba(0, 255, 136, 0.9));
 }
 
 header .logo1:hover {
@@ -139,13 +166,17 @@ header .logo1:hover {
 }
 
 /* NAVIGATION */
-nav ul {
+.header-nav ul {
   display: flex;
   list-style: none;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;
 }
 
-nav ul li {
-  margin-left: 2rem;
+.header-nav ul li {
+  margin: 0;
 }
 
 /* SUPER BUTTON STYLE - From Admin Dashboard Template */
@@ -222,6 +253,7 @@ nav a.super-button:hover,
 }
 
 /* Navigation links standard (non super-button) */
+.header-nav a:not(.super-button),
 nav a:not(.super-button) {
   color: #ddd;
   font-weight: 600;
@@ -233,8 +265,10 @@ nav a:not(.super-button) {
   background: rgba(30, 20, 60, 0.6);
   border: 1px solid rgba(0, 255, 136, 0.35);
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
+.header-nav a:not(.super-button)::after,
 nav a:not(.super-button)::after {
   content: '';
   position: absolute;
@@ -247,6 +281,7 @@ nav a:not(.super-button)::after {
   transition: 0.3s;
 }
 
+.header-nav a:not(.super-button):hover,
 nav a:not(.super-button):hover {
   color: #00ff88;
   background: rgba(0, 255, 136, 0.1);
@@ -254,6 +289,7 @@ nav a:not(.super-button):hover {
   transform: translateY(-2px);
 }
 
+.header-nav a:not(.super-button):hover::after,
 nav a:not(.super-button):hover::after {
   width: 80%;
 }
@@ -331,7 +367,8 @@ nav a:not(.super-button):hover::after {
   backdrop-filter: blur(8px);
   z-index: 1;
   text-decoration: none;
-  margin-left: 15px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .dashboard-btn::before {
@@ -474,6 +511,7 @@ nav a:not(.super-button):hover::after {
 }
 
 .hero-image img {
+  filter: brightness(1.4) contrast(1.3) drop-shadow(0 0 15px rgba(0, 255, 136, 0.6));
   max-width: 100%;
   border-radius: 18px;
   border: 2px solid rgba(255, 0, 199, 0.6);
@@ -497,12 +535,22 @@ nav a:not(.super-button):hover::after {
   margin-bottom: 50px;
 }
 
+.section-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .section-header h2 {
   font-size: 2.5rem;
   background: linear-gradient(90deg, #ff00c7, #00ffea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 25px rgba(255, 0, 199, 0.4);
+  margin: 0;
 }
 
 .section-header p {
@@ -1429,9 +1477,49 @@ nav a:not(.super-button):hover::after {
     gap: 16px;
   }
 
+  .header-nav {
+    display: none;
+  }
+
+  .header-nav.active {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(10, 0, 30, 0.98);
+    padding: 20px 0;
+    z-index: 1000;
+  }
+
+  .header-nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-right {
+    gap: 0.5rem;
+  }
+
+  .add-game-btn,
+  .dashboard-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .section-header-top {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-header h2 {
+    margin-bottom: 1rem;
+  }
+
   .dashboard-btn {
     margin-left: 0;
-    margin-top: 10px;
+    margin-top: 0;
     width: auto;
     display: inline-block;
   }

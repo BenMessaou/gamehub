@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Prevent caching to ensure fresh data
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // Calculer le chemin racine du projet
 $rootPath = dirname(dirname(__DIR__));
 
@@ -15,6 +20,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $userId = $isLoggedIn ? $_SESSION['user_id'] : null;
 
 // Vérifier si un message de succès/erreur doit être affiché
+$showCreatedMessage = isset($_GET['created']);
 $showSuccessMessage = isset($_GET['joined']) && $_GET['joined'] == '1';
 $showDeletedMessage = isset($_GET['deleted']) && $_GET['deleted'] == '1';
 $errorMessage = '';
@@ -29,6 +35,16 @@ if (isset($_GET['error'])) {
         default:
             $errorMessage = 'Une erreur est survenue.';
     }
+}
+
+// Fonction pour traduire le statut en anglais
+function translateStatus($statut) {
+    $translations = [
+        'ouvert' => 'Open',
+        'en_cours' => 'In Progress',
+        'ferme' => 'Closed'
+    ];
+    return isset($translations[$statut]) ? $translations[$statut] : ucfirst($statut);
 }
 
 // Récupérer toutes les collaborations ouvertes
@@ -58,18 +74,18 @@ foreach ($collabs as &$collab) {
     <header>
         <div class="container">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="assests/logo.png" alt="Logo GameHub Pro" style="width: 50px; height: 50px;">
+                <img src="assests/logo.png" alt="Logo GameHub Pro" class="header-logo">
                 <h1 class="logo">GameHub Pro</h1>
             </div>
             <nav>
                 <ul>
                     <li><a href="index.php" class="super-button">Home</a></li>
                     <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
-                    <li><a href="collaborations.php" class="super-button">🤝 Collaborations</a></li>
+                    <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
                     <li><a href="index.php#about" class="super-button">About</a></li>
                 </ul>
             </nav>
-            <a href="index.php" class="dashboard-btn">Back to Home</a>
+            
             <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
         </div>
     </header>
@@ -79,7 +95,7 @@ foreach ($collabs as &$collab) {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="index.php#new-games">Recent Games</a></li>
-                <li><a href="collaborations.php">🤝 Collaborations</a></li>
+                <li><a href="collaborations.php"> Collaborations</a></li>
                 <li><a href="index.php#about">About</a></li>
             </ul>
         </nav>
@@ -95,15 +111,57 @@ foreach ($collabs as &$collab) {
         
         <div class="collabs-container">
             <div class="collabs-header">
-                <h1>🤝 Collaborations</h1>
+                <h1> Collaborations</h1>
                 <a href="../backoffice/collabcrud/create_collab.php" class="super-button">
                     ➕ Add Collab
                 </a>
             </div>
+<div class="animated-strip">
+    <div class="strip-content">
+        <img src="assests /nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+
+             <img src="assests /nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/3.png" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/1.png"  />
+                <img src="assests /nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+                <img src="assests /nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+                    <img src="assests /nim.jpg" />
+        <img src="assests/1.png" />
+        <img src="assests/house.jpg" />
+        <img src="assests/5.png"  />
+        <img src="assests/girl.jpg"  />
+    </div>
+</div>
+
+            <?php if ($showCreatedMessage): ?>
+                <div class="success-message" style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
+                    ✅ Collaboration created successfully! Your project is now visible in the list.
+                </div>
+                <script>
+                    // Remove URL parameter after display to force fresh load
+                    setTimeout(function() {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }, 2000);
+                </script>
+            <?php endif; ?>
 
             <?php if ($showSuccessMessage): ?>
                 <div class="success-message" style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
-                    ✅ Vous avez rejoint la collaboration avec succès !
+                    ✅ You have successfully joined the collaboration!
                 </div>
                 <script>
                     // Supprimer le paramètre de l'URL après affichage
@@ -115,7 +173,7 @@ foreach ($collabs as &$collab) {
 
             <?php if ($showDeletedMessage): ?>
                 <div class="success-message" style="background: rgba(255, 51, 92, 0.2); color: #ff335c; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(255, 51, 92, 0.5); text-align: center; font-weight: 600;">
-                    🗑️ Collaboration supprimée avec succès !
+                     Collaboration deleted successfully!
                 </div>
                 <script>
                     // Supprimer le paramètre de l'URL après affichage
@@ -139,8 +197,8 @@ foreach ($collabs as &$collab) {
 
             <?php if (empty($collabs)): ?>
                 <div class="empty-state">
-                    <h3>Aucune collaboration disponible</h3>
-                    <p>Soyez le premier à créer une collaboration !</p>
+                    <h3>No collaborations available</h3>
+                    <p>Be the first to create a collaboration!</p>
                 </div>
             <?php else: ?>
                 <div class="collabs-grid">
@@ -159,7 +217,7 @@ foreach ($collabs as &$collab) {
                             <?php else: ?>
                                 <div class="no-image">
                                     <img src="assests/logo.png" alt="Default Collaboration Image" class="default-collab-image">
-                                    <div class="no-image-overlay">🤝</div>
+                                    <div class="no-image-overlay"></div>
                                 </div>
                             <?php endif; ?>
                             
@@ -167,7 +225,7 @@ foreach ($collabs as &$collab) {
                             
                             <div class="collab-info">
                                 <span class="statut <?php echo htmlspecialchars($collab['statut']); ?>">
-                                    <?php echo ucfirst($collab['statut']); ?>
+                                    <?php echo translateStatus($collab['statut']); ?>
                                 </span>
                                 <span class="members-info">
                                     👥 <?php echo $collab['current_members']; ?>/<?php echo $collab['max_membres']; ?> membres
@@ -178,18 +236,18 @@ foreach ($collabs as &$collab) {
                             
                             <div class="card-actions">
                                 <a href="../backoffice/collabcrud/view_collab.php?id=<?php echo $collab['id']; ?>" class="btn-view">
-                                    👁️ Voir
+                                     See
                                 </a>
                                 
                                 <?php if ($isLoggedIn): ?>
                                     <?php if ($collab['is_member']): ?>
                                         <span class="btn-joined">✓ Déjà membre</span>
                                     <?php elseif ($collab['is_owner']): ?>
-                                        <span class="btn-owner">👑 Propriétaire</span>
+                                        <span class="btn-owner">👑owner</span>
                                     <?php elseif ($canJoin): ?>
                                         <form action="../backoffice/collabcrud/join_collab.php" method="POST" style="display: inline;">
                                             <input type="hidden" name="collab_id" value="<?php echo $collab['id']; ?>">
-                                            <button type="submit" class="btn-join" onclick="return confirm('Voulez-vous rejoindre cette collaboration ?');">
+                                            <button type="submit" class="btn-join" onclick="return confirm('Do you want to join this collaboration?');">
                                                 ➕ Join
                                             </button>
                                         </form>
@@ -201,14 +259,14 @@ foreach ($collabs as &$collab) {
                                         <form action="../backoffice/collabcrud/join_collab.php" method="POST" style="display: inline;">
                                             <input type="hidden" name="collab_id" value="<?php echo $collab['id']; ?>">
                                             <input type="hidden" name="user_id" value="1">
-                                            <button type="submit" class="btn-join" onclick="return confirm('Voulez-vous rejoindre cette collaboration ? (Mode développeur - User ID: 1)');" title="Mode développeur - Utilise l'ID utilisateur 1">
+                                            <button type="submit" class="btn-join" onclick="return confirm('Do you want to join this collaboration? (Developer mode - User ID: 1)');" title="Developer mode - Uses user ID 1">
                                                 ➕ Join
                                             </button>
                                         </form>
                                     <?php elseif ($collab['current_members'] >= $collab['max_membres']): ?>
                                         <span class="btn-full">✗ Complet</span>
                                     <?php else: ?>
-                                        <span class="btn-full">✗ Non disponible</span>
+                                        <span class="btn-full">✗ Not available</span>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </div>
@@ -230,8 +288,9 @@ foreach ($collabs as &$collab) {
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="index.php#new-games">Recent Games</a></li>
-                    <li><a href="eventsp.php">🎮 Events</a></li>
-                    <li><a href="collaborations.php">🤝 Collaborations</a></li>
+                    <li><a href="#" class="dashboard-link" id="dashboardFooterBtn">Dashboard</a></li>
+                   
+                    <li><a href="collaborations.php"> Collaborations</a></li>
                 </ul>
             </div>
         </div>
@@ -241,5 +300,35 @@ foreach ($collabs as &$collab) {
     </footer>
 
     <script src="collaborations.js"></script>
+    <script>
+    // Dashboard button management in footer
+    document.addEventListener('DOMContentLoaded', function() {
+        const dashboardFooterBtn = document.getElementById('dashboardFooterBtn');
+        
+        if (dashboardFooterBtn) {
+            dashboardFooterBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Display alert indicating admin login
+                alert('You are logged in as administrator.\n\nTo access the Dashboard, please enter the access code.');
+                
+                // Request the code
+                const code = prompt('Enter the Dashboard access code:');
+                
+                // Verify the code
+                if (code === '0000') {
+                    // Correct code, redirect to collaboration dashboard
+                    window.location.href = '../backoffice/collabcrud/collaboration.php';
+                } else if (code === null) {
+                    // User cancelled
+                    return;
+                } else {
+                    // Incorrect code
+                    alert('Incorrect code. Access denied.');
+                }
+            });
+        }
+    });
+    </script>
 </body>
 </html>

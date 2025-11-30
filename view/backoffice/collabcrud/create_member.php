@@ -239,17 +239,17 @@ $remainingSlots = $collab['max_membres'] - count($currentMembers);
                         ❌ Ce projet a atteint le nombre maximum de membres. Vous ne pouvez pas ajouter de nouveaux membres.
                     </div>
                 <?php else: ?>
-                    <form method="POST">
+                    <form id="createMemberForm" method="POST">
                         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
 
                         <div class="form-group">
                             <label for="user_id">ID Utilisateur *</label>
-                            <input type="number" id="user_id" name="user_id" min="1" required placeholder="Entrez l'ID de l'utilisateur à ajouter">
+                            <input type="number" id="user_id" name="user_id" placeholder="Entrez l'ID de l'utilisateur à ajouter">
                         </div>
 
                         <div class="form-group">
                             <label for="role">Rôle *</label>
-                            <select id="role" name="role" required>
+                            <select id="role" name="role">
                                 <option value="membre" selected>Membre</option>
                                 <option value="moderateur">Modérateur</option>
                             </select>
@@ -261,6 +261,24 @@ $remainingSlots = $collab['max_membres'] - count($currentMembers);
             </div>
         </div>
     </main>
+
+    <script src="validation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const validator = new FormValidator('createMemberForm');
+            
+            // Validation pour user_id
+            validator.addRule('user_id', {
+                required: true,
+                min: 1
+            }, 'ID utilisateur requis (minimum 1)');
+            
+            // Validation pour role
+            validator.addRule('role', {
+                required: true
+            }, 'Rôle requis');
+        });
+    </script>
 
 </body>
 </html>

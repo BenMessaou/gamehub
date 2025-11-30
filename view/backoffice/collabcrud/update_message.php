@@ -232,13 +232,13 @@ if ($_SERVER['REQUEST_METHOD'] === "GET" && isset($_GET['id']) && isset($_GET['c
                         <p><strong>Date d'envoi :</strong> <?php echo htmlspecialchars($message['date_message'] ?? 'Date inconnue'); ?></p>
                     </div>
 
-                    <form action="update_message.php" method="POST">
+                    <form id="updateMessageForm" action="update_message.php" method="POST">
                         <input type="hidden" name="id" value="<?php echo $message_id; ?>">
                         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
 
                         <div class="form-group">
                             <label for="message">Message *</label>
-                            <textarea id="message" name="message" required><?php echo htmlspecialchars($message['message']); ?></textarea>
+                            <textarea id="message" name="message"><?php echo htmlspecialchars($message['message']); ?></textarea>
                         </div>
 
                         <button type="submit" class="btn-submit">💾 Mettre à jour le message</button>
@@ -246,6 +246,20 @@ if ($_SERVER['REQUEST_METHOD'] === "GET" && isset($_GET['id']) && isset($_GET['c
                 </div>
             </div>
         </main>
+
+        <script src="validation.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const validator = new FormValidator('updateMessageForm');
+                
+                // Validation pour message
+                validator.addRule('message', {
+                    required: true,
+                    minLength: 1,
+                    maxLength: 1000
+                }, 'Message requis (1-1000 caractères)');
+            });
+        </script>
 
     </body>
     </html>

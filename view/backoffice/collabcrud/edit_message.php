@@ -204,7 +204,7 @@ if ($isLoggedIn) {
 
                     <div class="form-group">
                         <label for="message">Message *</label>
-                        <textarea id="message" name="message" required><?php echo htmlspecialchars($message['message']); ?></textarea>
+                        <textarea id="message" name="message"><?php echo htmlspecialchars($message['message']); ?></textarea>
                     </div>
 
                     <button type="submit" class="btn-submit">💾 Mettre à jour le message</button>

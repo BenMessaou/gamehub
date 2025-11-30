@@ -30,28 +30,28 @@ $errorMessage = '';
 if (isset($_GET['error'])) {
     switch ($_GET['error']) {
         case 'cannot_delete_owner':
-            $errorMessage = 'Erreur : vous ne pouvez pas supprimer le propriétaire de la collaboration.';
+            $errorMessage = 'Error: You cannot remove the collaboration owner.';
             break;
         case 'cannot_delete_self':
-            $errorMessage = 'Erreur : vous ne pouvez pas vous supprimer vous-même.';
+            $errorMessage = 'Error: You cannot remove yourself.';
             break;
         case 'task_invalid':
-            $errorMessage = 'Erreur : la tâche est invalide.';
+            $errorMessage = 'Error: Invalid task.';
             break;
         case 'message_invalid':
-            $errorMessage = 'Erreur : le message est invalide.';
+            $errorMessage = 'Error: Invalid message.';
             break;
         case 'message_update_invalid':
-            $errorMessage = 'Erreur : impossible de mettre à jour le message.';
+            $errorMessage = 'Error: Unable to update message.';
             break;
         default:
-            $errorMessage = 'Une erreur est survenue.';
+            $errorMessage = 'An error occurred.';
     }
 }
 
 // Vérifier si ID est passé
 if (!isset($_GET['id'])) {
-    die("ID du projet manquant.");
+    die("Missing project ID.");
 }
 
 $collab_id = $_GET['id'];
@@ -60,7 +60,7 @@ $collab_id = $_GET['id'];
 $collab = $projectController->getById($collab_id);
 
 if (!$collab) {
-    die("Projet collaboratif introuvable.");
+    die("Collaborative project not found.");
 }
 
 // Récupérer les membres
@@ -110,6 +110,29 @@ if ($canViewChat) {
 // En mode développeur, permettre la suppression si l'utilisateur n'est pas connecté
 // (on considère que le développeur peut supprimer n'importe quelle collaboration)
 $canDelete = $isOwner || !$isLoggedIn;
+
+// Fonction pour traduire le statut en anglais
+function translateStatus($statut) {
+    $translations = [
+        'ouvert' => 'Open',
+        'en_cours' => 'In Progress',
+        'ferme' => 'Closed'
+    ];
+    return isset($translations[$statut]) ? $translations[$statut] : ucfirst($statut);
+}
+
+// Message de succès pour changement de statut
+$showStatusUpdated = isset($_GET['status_updated']) && $_GET['status_updated'] == '1';
+$statusErrorMessage = '';
+if (isset($_GET['status_error'])) {
+    switch ($_GET['status_error']) {
+        case 'unauthorized':
+            $statusErrorMessage = 'Error: You are not authorized to change the status.';
+            break;
+        default:
+            $statusErrorMessage = 'Error: Unable to update status.';
+    }
+}
 
 ?>
 
@@ -500,11 +523,11 @@ $canDelete = $isOwner || !$isLoggedIn;
 </head>
 <body>
 
-<a href="../../frontoffice/collaborations.php" class="back-link">← Retour aux Collaborations</a>
+<a href="../../frontoffice/collaborations.php" class="back-link">← Back to Collaborations</a>
 
 <?php if ($showSuccessMessage): ?>
     <div style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
-        ✅ Collaboration mise à jour avec succès !
+        ✅ Collaboration updated successfully!
     </div>
     <script>
         // Supprimer le paramètre de l'URL après affichage
@@ -516,7 +539,7 @@ $canDelete = $isOwner || !$isLoggedIn;
 
 <?php if ($showMemberDeletedMessage): ?>
     <div style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
-        ✅ Membre supprimé avec succès !
+        ✅ Member removed successfully!
     </div>
     <script>
         // Supprimer le paramètre de l'URL après affichage
@@ -528,7 +551,7 @@ $canDelete = $isOwner || !$isLoggedIn;
 
 <?php if ($showMemberAddedMessage): ?>
     <div style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
-        ✅ Membre ajouté avec succès !
+        ✅ Member added successfully!
     </div>
     <script>
         // Supprimer le paramètre de l'URL après affichage
@@ -552,7 +575,7 @@ $canDelete = $isOwner || !$isLoggedIn;
 
 <?php if ($showMessageSent): ?>
     <div style="background: rgba(0, 132, 255, 0.2); color: #0084FF; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 132, 255, 0.5); text-align: center; font-weight: 600;">
-        ✅ Message envoyé avec succès !
+        ✅ Message sent successfully!
     </div>
     <script>
         setTimeout(function() {
@@ -567,7 +590,7 @@ $canDelete = $isOwner || !$isLoggedIn;
 
 <?php if ($showMessageUpdated): ?>
     <div style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
-        ✅ Message modifié avec succès !
+        ✅ Message updated successfully!
     </div>
     <script>
         setTimeout(function() {
@@ -578,7 +601,29 @@ $canDelete = $isOwner || !$isLoggedIn;
 
 <?php if ($showMessageDeleted): ?>
     <div style="background: rgba(255, 51, 92, 0.2); color: #ff335c; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(255, 51, 92, 0.5); text-align: center; font-weight: 600;">
-        ✅ Message supprimé avec succès !
+        ✅ Message deleted successfully!
+    </div>
+    <script>
+        setTimeout(function() {
+            window.history.replaceState({}, document.title, window.location.pathname + '?id=<?php echo $collab_id; ?>');
+        }, 3000);
+    </script>
+<?php endif; ?>
+
+<?php if ($showStatusUpdated): ?>
+    <div style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(0, 255, 136, 0.5); text-align: center; font-weight: 600;">
+        ✅ Status updated successfully!
+    </div>
+    <script>
+        setTimeout(function() {
+            window.history.replaceState({}, document.title, window.location.pathname + '?id=<?php echo $collab_id; ?>');
+        }, 3000);
+    </script>
+<?php endif; ?>
+
+<?php if (!empty($statusErrorMessage)): ?>
+    <div style="background: rgba(255, 51, 92, 0.2); color: #ff335c; padding: 15px; border-radius: 10px; margin-bottom: 2rem; border: 2px solid rgba(255, 51, 92, 0.5); text-align: center; font-weight: 600;">
+        ❌ <?php echo htmlspecialchars($statusErrorMessage); ?>
     </div>
     <script>
         setTimeout(function() {
@@ -594,30 +639,43 @@ $canDelete = $isOwner || !$isLoggedIn;
 <?php } ?>
 
 <div class="info-box">
-<b>Description :</b><br>
+<b>Description:</b><br>
     <?php echo nl2br(htmlspecialchars($collab['description'])); ?>
 </div>
 
 <div class="info-box">
-    <b>Statut :</b> <?php echo htmlspecialchars(ucfirst($collab['statut'])); ?><br>
-<b>Nombre maximum de membres :</b> <?php echo $collab['max_membres']; ?><br>
-    <b>Membres actuels :</b> <?php echo count($members); ?> / <?php echo $collab['max_membres']; ?>
+    <b>Status:</b> 
+    <?php if ($isOwner || !$isLoggedIn): ?>
+        <form action="update_status.php" method="POST" style="display: inline-block; margin-left: 10px;">
+            <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
+            <select name="statut" onchange="this.form.submit()" style="padding: 5px 10px; border-radius: 5px; background: rgba(0, 0, 0, 0.5); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); font-weight: 600; cursor: pointer;">
+                <option value="ouvert" <?php echo $collab['statut'] == 'ouvert' ? 'selected' : ''; ?>>Open</option>
+                <option value="en_cours" <?php echo $collab['statut'] == 'en_cours' ? 'selected' : ''; ?>>In Progress</option>
+                <option value="ferme" <?php echo $collab['statut'] == 'ferme' ? 'selected' : ''; ?>>Closed</option>
+            </select>
+        </form>
+    <?php else: ?>
+        <?php echo translateStatus($collab['statut']); ?>
+    <?php endif; ?>
+    <br>
+    <b>Maximum number of members:</b> <?php echo $collab['max_membres']; ?><br>
+    <b>Current members:</b> <?php echo count($members); ?> / <?php echo $collab['max_membres']; ?>
 </div>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <h3 style="margin: 0;">Liste des membres :</h3>
+    <h3 style="margin: 0;">Members List:</h3>
     <?php if (($isOwner || !$isLoggedIn) && count($members) < $collab['max_membres']): ?>
         <a href="create_member.php?collab_id=<?php echo $collab_id; ?>" style="padding: 8px 16px; background: rgba(0, 255, 136, 0.2); color: #00ff88; text-decoration: none; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.5); font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
-            ➕ Ajouter un membre
+            ➕ Add a member
         </a>
     <?php elseif (count($members) >= $collab['max_membres']): ?>
-        <span style="color: #ff335c; font-size: 0.9rem;">✗ Projet complet</span>
+        <span style="color: #ff335c; font-size: 0.9rem;">✗ Project full</span>
     <?php endif; ?>
 </div>
 <ul class="members-list">
 <?php 
 if (empty($members)) {
-    echo "<li>Aucun membre pour le moment.</li>";
+    echo "<li>No members yet.</li>";
 } else {
 foreach ($members as $m) {
         $roleLabel = ucfirst($m['role']);
@@ -637,10 +695,10 @@ foreach ($members as $m) {
             if (!$isLoggedIn) {
                 echo "<input type=\"hidden\" name=\"dev_mode\" value=\"1\">";
             }
-            echo "<button type=\"submit\" onclick=\"return confirm('Voulez-vous vraiment supprimer ce membre ?');\" class=\"btn-delete-member\">🗑️ Supprimer</button>";
+            echo "<button type=\"submit\" onclick=\"return confirm('Are you sure you want to remove this member?');\" class=\"btn-delete-member\">🗑️ Remove</button>";
             echo "</form>";
         } elseif ($isOwnerMember) {
-            echo "<span class=\"owner-badge\">👑 Propriétaire</span>";
+            echo "<span class=\"owner-badge\">👑 Owner</span>";
         }
         
         echo "</div>";
@@ -656,31 +714,31 @@ foreach ($members as $m) {
 <!-- Section To-Do List -->
 <div style="margin-top: 2rem;">
     <h3 style="color: #00ff88; margin-bottom: 1.5rem; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);">
-        📋 Tableau des tâches (To-Do List)
+        📋 Task List (To-Do List)
     </h3>
 
     <!-- Formulaire d'ajout -->
     <form action="task_add.php" method="POST" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;">
         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-        <input type="text" name="task" placeholder="Nouvelle tâche..." required 
+        <input type="text" name="task" placeholder="New task..." 
                style="flex: 1; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 10px; color: #fff; font-size: 1rem;">
         <button type="submit" 
                 style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
-            ➕ Ajouter
+            ➕ Add
         </button>
     </form>
 
     <!-- Tableau des tâches -->
     <?php if (empty($tasks)): ?>
         <div style="background: rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 10px; text-align: center; color: #aaa;">
-            <p>Aucune tâche pour le moment. Ajoutez votre première tâche !</p>
+            <p>No tasks yet. Add your first task!</p>
         </div>
     <?php else: ?>
         <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse; background: rgba(0, 0, 0, 0.5); border-radius: 10px; overflow: hidden;">
                 <thead>
                     <tr style="background: rgba(0, 255, 136, 0.2);">
-                        <th style="padding: 15px; text-align: left; color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Tâche</th>
+                        <th style="padding: 15px; text-align: left; color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Task</th>
                         <th style="padding: 15px; text-align: center; color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Status</th>
                         <th style="padding: 15px; text-align: center; color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Actions</th>
                     </tr>
@@ -700,9 +758,9 @@ foreach ($members as $m) {
                         </td>
                         <td style="padding: 15px; text-align: center;">
                             <?php if ($isTaskDone): ?>
-                                <span style="color: #00ff88; font-weight: 600;">✓ Terminée</span>
+                                <span style="color: #00ff88; font-weight: 600;">✓ Done</span>
                             <?php else: ?>
-                                <span style="color: #ff335c; font-weight: 600;">⏳ À faire</span>
+                                <span style="color: #ff335c; font-weight: 600;">⏳ To do</span>
                             <?php endif; ?>
                         </td>
                         <td style="padding: 15px; text-align: center;">
@@ -712,16 +770,16 @@ foreach ($members as $m) {
                                        style="padding: 6px 12px; background: rgba(0, 255, 136, 0.2); color: #00ff88; text-decoration: none; border-radius: 5px; border: 1px solid rgba(0, 255, 136, 0.5); font-size: 0.85rem; transition: all 0.3s ease;"
                                        onmouseover="this.style.background='rgba(0, 255, 136, 0.3)'"
                                        onmouseout="this.style.background='rgba(0, 255, 136, 0.2)'">
-                                        ✓ Marquer terminée
+                                        ✓ Mark as done
                                     </a>
                                 <?php endif; ?>
                                 <?php if ($isOwner || !$isLoggedIn): ?>
                                     <a href="task_delete.php?id=<?php echo $t['id']; ?>&collab_id=<?php echo $collab_id; ?>" 
-                                       onclick="return confirm('Voulez-vous vraiment supprimer cette tâche ?');"
+                                       onclick="return confirm('Are you sure you want to delete this task?');"
                                        style="padding: 6px 12px; background: rgba(255, 51, 92, 0.2); color: #ff335c; text-decoration: none; border-radius: 5px; border: 1px solid rgba(255, 51, 92, 0.5); font-size: 0.85rem; transition: all 0.3s ease;"
                                        onmouseover="this.style.background='rgba(255, 51, 92, 0.3)'"
                                        onmouseout="this.style.background='rgba(255, 51, 92, 0.2)'">
-                                        🗑️ Supprimer
+                                        🗑️ Delete
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -752,7 +810,7 @@ foreach ($members as $m) {
             <form action="join_collab.php" method="POST" style="display: inline;">
         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
                 <button type="submit" style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit;">
-                    ➕ Rejoindre ce projet
+                    ➕ Join this project
                 </button>
             </form>
         <?php 
@@ -771,7 +829,7 @@ foreach ($members as $m) {
             <?php if (!$isLoggedIn): ?>
                 <input type="hidden" name="dev_mode" value="1">
             <?php endif; ?>
-            <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette collaboration ?<?php echo !$isLoggedIn ? ' (Mode développeur)' : ''; ?>');" style="padding: 12px 24px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border: 2px solid rgba(255, 51, 92, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.3s ease;" title="<?php echo !$isLoggedIn ? 'Mode développeur - Suppression autorisée' : 'Seul le propriétaire peut supprimer'; ?>" onmouseover="this.style.background='rgba(255, 51, 92, 0.3)'; this.style.boxShadow='0 0 15px rgba(255, 51, 92, 0.5)';" onmouseout="this.style.background='rgba(255, 51, 92, 0.2)'; this.style.boxShadow='none';">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this collaboration?<?php echo !$isLoggedIn ? ' (Developer mode)' : ''; ?>');" style="padding: 12px 24px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border: 2px solid rgba(255, 51, 92, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.3s ease;" title="<?php echo !$isLoggedIn ? 'Mode développeur - Suppression autorisée' : 'Seul le propriétaire peut supprimer'; ?>" onmouseover="this.style.background='rgba(255, 51, 92, 0.3)'; this.style.boxShadow='0 0 15px rgba(255, 51, 92, 0.5)';" onmouseout="this.style.background='rgba(255, 51, 92, 0.2)'; this.style.boxShadow='none';">
                 🗑️ Supprimer<?php echo !$isLoggedIn ? ' (Dev)' : ''; ?>
             </button>
     </form>
@@ -785,8 +843,8 @@ foreach ($members as $m) {
             <form action="join_collab.php" method="POST" style="display: inline;">
                 <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
                 <input type="hidden" name="user_id" value="1">
-                <button type="submit" onclick="return confirm('Voulez-vous rejoindre cette collaboration ? (Mode développeur - User ID: 1)');" style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit;" title="Mode développeur">
-                    ➕ Rejoindre (Mode dev)
+                <button type="submit" onclick="return confirm('Do you want to join this collaboration? (Developer mode - User ID: 1)');" style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit;" title="Mode développeur">
+                    ➕ Join (Dev mode)
                 </button>
     </form>
 <?php
@@ -799,7 +857,7 @@ foreach ($members as $m) {
 
 <?php if ($canViewChat): ?>
 <!-- BOUTON POUR OUVRIR LE CHAT -->
-<button onclick="toggleChat()" class="chat-button" title="Ouvrir le chat">
+<button onclick="toggleChat()" class="chat-button" title="Open chat">
     💬
 </button>
 
@@ -807,7 +865,7 @@ foreach ($members as $m) {
 <div id="chatBox" class="chat-box">
     <!-- HEADER DU CHAT -->
     <div class="chat-header">
-        <span><b>💬 Chat du projet</b></span>
+        <span><b>💬 Project Chat</b></span>
         <span onclick="toggleChat()" class="chat-close">×</span>
     </div>
     
@@ -815,7 +873,7 @@ foreach ($members as $m) {
     <div class="messages-container" id="messagesBox">
         <?php if (empty($messages)): ?>
             <div style="text-align: center; color: #aaa; padding: 2rem;">
-                <p>Aucun message pour le moment. Soyez le premier à écrire !</p>
+                <p>No messages yet. Be the first to write!</p>
             </div>
         <?php else: ?>
             <?php foreach ($messages as $m): 
@@ -842,12 +900,12 @@ foreach ($members as $m) {
                                 <div class="message-dropdown" id="menu-<?php echo $m['id']; ?>">
                                     <?php if ($canEditMessage): ?>
                                         <a href="update_message.php?id=<?php echo $m['id']; ?>&collab_id=<?php echo $collab_id; ?>" class="message-dropdown-item edit" style="text-decoration: none; display: block;" onclick="event.stopPropagation();">
-                                            ✏️ Modifier
+                                            ✏️ Edit
                                         </a>
                                     <?php endif; ?>
                                     <?php if ($canDeleteMessage): ?>
                                         <div class="message-dropdown-item delete" onclick="event.stopPropagation(); deleteMessage(<?php echo $m['id']; ?>, <?php echo $collab_id; ?>);">
-                                            🗑️ Supprimer
+                                            🗑️ Delete
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -855,7 +913,7 @@ foreach ($members as $m) {
                         <?php endif; ?>
                     </div>
                     <div class="message-text" id="message-text-<?php echo $m['id']; ?>"><?php echo nl2br(htmlspecialchars($m['message'])); ?></div>
-                    <div class="message-date">📅 <?php echo htmlspecialchars($m['date_message'] ?? 'Date inconnue'); ?></div>
+                    <div class="message-date">📅 <?php echo htmlspecialchars($m['date_message'] ?? 'Unknown date'); ?></div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -865,9 +923,9 @@ foreach ($members as $m) {
     <form id="chatMessageForm" action="send_message.php" method="POST" class="chat-form">
         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
         <input type="hidden" name="message_id" id="editing-message-id" value="">
-        <textarea name="message" id="chat-message-input" rows="2" placeholder="Tapez votre message..." required></textarea>
+        <textarea name="message" id="chat-message-input" rows="2" placeholder="Type your message..."></textarea>
         <div id="chat-form-buttons">
-            <button type="submit" id="btn-send-message" class="btn-send">📤 Envoyer</button>
+            <button type="submit" id="btn-send-message" class="btn-send">📤 Send</button>
             <button type="button" id="btn-cancel-edit" class="btn-cancel-edit" style="display: none;" onclick="cancelEditMessage()">❌ Annuler</button>
             <button type="button" id="btn-resend-message" class="btn-resend" style="display: none;" onclick="resendMessage()">🔄 Renvoyer</button>
         </div>
@@ -1028,7 +1086,7 @@ function cancelEditMessage() {
     if (messageInput) {
         messageInput.value = '';
         messageInput.classList.remove('editing');
-        messageInput.placeholder = 'Tapez votre message...';
+        messageInput.placeholder = 'Type your message...';
     }
     
     if (messageIdInput) {
@@ -1144,7 +1202,7 @@ function resendMessage() {
 
 // Fonction pour supprimer un message
 function deleteMessage(messageId, collabId) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+    if (confirm('Are you sure you want to delete this message?')) {
         window.location.href = 'delete_message.php?id=' + messageId + '&collab_id=' + collabId;
     }
 }

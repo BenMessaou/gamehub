@@ -168,22 +168,22 @@ if (!$collab) {
                     </div>
                 <?php endif; ?>
 
-                <form action="update_collab.php" method="POST" enctype="multipart/form-data">
+                <form id="editCollabForm" action="update_collab.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                     <div class="form-group">
                         <label for="titre">Titre *</label>
-                        <input type="text" id="titre" name="titre" value="<?php echo htmlspecialchars($collab['titre']); ?>" required>
+                        <input type="text" id="titre" name="titre" value="<?php echo htmlspecialchars($collab['titre']); ?>">
                     </div>
 
                     <div class="form-group">
                         <label for="description">Description *</label>
-                        <textarea id="description" name="description" required><?php echo htmlspecialchars($collab['description']); ?></textarea>
+                        <textarea id="description" name="description"><?php echo htmlspecialchars($collab['description']); ?></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="statut">Statut *</label>
-                        <select id="statut" name="statut" required>
+                        <select id="statut" name="statut">
                             <option value="ouvert" <?php if ($collab['statut']=="ouvert") echo "selected"; ?>>Ouvert</option>
                             <option value="en_cours" <?php if ($collab['statut']=="en_cours") echo "selected"; ?>>En cours</option>
                             <option value="ferme" <?php if ($collab['statut']=="ferme") echo "selected"; ?>>Fermé</option>
@@ -192,7 +192,7 @@ if (!$collab) {
 
                     <div class="form-group">
                         <label for="max_membres">Nombre maximum de membres *</label>
-                        <input type="number" id="max_membres" name="max_membres" min="1" max="20" value="<?php echo $collab['max_membres']; ?>" required>
+                        <input type="number" id="max_membres" name="max_membres" value="<?php echo $collab['max_membres']; ?>">
                     </div>
 
                     <div class="form-group">
@@ -235,6 +235,39 @@ if (!$collab) {
             } else {
                 previewDiv.style.display = 'none';
             }
+        });
+    </script>
+
+    <script src="validation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const validator = new FormValidator('editCollabForm');
+            
+            // Validation pour titre
+            validator.addRule('titre', {
+                required: true,
+                minLength: 3,
+                maxLength: 200
+            }, 'Titre requis (3-200 caractères)');
+            
+            // Validation pour description
+            validator.addRule('description', {
+                required: true,
+                minLength: 10,
+                maxLength: 2000
+            }, 'Description requise (10-2000 caractères)');
+            
+            // Validation pour statut
+            validator.addRule('statut', {
+                required: true
+            }, 'Statut requis');
+            
+            // Validation pour max_membres
+            validator.addRule('max_membres', {
+                required: true,
+                min: 1,
+                max: 20
+            }, 'Nombre de membres requis (1-20)');
         });
     </script>
 

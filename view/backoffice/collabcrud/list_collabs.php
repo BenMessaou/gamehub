@@ -130,7 +130,7 @@ foreach ($collabs as &$collab) {
                             <td><?php echo $c['current_members']; ?>/<?php echo $c['max_membres']; ?></td>
                             <td><?php echo date('d/m/Y', strtotime($c['date_creation'])); ?></td>
                             <td>
-                                <a href="view_collab.php?id=<?php echo $c['id']; ?>" class="btn-view">Voir</a>
+                                <a href="view_collab.php?id=<?php echo $c['id']; ?>" class="btn-view">See</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

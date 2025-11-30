@@ -123,8 +123,25 @@ class CollabProjectController {
     // 6. RÉCUPÉRER TOUS LES PROJETS OUVERTS (pour les autres users)
     // ============================================================
     public function getAllOpen() {
-        $stmt = $this->db->query("SELECT * FROM collab_project WHERE statut = 'ouvert'");
+        $stmt = $this->db->query("SELECT * FROM collab_project WHERE statut = 'ouvert' ORDER BY date_creation DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ============================================================
+    // 7. METTRE À JOUR UNIQUEMENT LE STATUT D'UN PROJET
+    // ============================================================
+    public function updateStatus($id, $statut, $ownerId = null) {
+        // Mode développeur : pas de vérification owner
+        if ($ownerId === null) {
+            $sql = "UPDATE collab_project SET statut = ? WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([$statut, $id]);
+        }
+        
+        // Mode normal : vérifier que l'utilisateur est le propriétaire
+        $sql = "UPDATE collab_project SET statut = ? WHERE id = ? AND owner_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$statut, $id, $ownerId]);
     }
 }
 

@@ -22,16 +22,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = trim($_POST['titre'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $max_membres = isset($_POST['max_membres']) ? intval($_POST['max_membres']) : 5;
-    $image = isset($_POST['image']) ? trim($_POST['image']) : '';
+    
+    // Gestion de l'upload d'image
+    $imagePath = null;
+    
+    // Vérifier si un fichier image a été uploadé
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['image'];
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (in_array($file['type'], $allowedTypes) && $file['size'] <= $maxSize) {
+            // Créer le dossier uploads s'il n'existe pas
+            $uploadDir = __DIR__ . '/../../frontoffice/backoffice/uploads/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $fileName = uniqid('collab_', true) . '.' . $extension;
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                // Chemin absolu depuis la racine du serveur web pour l'affichage
+                $imagePath = '/gamehubprjt/view/frontoffice/backoffice/uploads/' . $fileName;
+            } else {
+                $message = 'Error uploading the image. Please try again.';
+                $messageType = 'error';
+            }
+        } else {
+            $message = 'Format d\'image non supporté ou fichier trop volumineux (max 5MB).';
+            $messageType = 'error';
+        }
+    } elseif (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $message = 'Error uploading the image. Error code: ' . $_FILES['image']['error'];
+        $messageType = 'error';
+    }
 
     // Validation
     if (empty($titre) || empty($description)) {
         $message = 'Veuillez remplir tous les champs requis.';
         $messageType = 'error';
     } elseif ($max_membres < 1 || $max_membres > 20) {
-        $message = 'Le nombre de membres doit être entre 1 et 20.';
+        $message = 'The number of members must be between 1 and 20.';
         $messageType = 'error';
-    } else {
+    } elseif ($messageType !== 'error') {
         $collab = new CollabProject(
             null,
             $owner_id,
@@ -40,17 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             date("Y-m-d"),
             "ouvert",
             $max_membres,
-            $image ?: null
+            $imagePath
         );
 
         $controller = new CollabProjectController();
         $createdId = $controller->create($collab);
 
         if ($createdId) {
-            $message = '✅ Collaboration lancée avec succès ! Votre projet collaboratif est maintenant disponible.';
+            $message = '✅ Collaboration created successfully! Your collaborative project is now available.';
             $messageType = 'success';
         } else {
-            $message = '❌ Erreur : impossible de créer la collaboration. Veuillez réessayer.';
+            $message = '❌ Error: Unable to create the collaboration. Please try again.';
             $messageType = 'error';
         }
     }
@@ -63,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un projet collaboratif - GameHub Pro</title>
+    <title>Create a Collaborative Project - GameHub Pro</title>
     <link rel="stylesheet" href="../../frontoffice/collaborations.css">
     <style>
         body {
@@ -139,19 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: translateY(-3px);
             box-shadow: 0 0 35px rgba(0, 255, 136, 0.9);
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 2rem;
-            color: #00ff88;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 2px solid rgba(0, 255, 136, 0.5);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        .back-link:hover {
-            background: rgba(0, 255, 136, 0.2);
-        }
+        /* Le bouton utilise maintenant la classe super-button */
         .message {
             padding: 15px 20px;
             border-radius: 10px;
@@ -203,10 +226,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <main class="main-content">
         <div class="container">
-            <a href="../../frontoffice/collaborations.php" class="back-link">← Retour aux Collaborations</a>
+            <a href="../../frontoffice/collaborations.php" class="super-button" style="margin-bottom: 2rem; display: inline-block;">← Back to Collaborations</a>
             
             <div class="create-form-container">
-                <h2>Créer un Projet Collaboratif</h2>
+                <h2>Create a Collaborative Project</h2>
 
                 <?php if (!empty($message)): ?>
                     <div class="message <?php echo $messageType; ?>">
@@ -216,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <?php if (!$isLoggedIn): ?>
                     <div class="dev-mode">
-                        ⚠️ <strong>Mode développeur</strong> : Vous n'êtes pas connecté. Veuillez entrer un ID utilisateur pour créer la collaboration.
+                        ⚠️ <strong>Developer mode</strong>: You are not logged in. Please enter a user ID to create the collaboration.
                     </div>
                 <?php endif; ?>
 
@@ -230,53 +253,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 form.style.pointerEvents = 'none';
                             }
                             
-                            // Redirection après 3 secondes
+                            // Redirection après 3 secondes avec timestamp pour éviter le cache
                             setTimeout(function() {
-                                window.location.href = '../../frontoffice/collaborations.php';
+                                window.location.href = '../../frontoffice/collaborations.php?created=' + Date.now();
                             }, 3000);
                         });
                     </script>
                 <?php endif; ?>
 
                 <?php if ($messageType !== 'success'): ?>
-                <form action="" method="POST">
+                <form id="createCollabForm" action="" method="POST" enctype="multipart/form-data">
                     
                     <?php if (!$isLoggedIn): ?>
                     <div class="form-group">
                         <label for="owner_id">ID Utilisateur (Owner) *</label>
-                        <input type="number" id="owner_id" name="owner_id" value="<?php echo $defaultOwnerId; ?>" min="1" required>
+                        <input type="number" id="owner_id" name="owner_id" value="<?php echo $defaultOwnerId; ?>">
                     </div>
                     <?php else: ?>
                         <input type="hidden" name="owner_id" value="<?php echo $_SESSION['user_id']; ?>">
                     <?php endif; ?>
 
                     <div class="form-group">
-                        <label for="titre">Titre du projet *</label>
-                        <input type="text" id="titre" name="titre" required placeholder="Ex: Développement d'un jeu de stratégie">
+                        <label for="titre">Project Title *</label>
+                        <input type="text" id="titre" name="titre" placeholder="Ex: Strategy Game Development">
                     </div>
 
                     <div class="form-group">
                         <label for="description">Description *</label>
-                        <textarea id="description" name="description" required placeholder="Décrivez votre projet collaboratif..."></textarea>
+                        <textarea id="description" name="description" placeholder="Describe your collaborative project..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="max_membres">Nombre maximum de membres *</label>
-                        <input type="number" id="max_membres" name="max_membres" min="1" max="20" value="5" required>
+                        <label for="max_membres">Maximum Number of Members *</label>
+                        <input type="number" id="max_membres" name="max_membres" value="5">
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Image (URL) - Optionnel</label>
-                        <input type="text" id="image" name="image" placeholder="https://example.com/image.jpg">
+                        <label for="image">Image - Optionnel</label>
+                        <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                        <p style="color: #aaa; font-size: 0.85rem; margin-top: 0.5rem;">📎 Format accepté : JPG, PNG, GIF, WebP (max 5MB)</p>
+                        <div id="image-preview" style="margin-top: 1rem; display: none;">
+                            <p style="color: #00ffea; font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">👁️ Aperçu de l'image :</p>
+                            <img id="preview-img" src="" alt="Aperçu" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid rgba(0, 255, 136, 0.3); display: block;">
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn-submit">🚀 Créer la Collaboration</button>
+                    <button type="submit" class="btn-submit">🚀 Create Collaboration</button>
 
                 </form>
                 <?php endif; ?>
             </div>
         </div>
     </main>
+
+    <script src="validation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const validator = new FormValidator('createCollabForm');
+            
+            <?php if (!$isLoggedIn): ?>
+            // Validation pour owner_id (si mode développeur)
+            validator.addRule('owner_id', {
+                required: true,
+                min: 1
+            }, 'ID utilisateur requis (minimum 1)');
+            <?php endif; ?>
+            
+            // Validation pour titre
+            validator.addRule('titre', {
+                required: true,
+                minLength: 3,
+                maxLength: 200
+            }, 'Titre requis (3-200 caractères)');
+            
+            // Validation pour description
+            validator.addRule('description', {
+                required: true,
+                minLength: 10,
+                maxLength: 2000
+            }, 'Description requise (10-2000 caractères)');
+            
+            // Validation pour max_membres
+            validator.addRule('max_membres', {
+                required: true,
+                min: 1,
+                max: 20
+            }, 'Nombre de membres requis (1-20)');
+        });
+        
+        // Gestion de l'aperçu d'image
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        
+        if (imageInput && imagePreview && previewImg) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    // Vérifier le type de fichier
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Format d\'image non supporté. Formats acceptés : JPG, PNG, GIF, WebP');
+                        imageInput.value = '';
+                        imagePreview.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Vérifier la taille (5MB max)
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        alert('Fichier trop volumineux. Taille maximum : 5MB');
+                        imageInput.value = '';
+                        imagePreview.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Afficher l'aperçu
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>

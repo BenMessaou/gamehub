@@ -330,7 +330,7 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
             <a href="#" class="nav-link" id="statisticsBtn">Statistiques</a>
             <a href="projectlist.php" class="nav-link active">Projects</a>
             <a href="addProject.php" class="nav-link">Add Project</a>
-            <a href="../eventscrud/eventList.php" class="nav-link">📅 Events</a>
+            <a href="../collabcrud/collaboration.php" class="nav-link">🤝 Collab</a>
         </nav>
     </div>
 </header>
