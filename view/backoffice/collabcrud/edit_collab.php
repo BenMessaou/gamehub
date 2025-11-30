@@ -75,6 +75,25 @@ if (!$collab) {
             border-color: #00ff88;
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
         }
+        .form-group input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .form-group input[type="file"]::file-selector-button {
+            padding: 8px 16px;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        .form-group input[type="file"]::file-selector-button:hover {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
@@ -149,7 +168,7 @@ if (!$collab) {
                     </div>
                 <?php endif; ?>
 
-                <form action="update_collab.php" method="POST">
+                <form action="update_collab.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                     <div class="form-group">
@@ -177,8 +196,20 @@ if (!$collab) {
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Image (URL) - Optionnel</label>
-                        <input type="text" id="image" name="image" value="<?php echo htmlspecialchars($collab['image'] ?? ''); ?>" placeholder="https://example.com/image.jpg">
+                        <label for="image">Image - Optionnel</label>
+                        <?php if (!empty($collab['image'])): ?>
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0, 255, 136, 0.1); border-radius: 10px; border: 2px solid rgba(0, 255, 136, 0.3);">
+                                <p style="color: #00ffea; font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">🖼️ Image actuelle :</p>
+                                <img src="<?php echo htmlspecialchars($collab['image']); ?>" alt="Image actuelle" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid rgba(0, 255, 136, 0.3); display: block;">
+                                <p style="color: #aaa; font-size: 0.8rem; margin-top: 0.5rem;">Sélectionnez une nouvelle image pour la remplacer</p>
+                            </div>
+                        <?php endif; ?>
+                        <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                        <p style="color: #aaa; font-size: 0.85rem; margin-top: 0.5rem;">📎 Format accepté : JPG, PNG, GIF, WebP (max 5MB)</p>
+                        <div id="image-preview" style="margin-top: 1rem; display: none;">
+                            <p style="color: #00ffea; font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;">👁️ Aperçu de la nouvelle image :</p>
+                            <img id="preview-img" src="" alt="Aperçu" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid rgba(0, 255, 136, 0.3); display: block;">
+                        </div>
                     </div>
 
                     <button type="submit" class="btn-submit">💾 Mettre à jour la Collaboration</button>
@@ -186,6 +217,26 @@ if (!$collab) {
             </div>
         </div>
     </main>
+
+    <script>
+        // Aperçu de l'image avant upload
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const previewDiv = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewDiv.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>

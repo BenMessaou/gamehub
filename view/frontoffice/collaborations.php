@@ -65,10 +65,8 @@ foreach ($collabs as &$collab) {
                 <ul>
                     <li><a href="index.php" class="super-button">Home</a></li>
                     <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
-                    <li><a href="eventsp.php" class="super-button">🎮 Events</a></li>
                     <li><a href="collaborations.php" class="super-button">🤝 Collaborations</a></li>
                     <li><a href="index.php#about" class="super-button">About</a></li>
-                    <li><a href="index.php#contact" class="super-button">Contact</a></li>
                 </ul>
             </nav>
             <a href="index.php" class="dashboard-btn">Back to Home</a>
@@ -81,15 +79,20 @@ foreach ($collabs as &$collab) {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="index.php#new-games">Recent Games</a></li>
-                <li><a href="eventsp.php">🎮 Events</a></li>
                 <li><a href="collaborations.php">🤝 Collaborations</a></li>
                 <li><a href="index.php#about">About</a></li>
-                <li><a href="index.php#contact">Contact</a></li>
             </ul>
         </nav>
     </aside>
 
     <main id="main-content" class="main-content">
+        <!-- Images décoratives flottantes en arrière-plan -->
+        <div class="decorative-images">
+            <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-1">
+            <img src="assests/game5.png" alt="Decor" class="decor-img decor-img-2">
+            <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-3">
+        </div>
+        
         <div class="collabs-container">
             <div class="collabs-header">
                 <h1>🤝 Collaborations</h1>
@@ -150,9 +153,14 @@ foreach ($collabs as &$collab) {
                     ?>
                         <div class="collab-card">
                             <?php if (!empty($collab['image'])): ?>
-                                <img src="<?php echo htmlspecialchars($collab['image']); ?>" alt="<?php echo htmlspecialchars($collab['titre']); ?>">
+                                <div class="card-image-wrapper">
+                                    <img src="<?php echo htmlspecialchars($collab['image']); ?>" alt="<?php echo htmlspecialchars($collab['titre']); ?>" class="collab-image">
+                                </div>
                             <?php else: ?>
-                                <div class="no-image">🤝</div>
+                                <div class="no-image">
+                                    <img src="assests/logo.png" alt="Default Collaboration Image" class="default-collab-image">
+                                    <div class="no-image-overlay">🤝</div>
+                                </div>
                             <?php endif; ?>
                             
                             <h3><?php echo htmlspecialchars($collab['titre']); ?></h3>

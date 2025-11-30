@@ -443,8 +443,12 @@ $canDelete = $isOwner || !$isLoggedIn;
             border-color: #00ff88;
             box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
         }
+        #chat-form-buttons {
+            display: flex;
+            gap: 10px;
+        }
         .chat-form button {
-            width: 100%;
+            flex: 1;
             padding: 12px;
             background: linear-gradient(135deg, #0084FF, #00C6FF);
             color: white;
@@ -454,9 +458,21 @@ $canDelete = $isOwner || !$isLoggedIn;
             cursor: pointer;
             transition: all 0.3s ease;
         }
+        .chat-form button.btn-resend {
+            background: linear-gradient(135deg, #00ff88, #00C6FF);
+        }
+        .chat-form button.btn-cancel-edit {
+            background: linear-gradient(135deg, #ff335c, #ff6b8a);
+            flex: 0 0 auto;
+            min-width: 50px;
+        }
         .chat-form button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 132, 255, 0.4);
+        }
+        .chat-form textarea.editing {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
         .messages-container::-webkit-scrollbar {
             width: 6px;
@@ -825,12 +841,12 @@ foreach ($members as $m) {
                                 <button class="message-menu-btn" onclick="toggleMessageMenu(<?php echo $m['id']; ?>)">⋮</button>
                                 <div class="message-dropdown" id="menu-<?php echo $m['id']; ?>">
                                     <?php if ($canEditMessage): ?>
-                                        <div class="message-dropdown-item edit" onclick="editMessage(<?php echo $m['id']; ?>, <?php echo json_encode($m['message']); ?>, <?php echo $collab_id; ?>)">
+                                        <a href="update_message.php?id=<?php echo $m['id']; ?>&collab_id=<?php echo $collab_id; ?>" class="message-dropdown-item edit" style="text-decoration: none; display: block;" onclick="event.stopPropagation();">
                                             ✏️ Modifier
-                                        </div>
+                                        </a>
                                     <?php endif; ?>
                                     <?php if ($canDeleteMessage): ?>
-                                        <div class="message-dropdown-item delete" onclick="deleteMessage(<?php echo $m['id']; ?>, <?php echo $collab_id; ?>)">
+                                        <div class="message-dropdown-item delete" onclick="event.stopPropagation(); deleteMessage(<?php echo $m['id']; ?>, <?php echo $collab_id; ?>);">
                                             🗑️ Supprimer
                                         </div>
                                     <?php endif; ?>
@@ -846,10 +862,18 @@ foreach ($members as $m) {
     </div>
     
     <!-- FORMULAIRE D'ENVOI -->
-    <form action="send_message.php" method="POST" class="chat-form">
+    <form id="chatMessageForm" action="send_message.php" method="POST" class="chat-form">
         <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-        <textarea name="message" rows="2" placeholder="Tapez votre message..." required></textarea>
-        <button type="submit">📤 Envoyer</button>
+        <input type="hidden" name="message_id" id="editing-message-id" value="">
+        <textarea name="message" id="chat-message-input" rows="2" placeholder="Tapez votre message..." required></textarea>
+        <div id="chat-form-buttons">
+            <button type="submit" id="btn-send-message" class="btn-send">📤 Envoyer</button>
+            <button type="button" id="btn-cancel-edit" class="btn-cancel-edit" style="display: none;" onclick="cancelEditMessage()">❌ Annuler</button>
+            <button type="button" id="btn-resend-message" class="btn-resend" style="display: none;" onclick="resendMessage()">🔄 Renvoyer</button>
+        </div>
+        <div id="edit-mode-indicator" style="display: none; text-align: center; color: #00ff88; font-size: 0.85rem; margin-top: 5px;">
+            ✏️ Mode édition activé
+        </div>
     </form>
 </div>
 
@@ -903,51 +927,219 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Fonction pour modifier un message
+// Fonction pour modifier un message - place le message dans la zone de saisie
 function editMessage(messageId, currentMessage, collabId) {
+    console.log('editMessage appelée:', { messageId, currentMessage, collabId });
+    
+    // S'assurer que le chat est ouvert
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox && !chatBox.classList.contains('show')) {
+        chatBox.classList.add('show');
+    }
+    
     // Fermer le menu
     document.querySelectorAll('.message-dropdown').forEach(menu => {
         menu.classList.remove('show');
     });
     
-    // Créer ou récupérer le modal
-    let modal = document.getElementById('editMessageModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'editMessageModal';
-        modal.className = 'edit-modal';
-        modal.innerHTML = `
-            <div class="edit-modal-content">
-                <div class="edit-modal-header">✏️ Modifier le message</div>
-                <form id="editMessageForm" method="POST" action="update_message.php">
-                    <input type="hidden" name="id" id="edit-message-id">
-                    <input type="hidden" name="collab_id" id="edit-collab-id">
-                    <textarea name="message" id="edit-message-text" required></textarea>
-                    <div class="edit-modal-buttons">
-                        <button type="submit" class="btn-save">💾 Enregistrer</button>
-                        <button type="button" class="btn-cancel" onclick="closeEditModal()">❌ Annuler</button>
-                    </div>
-                </form>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    // Remplir le formulaire
-    document.getElementById('edit-message-id').value = messageId;
-    document.getElementById('edit-collab-id').value = collabId;
-    document.getElementById('edit-message-text').value = currentMessage;
-    
-    // Afficher le modal
-    modal.classList.add('show');
+    // Attendre un peu pour que le DOM soit prêt
+    setTimeout(() => {
+        // Récupérer les éléments du formulaire
+        const chatForm = document.getElementById('chatMessageForm');
+        const messageInput = document.getElementById('chat-message-input');
+        const messageIdInput = document.getElementById('editing-message-id');
+        const btnSend = document.getElementById('btn-send-message');
+        const btnResend = document.getElementById('btn-resend-message');
+        const btnCancel = document.getElementById('btn-cancel-edit');
+        
+        if (!chatForm) {
+            console.error('Formulaire chatMessageForm non trouvé!');
+            alert('Erreur: Formulaire de chat non trouvé. Assurez-vous que le chat est ouvert.');
+            return;
+        }
+        
+        if (!messageInput) {
+            console.error('Textarea chat-message-input non trouvé!');
+            alert('Erreur: Zone de saisie non trouvée.');
+            return;
+        }
+        
+        if (!messageIdInput) {
+            console.error('Input editing-message-id non trouvé!');
+            alert('Erreur: Champ ID de message non trouvé.');
+            return;
+        }
+        
+        // Stocker l'ID du message en édition
+        messageIdInput.value = messageId;
+        
+        // Remplir le textarea avec le message à modifier
+        messageInput.value = currentMessage;
+        messageInput.classList.add('editing');
+        messageInput.placeholder = 'Modifiez votre message...';
+        
+        // Changer l'action du formulaire pour la mise à jour
+        chatForm.setAttribute('data-original-action', chatForm.action);
+        chatForm.setAttribute('data-editing-message-id', messageId);
+        
+        // Afficher/masquer les boutons
+        if (btnSend) {
+            btnSend.style.display = 'none';
+        }
+        if (btnResend) {
+            btnResend.style.display = 'inline-block';
+        }
+        if (btnCancel) {
+            btnCancel.style.display = 'inline-block';
+        }
+        
+        // Afficher l'indicateur de mode édition
+        const editIndicator = document.getElementById('edit-mode-indicator');
+        if (editIndicator) {
+            editIndicator.style.display = 'block';
+        }
+        
+        // Focus sur le textarea et sélectionner le texte
+        messageInput.focus();
+        setTimeout(() => {
+            messageInput.select();
+        }, 50);
+        
+        // Faire défiler vers le bas pour voir la zone de saisie
+        const messagesBox = document.getElementById('messagesBox');
+        if (messagesBox) {
+            messagesBox.scrollTop = messagesBox.scrollHeight;
+        }
+        
+        console.log('Message placé dans la zone de saisie:', currentMessage);
+    }, 100);
 }
 
-// Fonction pour fermer le modal
-function closeEditModal() {
-    const modal = document.getElementById('editMessageModal');
-    if (modal) {
-        modal.classList.remove('show');
+// Fonction pour annuler l'édition d'un message
+function cancelEditMessage() {
+    const messageInput = document.getElementById('chat-message-input');
+    const messageIdInput = document.getElementById('editing-message-id');
+    const chatForm = document.getElementById('chatMessageForm');
+    const btnSend = document.getElementById('btn-send-message');
+    const btnResend = document.getElementById('btn-resend-message');
+    const btnCancel = document.getElementById('btn-cancel-edit');
+    
+    // Réinitialiser le formulaire
+    if (messageInput) {
+        messageInput.value = '';
+        messageInput.classList.remove('editing');
+        messageInput.placeholder = 'Tapez votre message...';
     }
+    
+    if (messageIdInput) {
+        messageIdInput.value = '';
+    }
+    
+    // Restaurer l'action originale du formulaire
+    if (chatForm) {
+        const originalAction = chatForm.getAttribute('data-original-action');
+        if (originalAction) {
+            chatForm.action = originalAction;
+        } else {
+            chatForm.action = 'send_message.php';
+        }
+        chatForm.removeAttribute('data-editing-message-id');
+    }
+    
+    // Afficher/masquer les boutons
+    if (btnSend) btnSend.style.display = 'inline-block';
+    if (btnResend) btnResend.style.display = 'none';
+    if (btnCancel) btnCancel.style.display = 'none';
+    
+    // Masquer l'indicateur de mode édition
+    const editIndicator = document.getElementById('edit-mode-indicator');
+    if (editIndicator) {
+        editIndicator.style.display = 'none';
+    }
+}
+
+// Fonction pour renvoyer un message modifié
+function resendMessage() {
+    console.log('resendMessage appelée');
+    
+    const chatForm = document.getElementById('chatMessageForm');
+    const messageInput = document.getElementById('chat-message-input');
+    const messageIdInput = document.getElementById('editing-message-id');
+    
+    if (!chatForm) {
+        alert('Erreur: Formulaire non trouvé.');
+        console.error('chatForm non trouvé');
+        return;
+    }
+    
+    if (!messageInput) {
+        alert('Erreur: Zone de saisie non trouvée.');
+        console.error('messageInput non trouvé');
+        return;
+    }
+    
+    if (!messageIdInput) {
+        alert('Erreur: ID de message non trouvé.');
+        console.error('messageIdInput non trouvé');
+        return;
+    }
+    
+    const messageText = messageInput.value.trim();
+    const messageId = messageIdInput.value;
+    
+    console.log('Données à envoyer:', { messageId, messageText });
+    
+    if (!messageText) {
+        alert('Veuillez entrer un message.');
+        messageInput.focus();
+        return;
+    }
+    
+    if (!messageId) {
+        alert('Erreur: ID de message manquant.');
+        return;
+    }
+    
+    // Récupérer le collab_id
+    const collabIdInput = chatForm.querySelector('input[name="collab_id"]');
+    const collabId = collabIdInput ? collabIdInput.value : '';
+    
+    if (!collabId) {
+        alert('Erreur: ID de collaboration manquant.');
+        return;
+    }
+    
+    console.log('Soumission vers update_message.php avec:', { id: messageId, message: messageText, collab_id: collabId });
+    
+    // Créer un formulaire dynamique pour la mise à jour
+    const updateForm = document.createElement('form');
+    updateForm.method = 'POST';
+    updateForm.action = 'update_message.php';
+    updateForm.style.display = 'none';
+    
+    // Ajouter les champs cachés
+    const idField = document.createElement('input');
+    idField.type = 'hidden';
+    idField.name = 'id';
+    idField.value = messageId;
+    updateForm.appendChild(idField);
+    
+    const collabIdField = document.createElement('input');
+    collabIdField.type = 'hidden';
+    collabIdField.name = 'collab_id';
+    collabIdField.value = collabId;
+    updateForm.appendChild(collabIdField);
+    
+    const messageField = document.createElement('input');
+    messageField.type = 'hidden';
+    messageField.name = 'message';
+    messageField.value = messageText;
+    updateForm.appendChild(messageField);
+    
+    // Ajouter le formulaire au DOM et le soumettre
+    document.body.appendChild(updateForm);
+    console.log('Formulaire créé, soumission...');
+    updateForm.submit();
 }
 
 // Fonction pour supprimer un message
