@@ -1,35 +1,34 @@
 <?php
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../controller/UserController.php';
+session_start();
+require_once __DIR__ . '/../../controller/userController.php';
 
-$error = "";
-
+$userController = new UserController();
+$error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $adminC = new getUserById($id);
-    $admin = $adminC->login($_POST['admin_id']);
-
-    if ($admin) {
-        header("Location: /../backoffice/index.php");
+    $email    = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $user = $userController->getUserByEmail($email);
+    if ($user && $user['password'] === $password && $user['role'] === 'admin') {
+        $_SESSION['admin_id'] = $user['id_user'];
+        header('Location: ../backoffice/index.php');
         exit;
     } else {
-        $error = "Admin not found. Incorrect credentials.";
+        $error = 'Invalid credentials or you are not an admin.';
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login</title>
+    <title>Admin Login - Gamehub</title>
     <link rel="stylesheet" href="index.css">
 </head>
-
 <body>
-
 <header>
     <div class="container">
-        <h1 class="logo">gamehub</h1>
+        <h1 class="logo">Gamehub</h1>
+        <img src="logo.png" class="logo1" alt="" >
 
         <nav>
             <ul>
@@ -37,39 +36,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <li><a href="#deals" class="super-button">Deals</a></li>
                     <li><a href="#deals" class="super-button">Shop Now</a></li>
                     <li><a href="#contact" class="super-button">Contact</a></li>
-               
+                    
+                
             </ul>
         </nav>
     </div>
 </header>
 
-<div class="profile-container" style="margin-top:150px; justify-content:center;">
-    <div class="card" style="width:450px;">
-        
-        <h2 style="color:#00ff88; margin-bottom:20px;">Admin Login</h2>
 
-        <?php if ($error): ?>
-            <div style="color:red; margin-bottom:20px; font-size:1.1rem;">
-                <?= $error ?>
-            </div>
+<div class="container" style="margin-top:150px;">
+    <div class="card">
+        <h4>Admin Login</h4>
+
+        <?php if (!empty($error)): ?>
+            <p style="color:red;"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="post" action="">
+            <div class="input-row">
+                <input type="email" placeholder="admin email" id="email" name="email" >
+            </div>
 
-            <input type="text"name="admin_id" placeholder="Admin ID" 
-               style="width:100%; padding:12px; margin-bottom:15px;">
+            <div class="input-row">
+                <input type="password" placeholder="password" id="password" name="password" >
+            </div>
 
-            <input type="text" name="email" placeholder="Email" 
-               style="width:100%; padding:12px; margin-bottom:15px;">
-
-            <input type="password" name="password" placeholder="Password" 
-               style="width:100%; padding:12px; margin-bottom:30px;">
-
-            <button class="shop-now-btn" style="width:100%;">Login</button>
+            <button type="submit" class="shop-now-btn">Login as Admin</button>
         </form>
-
     </div>
 </div>
 
+<script src="java.js"></script>
 </body>
 </html>

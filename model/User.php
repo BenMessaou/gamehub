@@ -23,9 +23,6 @@ class User {
         $this->gender = $gender;
         $this->role = $role;
     }
-
-    // --------- GETTERS ---------
-
     public function getId() {
         return $this->id_user;
     }

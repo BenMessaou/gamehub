@@ -57,17 +57,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <h2>Add New User</h2>
 
-        <form method="POST">
+        <form method="POST" onsubmit="return saisie()">
 
             <div class="input-row">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="text" name="lastname" placeholder="Lastname" required>
+                <input type="text" id="name"     name="name"     placeholder="Name">
+<input type="text" id="lastname" name="lastname" placeholder="Lastname">
             </div>
 
-            <input type="email" name="email" placeholder="Email" required><br><br>
-            <input type="password" name="password" placeholder="Password" required><br><br>
-            <input type="text" name="cin" placeholder="CIN"><br><br>
-            <input type="text" name="tel" placeholder="Phone"><br><br>
+            <input type="email" id="email"name="email" placeholder="Email" ><br><br>
+            <input type="password" id="password" name="password" placeholder="Password" ><br><br>
+            <input type="text" id="cin" name="cin" placeholder="CIN"><br><br>
+            <input type="text" id="tel" name="tel" placeholder="Phone"><br><br>
 
             <select name="gender">
                 <option value="">Gender</option>
@@ -79,13 +79,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <input type="text" name="role" value="client" placeholder="Role"><br><br>
 
             <button class="shop-now-btn" type="submit">Add User</button>
+            <p id="errorBox"></p>
+            <p id="errorBox" style="color:#ff4444; margin-top:10px; min-height:20px;"></p>
         </form>
+        
 
         <br>
         <a href="index.php" class="shop-now-btn">Back</a>
+        
+
 
     </div>
 </div>
-
+<script src="script.js"></script>
+<script>
+    // Attach validation to the form without using HTML5 required
+    const form = document.querySelector("form");
+    if (form) {
+        form.onsubmit = function() {
+            return validateBackofficeForm();
+        };
+    }
+</script>
 </body>
 </html>

@@ -1,33 +1,31 @@
+<!-- frontoffice/login_client.php -->
 <?php
-// user_project/view/frontoffice/login_client.php
 session_start();
+require_once "../../controller/userController.php";
 
-require_once __DIR__ . '/../../controller/userController.php';
+$error = "";
 
-$userController = new UserController();
-$error = '';
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email    = trim($_POST['email']);
+    $password = $_POST['password']; // plain text
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $uc = new UserController();
+    $user = $uc->getUserByEmail($email);
 
-    // Get user by email using your controller
-    $user = $userController->getUserByEmail($email);
+    // Plain-text comparison (because passwords are stored as plain text right now)
+    if ($user && $user['password'] === $password && strtolower($user['role']) === 'client') {
+        $_SESSION['user_id']   = $user['id_user'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['role']      = 'client';
 
-    if ($user && $user['password'] === $password) {
-        // ✅ In real life, use password_hash / password_verify
-
-        // Save ID in session
-        $_SESSION['user_id'] = $user['id_user'];
-
-        // Redirect to profile
-        header('Location: profile.php');
+        header("Location: profile.php");
         exit;
     } else {
-        $error = 'Incorrect email or password.';
+        $error = "Wrong email or password.";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,9 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+
 <header>
     <div class="container">
-        <h1 class="logo">gamehub</h1>
+        <h1 class="logo">Gamehub</h1>
+        <img src="logo.png" class="logo1" alt="" >
 
         <nav>
             <ul>
@@ -46,35 +46,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <li><a href="#deals" class="super-button">Deals</a></li>
                     <li><a href="#deals" class="super-button">Shop Now</a></li>
                     <li><a href="#contact" class="super-button">Contact</a></li>
+                    <li><a href="role.html" class="super-button">Back</a></li>
+                    
                 
             </ul>
         </nav>
     </div>
 </header>
 
-<div class="container" style="margin-top:150px;">
-    <div class="card">
-        <h4>Client Login</h4>
+<div class="container" style="margin-top:180px;">
+    <div class="card" >
+        <h2 style="color:#00ff88; text-align:center;">Client Login</h2><br>
 
-        <?php if (!empty($error)): ?>
-            <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <?php if($error): ?>
+            <div style="color:#ff4444; background:rgba(255,0,0,0.15); padding:12px; border-radius:8px; text-align:center; margin-bottom:20px;">
+                <?= $error ?>
+            </div>
         <?php endif; ?>
 
-        <form method="post" >
-            <div class="input-row">
-                <input type="email"  placeholder="email"id="email" name="email" >
-            </div>
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:15px;"><br>
+            <input type="password" name="password" placeholder="Password" required style="width:100%; padding:12px;"><br><br>
 
-            <div class="input-row">
-                
-                <input type="password" placeholder="password" id="password" name="password" >
-            </div>
-
-            <button type="submit" class="shop-now-btn">Login</button>
+            <button type="submit" class="shop-now-btn" style="width:100%;">Login</button>
         </form>
+
+        <p style="text-align:center; margin-top:25px; color:#aaa;">
+            <a href="verif.php" style="color:#00ff88;">Forgot Password?</a><br><br>
+            No account? <a href="signup_client.php" style="color:#00ff88;">Sign up</a>
+        </p>
     </div>
 </div>
 
-<script src="java.js"></script>
 </body>
 </html>

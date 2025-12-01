@@ -1,41 +1,65 @@
 <?php
+session_start();
 require_once "../../controller/userController.php";
-$uc = new userController();
+
+$uc = new UserController();
 $users = $uc->listUsers();
+
+$fixedUsers = [];
+foreach ($users as $user) {
+    $user['verified']               = $user['verified'] ?? 0;
+    $user['verification_requested'] = $user['verification_requested'] ?? 0;
+    $fixedUsers[] = $user;
+}
+$users = $fixedUsers;
+if (isset($_POST['approve_verify'])) {
+    $id = (int)$_POST['approve_id'];
+    $sql = "UPDATE user SET verified = 1 WHERE id_user = :id";
+    $req = config::getConnexion()->prepare($sql);
+    $req->execute([':id' => $id]);
+    echo '<script>alert("User verified successfully!"); location.reload();</script>';
+}
+
+if (isset($_POST['delete_user'])) {
+    $id = (int)$_POST['delete_id'];
+    $uc->deleteUser($id);
+    echo '<script>alert("User deleted successfully!"); location.reload();</script>';
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Backoffice - Users</title>
     <link rel="stylesheet" href="../frontoffice/index.css">
+    <style>
+        .status-verified { color:#00ff88; font-weight:bold; }
+        .status-pending  { color:#ffdd00; font-weight:bold; }
+        .status-none     { color:#ff4444; font-weight:bold; }
+        .action-btn { margin: 4px; padding: 8px 14px; font-size: 0.9rem; }
+    </style>
 </head>
-
 <body>
 
 <header>
     <div class="container">
         <h1 class="logo">gamehub</h1>
-
         <nav>
             <ul>
-                <li><a href="#home" class="super-button">Home</a></li>
-                    <li><a href="#deals" class="super-button">Deals</a></li>
-                    <li><a href="#deals" class="super-button">Shop Now</a></li>
-                    <li><a href="#contact" class="super-button">Contact</a></li>
-                <li><a class="super-button" href="index.php">Dashboard</a></li>
+                <li><a href="index.php" class="super-button">Dashboard</a></li>
+                <li><a href="../frontoffice/index.php" class="super-button">View Site</a></li>
+                <li><a href="logout.php" class="super-button">Logout</a></li>
             </ul>
         </nav>
     </div>
 </header>
 
-<div class="container" style="margin-top: 150px;">
-
+<div class="container" style="margin-top: 120px;">
     <div class="form-card">
-        
-        <h2 style="color:#00ff88; margin-bottom:20px;">User List</h2>
+        <h2 style="color:#00ff88; text-align:center; margin-bottom:30px;">User Management</h2>
 
-        <table border="0" cellpadding="10" cellspacing="0" style="width:100%; color:white; text-align:center;">
+        <table style="width:100%; border-collapse:collapse; color:white;">
             <tr style="color:#00ff88; font-size:1.2rem;">
                 <th>ID</th>
                 <th>Name</th>
@@ -45,31 +69,56 @@ $users = $uc->listUsers();
                 <th>Tel</th>
                 <th>Gender</th>
                 <th>Role</th>
-                <th>Update</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
 
             <?php foreach($users as $u): ?>
-            <tr style="padding:20px;">
+            <tr style="border-bottom:1px solid #333; text-align:center;">
                 <td><?= $u['id_user'] ?></td>
-                <td><?= $u['name'] ?></td>
-                <td><?= $u['lastname'] ?></td>
-                <td><?= $u['email'] ?></td>
-                <td><?= $u['cin'] ?></td>
-                <td><?= $u['tel'] ?></td>
-                <td><?= $u['gender'] ?></td>
-                <td><?= $u['role'] ?></td>
+                <td><?= htmlspecialchars($u['name']) ?></td>
+                <td><?= htmlspecialchars($u['lastname']) ?></td>
+                <td><?= htmlspecialchars($u['email']) ?></td>
+                <td><?= htmlspecialchars($u['cin']) ?></td>
+                <td><?= htmlspecialchars($u['tel']) ?></td>
+                <td><?= ucfirst($u['gender']) ?></td>
+                <td><?= ucfirst($u['role']) ?></td>
                 <td>
-                    <a href="update_user.php?id=<?= $u['id_user'] ?>" class="super-button">Update</a>
+                    <?php if ($u['verified'] == 1): ?>
+                        <span class="status-verified">Verified</span>
+                    <?php elseif ($u['verification_requested'] == 1): ?>
+                        <span class="status-pending">Pending</span>
+                    <?php else: ?>
+                        <span class="status-none">Not Verified</span>
+                    <?php endif; ?>
+                </td>
+                <td style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                    <a href="update_user.php?id=<?= $u['id_user'] ?>" class="super-button action-btn">Update</a>
+
+                    <?php if ($u['verification_requested'] == 1 && $u['verified'] == 0): ?>
+                        <form method="POST" style="margin:0;">
+                            <input type="hidden" name="approve_id" value="<?= $u['id_user'] ?>">
+                            <button type="submit" name="approve_verify" class="action-btn"
+                                    style="background:#00ff88; color:black; border:none; border-radius:8px; font-weight:bold;">
+                                Approve
+                            </button>
+                        </form>
+                    <?php endif; ?>
+
+                    <form method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                        <input type="hidden" name="delete_id" value="<?= $u['id_user'] ?>">
+                        <button type="submit" name="delete_user" class="shop-now-btn">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>
-
         </table>
-        <ul>
-        <li><a class="super-button" href="add_user.php">Add User</a></li>
-                <li><a class="super-button" href="delete_user.php">Delete User</a></li></ul>
-    </div>
 
+        <br><br>
+        <a href="add_user.php" class="shop-now-btn">Add New User</a>
+    </div>
 </div>
 
 </body>

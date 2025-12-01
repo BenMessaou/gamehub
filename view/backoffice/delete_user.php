@@ -48,9 +48,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <br>
         <a href="index.php" class="super-button">Back</a>
+        <p id="errorBox" style="color:#ff4444; margin-top:10px; min-height:20px;"></p>
 
     </div>
 </div>
-
+<script src="script.js"></script>
+<script>
+    // Attach validation to the form without using HTML5 required
+    const form = document.querySelector("form");
+    if (form) {
+        form.onsubmit = function() {
+            return validateBackofficeForm();
+        };
+    }
+</script>
 </body>
 </html>
