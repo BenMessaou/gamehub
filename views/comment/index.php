@@ -52,11 +52,27 @@ $comments = $comments ?? [];
             transition: background-color 0.3s;
         }
         .dashboard-nav a:hover { background-color: rgba(0, 255, 136, 0.1); }
+        .alert { 
+            padding: 10px; 
+            margin: 15px 0; 
+            border-radius: 4px; 
+            font-weight: bold;
+        }
+        .success { 
+            background-color: #d4edda; 
+            color: #155724; 
+            border-color: #c3e6cb;
+        }
+        .error { 
+            background-color: #f8d7da; 
+            color: #721c24; 
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 <body>
     <header>
-        </header>
+    </header>
 
     <main class="container">
         <div class="dashboard-nav">
@@ -102,8 +118,9 @@ $comments = $comments ?? [];
                         <td><?php echo htmlspecialchars(substr($comment['content'], 0, 80)) . (strlen($comment['content']) > 80 ? '...' : ''); ?></td>
                         <td><?php echo date('d/m/Y H:i', strtotime($comment['created_at'])); ?></td>
                         <td>
-                            <form action="CommentController.php?action=delete" method="GET" style="display:inline-block;"
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                            <form action="CommentController.php" method="GET" style="display:inline-block;"
+                                     onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($comment['id']); ?>">
                                 <button type="submit" class="delete-btn">Supprimer</button>
                             </form>
