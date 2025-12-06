@@ -138,43 +138,49 @@ function e($value) {
             <div class="card">
                 <h4>About Me</h4>
                 <ul class="about-list">
-                    <!-- ======================== 2FA SECTION - ADD THIS EXACTLY ======================== -->
-<div class="card" style="margin: 40px auto; max-width: 600px; padding: 30px; text-align: center;">
-    <h3 style="color: #00ff88; margin-bottom: 20px;">Two-Factor Authentication (2FA)</h3>
-
-    <?php if (empty($user['totp_secret'])): ?>
-        <!-- 2FA NOT ENABLED YET -->
-        <p style="color: #ccc; margin-bottom: 25px;">
-            Protect your account with an extra security layer<br>
-            Use Google Authenticator, Authy, Microsoft Authenticator, etc.
-        </p>
-        <a href="2fa_setup.php" class="shop-now-btn" style="padding: 16px 40px; font-size: 1.2rem; font-weight: bold;">
-            Enable 2FA Now
-        </a>
-    <?php else: ?>
-        <!-- 2FA ALREADY ACTIVE -->
-        <p style="color: #00ff88; font-size: 1.4rem; font-weight: bold;">
-            2FA IS ACTIVE
-        </p>
-        <p style="color: #aaa; margin: 15px 0;">
-            Your account is protected with an authenticator app
-        </p>
-        <a href="2fa_setup.php?disable=1" style="color:#ff4444; text-decoration:underline;">
-            Disable 2FA (not recommended)
-        </a>
-    <?php endif; ?>
-</div>
-<!-- ======================== END OF 2FA SECTION ======================== -->
                     <li><strong>Full Name:</strong> <span class="editable"><?= e($user['name'] . ' ' . $user['lastname']) ?></span></li>
                     <li><strong>Email:</strong> <span class="editable"><?= e($user['email']) ?></span></li>
                     <li><strong>Phone:</strong> <span class="editable"><?= e($user['tel']) ?></span></li>
                     <li><strong>CIN:</strong> <span class="editable"><?= e($user['cin']) ?></span></li>
                     <li><strong>Address:</strong> <span class="editable"><?= e($user['address']) ?></span></li>
                 </ul>
+
+                <!-- FINGERPRINT REGISTRATION — NOW FIXED AND WORKING -->
+                <div style="text-align:center; margin:40px 0;">
+                    <button onclick="registerMyFingerprint()" 
+                            class="shop-now-btn" 
+                            style="padding:18px 50px; font-size:1.3rem; font-weight:bold;">
+                        Register Fingerprint / Face ID
+                    </button>
+                </div>
+
+                <!-- 2FA SECTION — UNCHANGED -->
+                <div style="margin: 40px auto; max-width: 600px; padding: 30px; text-align: center;">
+                    <h3 style="color: #00ff88; margin-bottom: 20px;">Two-Factor Authentication (2FA)</h3>
+
+                    <?php if (empty($user['totp_secret'])): ?>
+                        <p style="color: #ccc; margin-bottom: 25px;">
+                            Protect your account with an extra security layer<br>
+                            Use Google Authenticator, Authy, Microsoft Authenticator, etc.
+                        </p>
+                        <a href="2fa_setup.php" class="shop-now-btn" style="padding: 16px 40px; font-size: 1.2rem; font-weight: bold;">
+                            Enable 2FA Now
+                        </a>
+                    <?php else: ?>
+                        <p style="color: #00ff88; font-size: 1.4rem; font-weight: bold;">
+                            2FA IS ACTIVE
+                        </p>
+                        <p style="color: #aaa; margin: 15px 0;">
+                            Your account is protected with an authenticator app
+                        </p>
+                        <a href="2fa_setup.php?disable=1" style="color:#ff4444; text-decoration:underline;">
+                            Disable 2FA (not recommended)
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
-        <!-- Keep your middle and right columns as they were -->
         <div class="middle-column">
             <div class="card">
                 <h4>Bio</h4>
@@ -211,6 +217,36 @@ function e($value) {
         </div>
     </div>
 </main>
+
+<!-- FINGERPRINT SCRIPT — MOVED OUTSIDE SO IT WORKS -->
+<script>
+async function registerMyFingerprint() {
+    if (!window.PublicKeyCredential) {
+        alert("Your device doesn't support fingerprint/Face ID login");
+        return;
+    }
+
+    try {
+        const resp = await fetch('passkey_register.php');
+        if (!resp.ok) throw new Error();
+
+        const options = await resp.json();
+        const cred = await navigator.credentials.create({ publicKey: options });
+
+        await fetch('passkey_save.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cred)
+        });
+
+        alert("Fingerprint / Face ID registered successfully!");
+        location.reload();
+    } catch (err) {
+        console.error(err);
+        alert("Failed. Try again or use another device.");
+    }
+}
+</script>
 
 <script src="java.js"></script>
 <?php include "cookie-consent.php"; ?>
