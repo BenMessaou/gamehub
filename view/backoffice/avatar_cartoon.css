@@ -1,0 +1,892 @@
+/* ============================================
+   AVATAR CARTOON - Complete Character System
+   ============================================ */
+
+.avatar-cartoon {
+    position: relative;
+    display: inline-block;
+    width: 200px;
+    height: 300px;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    animation: avatarBounce 3s infinite ease-in-out;
+}
+
+/* Avatar bounce animation */
+@keyframes avatarBounce {
+    0%, 100% { 
+        transform: translateY(0px);
+    }
+    50% { 
+        transform: translateY(-3px);
+    }
+}
+
+/* Avatar wiggle animation */
+.avatar-cartoon.wiggle {
+    animation: avatarWiggle 4s infinite ease-in-out;
+}
+
+@keyframes avatarWiggle {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% { 
+        transform: translateY(-2px) rotate(1deg);
+    }
+    75% { 
+        transform: translateY(-2px) rotate(-1deg);
+    }
+}
+
+.avatar-cartoon-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* ============================================
+   HEAD - Cartoon Style
+   ============================================ */
+
+.avatar-head-cartoon {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 
+        0 5px 20px rgba(0, 0, 0, 0.15),
+        inset 0 -10px 30px rgba(0, 0, 0, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Skin tone variants */
+.avatar-head-cartoon.skin-light {
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+}
+
+.avatar-head-cartoon.skin-medium {
+    background: linear-gradient(135deg, #d4a574, #c68642);
+}
+
+.avatar-head-cartoon.skin-tan {
+    background: linear-gradient(135deg, #c68642, #a0724a);
+}
+
+.avatar-head-cartoon.skin-dark {
+    background: linear-gradient(135deg, #8d5524, #6b4423);
+}
+
+/* ============================================
+   HAIR - Cartoon Styles
+   ============================================ */
+
+.avatar-hair-cartoon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+    pointer-events: none;
+}
+
+/* Court arrondi */
+.hair-short-rounded {
+    width: 100px;
+    height: 45px;
+    background: #333;
+    border-radius: 50% 50% 30% 30%;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Long ondulé */
+.hair-long-wavy {
+    width: 110px;
+    height: 85px;
+    background: #333;
+    border-radius: 50% 50% 40% 40%;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 
+        0 0 0 2px rgba(0, 0, 0, 0.1),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.hair-long-wavy::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 10px;
+    width: 30px;
+    height: 40px;
+    background: inherit;
+    border-radius: 0 0 50% 50%;
+    transform: rotate(-10deg);
+}
+
+.hair-long-wavy::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    right: 10px;
+    width: 30px;
+    height: 40px;
+    background: inherit;
+    border-radius: 0 0 50% 50%;
+    transform: rotate(10deg);
+}
+
+/* Spiky (piques) */
+.hair-spiky {
+    width: 105px;
+    height: 55px;
+    background: #333;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    clip-path: polygon(
+        20% 0%, 30% 20%, 40% 0%, 50% 25%, 
+        60% 0%, 70% 20%, 80% 0%, 100% 15%, 
+        100% 100%, 0% 100%, 0% 15%
+    );
+}
+
+/* Afro */
+.hair-afro {
+    width: 125px;
+    height: 65px;
+    background: #333;
+    border-radius: 50%;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 
+        0 0 0 3px rgba(0, 0, 0, 0.1),
+        inset 0 -5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hair-afro::before,
+.hair-afro::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background: inherit;
+    border-radius: 50%;
+    top: 10px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.hair-afro::before {
+    left: 15px;
+}
+
+.hair-afro::after {
+    right: 15px;
+}
+
+/* Frange */
+.hair-bangs {
+    width: 95px;
+    height: 38px;
+    background: #333;
+    border-radius: 50% 50% 20% 20%;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    clip-path: polygon(
+        0% 0%, 15% 100%, 25% 0%, 35% 100%, 
+        45% 0%, 55% 100%, 65% 0%, 75% 100%, 
+        85% 0%, 100% 100%, 100% 0%
+    );
+}
+
+/* Mohawk (crête) */
+.hair-mohawk {
+    width: 22px;
+    height: 65px;
+    background: #333;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 11px 11px 0 0;
+    box-shadow: 
+        0 0 0 2px rgba(0, 0, 0, 0.2),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hair-mohawk::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 8px;
+    background: inherit;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Chignon / Bun */
+.hair-bun {
+    width: 50px;
+    height: 50px;
+    background: #333;
+    border-radius: 50%;
+    top: -22px;
+    right: 15px;
+    left: auto;
+    transform: none;
+    box-shadow: 
+        0 0 0 2px rgba(0, 0, 0, 0.1),
+        inset 0 -5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hair-bun::before {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 20px;
+    background: inherit;
+    border-radius: 0 0 50% 50%;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Queue de cheval */
+.hair-ponytail {
+    width: 90px;
+    height: 35px;
+    background: #333;
+    border-radius: 50% 50% 20% 20%;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hair-ponytail::after {
+    content: '';
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 50px;
+    background: inherit;
+    border-radius: 0 0 50% 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   FACE - Cartoon Expressions (SVG)
+   ============================================ */
+
+.avatar-head-cartoon {
+    position: relative;
+}
+
+.avatar-face-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    z-index: 11;
+    pointer-events: none;
+}
+
+/* Eye blink animation - SVG circles */
+.avatar-face-svg svg .eye-blink {
+    animation: eyeBlink 4s infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+@keyframes eyeBlink {
+    0%, 98%, 100% { 
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    99% { 
+        transform: scaleY(0.1);
+        opacity: 0.8;
+    }
+}
+
+.avatar-face-svg svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Eyes Styles */
+.eye-happy {
+    fill: #000;
+}
+
+.eye-happy::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+}
+
+.eye-surprised {
+    fill: #000;
+}
+
+.eye-wink {
+    fill: none;
+    stroke: #000;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.eye-star {
+    fill: #ffd700;
+}
+
+/* Mouth Styles */
+.mouth-smile {
+    fill: none;
+    stroke: #ff6b6b;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.mouth-laugh {
+    fill: #ff6b6b;
+}
+
+.mouth-surprised {
+    fill: #ff6b6b;
+}
+
+.mouth-neutral {
+    fill: none;
+    stroke: #666;
+    stroke-width: 2;
+}
+
+.mouth-sad {
+    fill: none;
+    stroke: #4a90e2;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+/* Eyebrows */
+.eyebrow-soft {
+    fill: #2c2c2c;
+}
+
+.eyebrow-angry {
+    fill: #2c2c2c;
+}
+
+.eyebrow-surprised {
+    fill: #2c2c2c;
+}
+
+/* Cheeks/Blush */
+.avatar-cheeks {
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    height: 20px;
+    z-index: 9;
+}
+
+.cheek {
+    position: absolute;
+    width: 20px;
+    height: 15px;
+    background: radial-gradient(circle, rgba(255, 179, 186, 0.6) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.cheek.left {
+    left: 15px;
+}
+
+.cheek.right {
+    right: 15px;
+}
+
+/* ============================================
+   TORSO - Rounded Cartoon Shape
+   ============================================ */
+
+.avatar-torso-cartoon {
+    position: relative;
+    width: 90px;
+    height: 100px;
+    background: linear-gradient(135deg, #4a90e2 0%, #3a78c8 50%, #2c5aa0 100%);
+    border-radius: 25px 25px 18px 18px;
+    margin-top: -15px;
+    z-index: 5;
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.25),
+        inset 0 -8px 15px rgba(0, 0, 0, 0.15),
+        inset 0 4px 10px rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    overflow: visible;
+    animation: torsoBreathe 3.5s infinite ease-in-out;
+}
+
+/* Torso breathing animation */
+@keyframes torsoBreathe {
+    0%, 100% { 
+        transform: translateY(0px) scaleY(1);
+    }
+    50% { 
+        transform: translateY(-2px) scaleY(1.02);
+    }
+}
+
+/* Col du torse */
+.avatar-torso-cartoon::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 20px;
+    background: linear-gradient(135deg, #4a90e2 0%, #3a78c8 100%);
+    border-radius: 25px 25px 0 0;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-bottom: none;
+    box-shadow: 
+        0 -2px 5px rgba(0, 0, 0, 0.15),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Séparation des manches */
+.avatar-torso-cartoon::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Torso shape variations */
+.avatar-torso-cartoon.shape-rounded {
+    border-radius: 20px 20px 15px 15px;
+}
+
+.avatar-torso-cartoon.shape-square {
+    border-radius: 10px;
+}
+
+.avatar-torso-cartoon.shape-oval {
+    border-radius: 50% 50% 30% 30%;
+}
+
+/* ============================================
+   ARMS - Cartoon Style
+   ============================================ */
+
+.avatar-arms {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 60px;
+    z-index: 6;
+    pointer-events: none;
+}
+
+/* Arm Position: Rest (at sides) */
+.arms-rest {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 5px;
+    width: 100%;
+    position: relative;
+    gap: 40px;
+}
+
+.arm {
+    width: 25px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.arms-rest .arm:first-child {
+    transform: rotate(-15deg);
+    margin-right: auto;
+}
+
+.arms-rest .arm:last-child {
+    transform: rotate(15deg);
+    margin-left: auto;
+}
+
+/* Sleeve */
+.arm-sleeve {
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: 29px;
+    height: 25px;
+    background: #4a90e2;
+    border-radius: 12px 12px 8px 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hand */
+.arm-hand {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Arm Position: Open (welcoming) */
+.arms-open {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 5px;
+}
+
+.arms-open .arm:first-child {
+    transform: rotate(-45deg) translateY(-10px);
+    margin-right: auto;
+}
+
+.arms-open .arm:last-child {
+    transform: rotate(45deg) translateY(-10px);
+    margin-left: auto;
+}
+
+/* Arm Position: Raised (celebration) */
+.arms-raised {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 5px;
+}
+
+.arms-raised .arm:first-child {
+    transform: rotate(-90deg) translateX(-15px) translateY(-5px);
+    margin-right: auto;
+}
+
+.arms-raised .arm:last-child {
+    transform: rotate(90deg) translateX(15px) translateY(-5px);
+    margin-left: auto;
+}
+
+/* ============================================
+   LEGS - Cartoon Style
+   ============================================ */
+
+.avatar-legs-cartoon {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    margin-top: -5px;
+    z-index: 3;
+}
+
+.leg {
+    width: 35px;
+    height: 80px;
+    background: #2c5aa0;
+    border-radius: 15px 15px 20px 20px;
+    position: relative;
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.2),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Foot */
+.leg-foot {
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 15px;
+    background: #1a1a1a;
+    border-radius: 20px 20px 5px 5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   ACCESSORIES
+   ============================================ */
+
+/* Glasses */
+.avatar-glasses-cartoon {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    width: 90px;
+    height: 30px;
+}
+
+.glasses-frame {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.glasses-lens-cartoon {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #2c2c2c;
+    border-radius: 50%;
+    background: rgba(200, 200, 255, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.glasses-bridge-cartoon {
+    width: 8px;
+    height: 3px;
+    background: #2c2c2c;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+
+/* Hat */
+.avatar-hat-cartoon {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 13;
+    width: 100px;
+    height: 40px;
+    background: #2c2c2c;
+    border-radius: 50px 50px 0 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-hat-cartoon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 8px;
+    background: #2c2c2c;
+    border-radius: 4px;
+}
+
+/* Gaming Headset */
+.avatar-headset-cartoon {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    width: 140px;
+    height: 50px;
+}
+
+.headset-band {
+    width: 140px;
+    height: 8px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    position: absolute;
+    top: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.headset-cup-cartoon {
+    width: 45px;
+    height: 45px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.headset-cup-cartoon.left {
+    left: 0;
+}
+
+.headset-cup-cartoon.right {
+    right: 0;
+}
+
+.headset-cup-cartoon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #4a90e2 0%, #2c5aa0 100%);
+    border-radius: 50%;
+}
+
+/* ============================================
+   ANIMATIONS - Idle Cartoon
+   ============================================ */
+
+.avatar-cartoon.idle-breathe {
+    animation: avatarBreathe 3s ease-in-out infinite;
+}
+
+.avatar-cartoon.idle-bounce {
+    animation: avatarBounce 2s ease-in-out infinite;
+}
+
+.avatar-cartoon.idle-float {
+    animation: avatarFloat 4s ease-in-out infinite;
+}
+
+@keyframes avatarBreathe {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    50% {
+        transform: scale(1.02) translateY(-3px);
+    }
+}
+
+@keyframes avatarBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes avatarFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-5px) rotate(1deg);
+    }
+    75% {
+        transform: translateY(-5px) rotate(-1deg);
+    }
+}
+
+/* Head animation */
+.avatar-head-cartoon.idle {
+    animation: headNod 4s ease-in-out infinite;
+}
+
+@keyframes headNod {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-2deg);
+    }
+    75% {
+        transform: rotate(2deg);
+    }
+}
+
+/* Arms animation */
+.avatar-arms.idle {
+    animation: armsSway 5s ease-in-out infinite;
+}
+
+@keyframes armsSway {
+    0%, 100% {
+        transform: translateX(-50%) rotate(0deg);
+    }
+    50% {
+        transform: translateX(-50%) rotate(3deg);
+    }
+}
+
+/* ============================================
+   SHADOWS & EFFECTS
+   ============================================ */
+
+.avatar-cartoon.shadow-soft {
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+.avatar-cartoon.shadow-medium {
+    filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+}
+
+.avatar-cartoon.shadow-strong {
+    filter: drop-shadow(0 10px 35px rgba(0, 0, 0, 0.4));
+}
+
+.avatar-cartoon.glow {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.6));
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .avatar-cartoon {
+        width: 150px;
+        height: 225px;
+    }
+    
+    .avatar-head-cartoon {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .avatar-torso-cartoon {
+        width: 70px;
+        height: 80px;
+    }
+    
+    .leg {
+        width: 28px;
+        height: 60px;
+    }
+}
+

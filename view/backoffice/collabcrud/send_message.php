@@ -7,6 +7,7 @@ $defaultUserId = 1; // ID par défaut pour le développeur
 
 require_once __DIR__ . "/../../../controller/controllercollab/CollabMessageController.php";
 require_once __DIR__ . "/../../../controller/controllercollab/CollabMemberController.php";
+require_once __DIR__ . "/../../../controller/controllercollab/MessageModerationController.php";
 require_once __DIR__ . "/../../../model/collab/CollabMessage.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,7 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
 
     if ($collab_id <= 0 || empty($message)) {
-        header("Location: view_collab.php?id=" . $collab_id . "&error=message_invalid");
+        $redirectTo = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : 'view_collab';
+        $redirectUrl = ($redirectTo === 'room_collab') ? 'room_collab.php' : 'view_collab.php';
+        header("Location: " . $redirectUrl . "?id=" . $collab_id . "&error=message_invalid");
         exit;
     }
 
@@ -29,11 +32,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // ============================================================
+    // MODÉRATION DU MESSAGE - 2 NIVEAUX
+    // ============================================================
+    $moderationController = new MessageModerationController();
+    $moderationResult = $moderationController->moderateMessage($message);
+    
+    // Enregistrer le log de modération
+    $moderationController->logModeration($message, $moderationResult, $user_id, $collab_id);
+    
+    // Vérifier le résultat de la modération
+    if ($moderationResult['blocked']) {
+        // Message bloqué - rediriger avec erreur
+        $redirectTo = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : 'view_collab';
+        $redirectUrl = ($redirectTo === 'room_collab') ? 'room_collab.php' : 'view_collab.php';
+        
+        // Encoder la raison pour l'URL
+        $reason = urlencode($moderationResult['reason']);
+        header("Location: " . $redirectUrl . "?id=" . $collab_id . "&error=message_blocked&reason=" . $reason . "&level=" . $moderationResult['level']);
+        exit;
+    }
+    
+    // Message approuvé - l'envoyer
     $msg = new CollabMessage(null, $collab_id, $user_id, $message, null);
     $controller = new CollabMessageController();
     $controller->send($msg);
 
-    header("Location: view_collab.php?id=" . $collab_id . "&message_sent=1");
+    // Vérifier d'où vient la requête (room_collab ou view_collab)
+    $redirectTo = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : 'view_collab';
+    
+    if ($redirectTo === 'room_collab') {
+        header("Location: room_collab.php?id=" . $collab_id . "&message_sent=1");
+    } else {
+        header("Location: view_collab.php?id=" . $collab_id . "&message_sent=1");
+    }
     exit;
 }
 ?>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Cartoon - Demo</title>
+    <link rel="stylesheet" href="avatar_cartoon.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .demo-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .demo-section h2 {
+            color: #ffd700;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .avatar-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        
+        .avatar-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .avatar-item h3 {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #ffd700;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #ffd700;
+        }
+        
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .control-group input[type="color"] {
+            height: 50px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #ff6b6b, #ffd700);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+            margin-top: 1rem;
+        }
+        
+        .code-block pre {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🎨 Avatar Cartoon System</h1>
+            <p>Personnage cartoon complet et expressif</p>
+        </div>
+
+        <!-- Demo 1: Basic Avatar -->
+        <div class="demo-section">
+            <h2>1. Avatar de Base</h2>
+            <div class="avatar-showcase">
+                <div class="avatar-item">
+                    <div id="avatar-basic-cartoon"></div>
+                    <h3>Avatar Par Défaut</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 2: Expressions -->
+        <div class="demo-section">
+            <h2>2. Expressions Faciales</h2>
+            <div class="avatar-showcase" id="expressions-cartoon"></div>
+        </div>
+
+        <!-- Demo 3: Arm Positions -->
+        <div class="demo-section">
+            <h2>3. Positions des Bras</h2>
+            <div class="avatar-showcase" id="arms-positions"></div>
+        </div>
+
+        <!-- Demo 4: Customization -->
+        <div class="demo-section">
+            <h2>4. Personnalisation Interactive</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Expression</label>
+                    <select id="expr-select" onchange="updateCustomCartoon()">
+                        <option value="happy">Joyeux 😊</option>
+                        <option value="laugh">Rire 😂</option>
+                        <option value="surprised">Surpris 😲</option>
+                        <option value="sad">Triste 😢</option>
+                        <option value="neutral">Neutre 😐</option>
+                        <option value="cool">Cool 😎</option>
+                        <option value="wink">Clin d'œil 😉</option>
+                        <option value="star">Étoiles ⭐</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Couleur de Peau</label>
+                    <select id="skin-select" onchange="updateCustomCartoon()">
+                        <option value="light">Clair</option>
+                        <option value="medium">Moyen</option>
+                        <option value="tan">Bronzé</option>
+                        <option value="dark">Foncé</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Couleur Torse</label>
+                    <input type="color" id="torso-color" value="#4a90e2" onchange="updateCustomCartoon()">
+                </div>
+                <div class="control-group">
+                    <label>Couleur Pantalon</label>
+                    <input type="color" id="legs-color" value="#2c5aa0" onchange="updateCustomCartoon()">
+                </div>
+                <div class="control-group">
+                    <label>Position des Bras</label>
+                    <select id="arms-select" onchange="updateCustomCartoon()">
+                        <option value="rest">Repos</option>
+                        <option value="open">Ouverts</option>
+                        <option value="raised">Levés</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Animation</label>
+                    <select id="anim-select" onchange="updateCustomCartoon()">
+                        <option value="breathe">Respiration</option>
+                        <option value="bounce">Rebond</option>
+                        <option value="float">Flottement</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="glasses-check" onchange="updateCustomCartoon()">
+                    <span>Lunettes</span>
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 0.5rem; margin-left: 1rem; cursor: pointer;">
+                    <input type="checkbox" id="hat-check" onchange="updateCustomCartoon()">
+                    <span>Chapeau</span>
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 0.5rem; margin-left: 1rem; cursor: pointer;">
+                    <input type="checkbox" id="headset-check" onchange="updateCustomCartoon()">
+                    <span>Casque Gamer</span>
+                </label>
+            </div>
+            <div class="avatar-showcase">
+                <div class="avatar-item">
+                    <div id="custom-cartoon"></div>
+                    <h3>Votre Avatar</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 5: Code Example -->
+        <div class="demo-section">
+            <h2>5. Exemple de Code</h2>
+            <div class="code-block">
+<pre>// Créer un avatar cartoon
+const avatar = new CartoonAvatarRenderer('container-id', {
+    base: { skin_tone: 'light' },
+    face: { expression: 'happy' },
+    body: {
+        torso: { color: '#4a90e2' },
+        legs: { color: '#2c5aa0' },
+        arms: { position: 'rest' }
+    },
+    accessories: {
+        face: ['glasses'],
+        head: ['hat']
+    },
+    animation: { idle: true, type: 'breathe' }
+});
+
+// Changer l'expression
+avatar.updateExpression('surprised');
+
+// Changer les couleurs
+avatar.updateColors('#ff6b6b', '#1a1a1a');
+
+// Changer position des bras
+avatar.updateArmsPosition('raised');</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="avatar_cartoon_faces.js"></script>
+    <script src="avatar_cartoon_renderer.js"></script>
+    <script>
+        // Initialize basic avatar
+        const basicAvatar = new CartoonAvatarRenderer('avatar-basic-cartoon', {});
+
+        // Show expressions
+        const expressions = ['happy', 'laugh', 'surprised', 'sad', 'neutral', 'cool', 'wink', 'star'];
+        expressions.forEach((expr, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'avatar-item';
+            wrapper.id = `expr-cartoon-${index}`;
+            document.getElementById('expressions-cartoon').appendChild(wrapper);
+            
+            const config = {
+                face: { expression: expr }
+            };
+            new CartoonAvatarRenderer(`expr-cartoon-${index}`, config);
+        });
+
+        // Show arm positions
+        const armPositions = ['rest', 'open', 'raised'];
+        armPositions.forEach((pos, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'avatar-item';
+            wrapper.id = `arms-${index}`;
+            document.getElementById('arms-positions').appendChild(wrapper);
+            
+            const config = {
+                body: { arms: { position: pos } }
+            };
+            new CartoonAvatarRenderer(`arms-${index}`, config);
+        });
+
+        // Custom avatar
+        let customAvatarRenderer = new CartoonAvatarRenderer('custom-cartoon', {});
+
+        function updateCustomCartoon() {
+            const config = {
+                face: {
+                    expression: document.getElementById('expr-select').value
+                },
+                base: {
+                    skin_tone: document.getElementById('skin-select').value
+                },
+                body: {
+                    torso: {
+                        color: document.getElementById('torso-color').value
+                    },
+                    legs: {
+                        color: document.getElementById('legs-color').value
+                    },
+                    arms: {
+                        position: document.getElementById('arms-select').value
+                    }
+                },
+                animation: {
+                    idle: true,
+                    type: document.getElementById('anim-select').value
+                },
+                accessories: {
+                    head: [],
+                    face: [],
+                    body: []
+                }
+            };
+
+            // Add accessories
+            if (document.getElementById('glasses-check').checked) {
+                config.accessories.face.push('glasses');
+            }
+            if (document.getElementById('hat-check').checked) {
+                config.accessories.head.push('hat');
+            }
+            if (document.getElementById('headset-check').checked) {
+                config.accessories.head.push('headset');
+            }
+
+            customAvatarRenderer.updateConfig(config);
+        }
+    </script>
+</body>
+</html>
+

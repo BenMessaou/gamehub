@@ -44,6 +44,11 @@ if (isset($_GET['error'])) {
         case 'message_update_invalid':
             $errorMessage = 'Error: Unable to update message.';
             break;
+        case 'message_blocked':
+            $reason = isset($_GET['reason']) ? urldecode($_GET['reason']) : 'Message bloqué par la modération';
+            $level = isset($_GET['level']) ? intval($_GET['level']) : 0;
+            $errorMessage = '🚫 Message bloqué (Niveau ' . $level . ') : ' . htmlspecialchars($reason);
+            break;
         default:
             $errorMessage = 'An error occurred.';
     }
@@ -669,7 +674,9 @@ if (isset($_GET['status_error'])) {
             ➕ Add a member
         </a>
     <?php elseif (count($members) >= $collab['max_membres']): ?>
-        <span style="color: #ff335c; font-size: 0.9rem;">✗ Project full</span>
+        <a href="room_collab.php?id=<?php echo $collab_id; ?>" style="padding: 8px 16px; background: rgba(0, 132, 255, 0.2); color: #0084FF; text-decoration: none; border-radius: 8px; border: 2px solid rgba(0, 132, 255, 0.5); font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
+            🏠 Room Collab
+        </a>
     <?php endif; ?>
 </div>
 <ul class="members-list">
@@ -865,8 +872,15 @@ foreach ($members as $m) {
 <div id="chatBox" class="chat-box">
     <!-- HEADER DU CHAT -->
     <div class="chat-header">
-        <span><b>💬 Project Chat</b></span>
-        <span onclick="toggleChat()" class="chat-close">×</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span><b>💬 Project Chat</b></span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="moderation_dashboard.php?collab_id=<?php echo $collab_id; ?>" style="padding: 5px 10px; background: rgba(255, 51, 92, 0.2); color: #ff335c; text-decoration: none; border-radius: 5px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(255, 51, 92, 0.5);" title="Dashboard Modération">
+                    🛡️
+                </a>
+                <span onclick="toggleChat()" class="chat-close">×</span>
+            </div>
+        </div>
     </div>
     
     <!-- LISTE DES MESSAGES -->
@@ -1209,5 +1223,6 @@ function deleteMessage(messageId, collabId) {
 </script>
 <?php endif; ?>
 
+    <script src="emoji_picker.js"></script>
 </body>
 </html>

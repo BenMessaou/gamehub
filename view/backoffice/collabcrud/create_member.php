@@ -47,8 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Vérifier si le projet est plein
         $currentMembers = $memberController->getMembers($collab_id);
         if (count($currentMembers) >= $collab['max_membres']) {
-            $message = 'Ce projet a atteint le nombre maximum de membres.';
-            $messageType = 'error';
+            // Le collab est complet, rediriger vers la room
+            header("Location: room_collab.php?id=" . $collab_id);
+            exit;
         } else {
             // Vérifier si l'utilisateur est déjà membre
             if ($memberController->isMember($collab_id, $user_id)) {
@@ -237,6 +238,11 @@ $remainingSlots = $collab['max_membres'] - count($currentMembers);
                 <?php if ($remainingSlots <= 0): ?>
                     <div class="message error">
                         ❌ Ce projet a atteint le nombre maximum de membres. Vous ne pouvez pas ajouter de nouveaux membres.
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <a href="room_collab.php?id=<?php echo $collab_id; ?>" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #00ff88, #00ffea); color: #000; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);">
+                            🏠 Accéder à la Room Collab
+                        </a>
                     </div>
                 <?php else: ?>
                     <form id="createMemberForm" method="POST">

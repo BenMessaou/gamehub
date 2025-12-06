@@ -1,0 +1,66 @@
+{
+  "avatar": {
+    "version": "3.0",
+    "type": "cartoon",
+    "base": {
+      "skin_tone": "light",
+      "skin_color": "#ffdbac"
+    },
+    "face": {
+      "expression": "happy",
+      "eyes": {
+        "style": "happy",
+        "color": "#000000",
+        "size": "medium"
+      },
+      "mouth": {
+        "style": "smile",
+        "color": "#ff6b6b"
+      },
+      "eyebrows": {
+        "style": "soft",
+        "color": "#2c2c2c"
+      },
+      "cheeks": true,
+      "blush_color": "#ffb3ba"
+    },
+    "body": {
+      "torso": {
+        "color": "#4a90e2",
+        "shape": "rounded",
+        "width": 90,
+        "height": 100
+      },
+      "arms": {
+        "position": "rest",
+        "left_color": "#ffdbac",
+        "right_color": "#ffdbac",
+        "sleeve_color": "#4a90e2"
+      },
+      "legs": {
+        "color": "#2c5aa0",
+        "width": 35,
+        "height": 80,
+        "spacing": 20
+      }
+    },
+    "accessories": {
+      "head": [],
+      "face": [],
+      "body": []
+    },
+    "animation": {
+      "idle": true,
+      "type": "breathe",
+      "speed": "normal"
+    },
+    "style": {
+      "shadow": true,
+      "glow": false,
+      "outline": true,
+      "outline_color": "#ffffff",
+      "outline_width": 2
+    }
+  }
+}
+

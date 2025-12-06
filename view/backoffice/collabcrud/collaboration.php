@@ -175,46 +175,14 @@ foreach ($myCollabs as &$collab) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaborations - GameHub</title>
+    <title>Collaborations - GameHub Admin</title>
+    <!-- Styles du template admin -->
+    <link rel="stylesheet" href="admin_style.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: #e8dfff;
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(0, 255, 150, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 80%, rgba(150, 0, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-            animation: rgbShift 10s ease-in-out infinite alternate;
-        }
-
-        @keyframes rgbShift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         .header {
@@ -225,15 +193,13 @@ foreach ($myCollabs as &$collab) {
 
         .header h1 {
             font-size: 3rem;
-            background: linear-gradient(90deg, #ff00c7, #00ffea);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #00ff88;
             margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255, 0, 199, 0.5);
+            text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
         }
 
         .header p {
-            color: #b8a8d9;
+            color: #e0fff2;
             font-size: 1.1rem;
         }
 
@@ -253,8 +219,8 @@ foreach ($myCollabs as &$collab) {
             justify-content: center;
             gap: 12px;
             padding: 14px 28px;
-            background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, #021015, #041f24);
+            border: 2px solid rgba(0, 255, 136, 0.6);
             border-radius: 100px;
             color: #fff;
             font-size: 16px;
@@ -263,7 +229,7 @@ foreach ($myCollabs as &$collab) {
             cursor: pointer;
             overflow: hidden;
             transition: all 0.4s ease-in-out;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
             backdrop-filter: blur(8px);
             z-index: 1;
             text-decoration: none;
@@ -277,35 +243,36 @@ foreach ($myCollabs as &$collab) {
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+            background: conic-gradient(from 0deg, #00ff88, #00ffff, #00ff88);
             animation: rotate 4s linear infinite;
             z-index: -2;
+            opacity: 0.6;
         }
 
         .tab-button::after {
             content: "";
             position: absolute;
             inset: 2px;
-            background: #0a0a0a;
+            background: #020c0f;
             border-radius: inherit;
             z-index: -1;
         }
 
         .tab-button:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
-            color: #90EE90;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+            color: #90ffb0;
         }
 
         .tab-button.active {
-            background: linear-gradient(145deg, rgba(255, 0, 199, 0.3), rgba(0, 255, 234, 0.3));
-            border-color: rgba(255, 0, 199, 0.8);
-            box-shadow: 0 0 30px rgba(255, 0, 199, 0.6), 0 0 40px rgba(0, 255, 234, 0.4);
+            background: linear-gradient(145deg, rgba(0, 255, 136, 0.25), rgba(0, 255, 255, 0.25));
+            border-color: rgba(0, 255, 136, 0.9);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 255, 0.5);
             color: #fff;
         }
 
         .tab-button.active::after {
-            background: rgba(255, 0, 199, 0.1);
+            background: rgba(0, 255, 136, 0.08);
         }
 
         @keyframes rotate {
@@ -315,23 +282,23 @@ foreach ($myCollabs as &$collab) {
 
         /* Special style for Statistics button - always has gradient */
         #statisticsBtn {
-            background: linear-gradient(135deg, rgba(255, 0, 199, 0.2), rgba(0, 255, 234, 0.2));
-            border-color: rgba(255, 0, 199, 0.5);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 255, 255, 0.25));
+            border-color: rgba(0, 255, 136, 0.7);
         }
 
         #statisticsBtn::after {
-            background: rgba(255, 0, 199, 0.05);
+            background: rgba(0, 255, 136, 0.08);
         }
 
         #statisticsBtn.active,
         #statisticsBtn:hover {
-            background: linear-gradient(135deg, rgba(255, 0, 199, 0.4), rgba(0, 255, 234, 0.4));
-            border-color: rgba(255, 0, 199, 0.8);
-            box-shadow: 0 0 40px rgba(255, 0, 199, 0.5), 0 0 40px rgba(0, 255, 234, 0.3);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.5), rgba(0, 255, 255, 0.5));
+            border-color: rgba(0, 255, 136, 1);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.7), 0 0 40px rgba(0, 255, 255, 0.5);
         }
 
         #statisticsBtn.active::after {
-            background: rgba(255, 0, 199, 0.15);
+            background: rgba(0, 255, 136, 0.15);
         }
 
         .tab-content {
@@ -349,13 +316,13 @@ foreach ($myCollabs as &$collab) {
         }
 
         .create-form {
-            background: rgba(15, 5, 35, 0.95);
+            background: rgba(0, 0, 0, 0.85);
             padding: 40px;
             border-radius: 20px;
-            border: 2px solid rgba(255, 0, 199, 0.3);
+            border: 2px solid rgba(0, 255, 136, 0.4);
             max-width: 700px;
             margin: 0 auto;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
         }
 
         .form-group {
@@ -365,7 +332,7 @@ foreach ($myCollabs as &$collab) {
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #00ffea;
+            color: #00ff88;
             font-weight: 600;
         }
 
@@ -373,10 +340,10 @@ foreach ($myCollabs as &$collab) {
         .form-group textarea {
             width: 100%;
             padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 0, 199, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.5);
             border-radius: 10px;
-            color: #e8dfff;
+            color: #e0fff2;
             font-size: 1rem;
             transition: all 0.3s ease;
         }
@@ -384,8 +351,8 @@ foreach ($myCollabs as &$collab) {
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #ff00c7;
-            box-shadow: 0 0 15px rgba(255, 0, 199, 0.3);
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
         }
 
         .form-group textarea {
@@ -395,7 +362,7 @@ foreach ($myCollabs as &$collab) {
 
         .btn {
             padding: 15px 40px;
-            background: linear-gradient(135deg, #ff00c7, #00ffea);
+            background: linear-gradient(135deg, #00ff88, #00ffff);
             border: none;
             border-radius: 25px;
             color: white;
@@ -405,17 +372,17 @@ foreach ($myCollabs as &$collab) {
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 5px 20px rgba(255, 0, 199, 0.4);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.6);
         }
 
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(255, 0, 199, 0.6);
+            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.9);
         }
 
         .btn-secondary {
-            background: rgba(255, 0, 199, 0.2);
-            border: 2px solid rgba(255, 0, 199, 0.5);
+            background: rgba(0, 255, 136, 0.15);
+            border: 2px solid rgba(0, 255, 136, 0.7);
         }
 
         .collabs-grid {
@@ -433,34 +400,34 @@ foreach ($myCollabs as &$collab) {
         .collabs-list-table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(15, 5, 35, 0.95);
+            background: rgba(0, 0, 0, 0.85);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
         }
 
         .collabs-list-table thead {
-            background: linear-gradient(135deg, rgba(255, 0, 199, 0.3), rgba(0, 255, 234, 0.3));
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.35), rgba(0, 255, 255, 0.35));
         }
 
         .collabs-list-table th {
             padding: 18px 20px;
             text-align: left;
-            color: #fff;
+            color: #00ff88;
             font-weight: 700;
             font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 2px solid rgba(255, 0, 199, 0.5);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.7);
         }
 
         .collabs-list-table tbody tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
         }
 
         .collabs-list-table tbody tr:hover {
-            background: rgba(255, 0, 199, 0.1);
+            background: rgba(0, 255, 136, 0.1);
             transform: scale(1.01);
         }
 
@@ -470,13 +437,13 @@ foreach ($myCollabs as &$collab) {
 
         .collabs-list-table td {
             padding: 15px 20px;
-            color: #ddd;
+            color: #e0fff2;
             font-size: 1rem;
         }
 
         .collabs-list-table .collab-name {
             font-weight: 600;
-            color: #00ffea;
+            color: #00ff88;
             font-size: 1.1rem;
         }
 
@@ -486,7 +453,7 @@ foreach ($myCollabs as &$collab) {
         }
 
         .collabs-list-table .creation-date {
-            color: #aaa;
+            color: #9ad0b5;
             font-size: 0.95rem;
         }
 
@@ -495,12 +462,12 @@ foreach ($myCollabs as &$collab) {
         }
 
         .collab-card {
-            background: rgba(15, 5, 35, 0.95);
+            background: rgba(0, 0, 0, 0.85);
             border-radius: 20px;
             padding: 25px;
-            border: 2px solid rgba(255, 0, 199, 0.3);
+            border: 2px solid rgba(0, 255, 136, 0.4);
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
         }
@@ -512,13 +479,13 @@ foreach ($myCollabs as &$collab) {
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #ff00c7, #00ffea);
+            background: linear-gradient(90deg, #00ff88, #00ffff);
         }
 
         .collab-card:hover {
             transform: translateY(-5px);
-            border-color: #ff00c7;
-            box-shadow: 0 12px 35px rgba(255, 0, 199, 0.5);
+            border-color: #00ff88;
+            box-shadow: 0 12px 35px rgba(0, 255, 136, 0.7);
         }
 
         .collab-card img {
@@ -527,17 +494,17 @@ foreach ($myCollabs as &$collab) {
             object-fit: cover;
             border-radius: 15px;
             margin-bottom: 15px;
-            border: 2px solid rgba(255, 0, 199, 0.2);
+            border: 2px solid rgba(0, 255, 136, 0.35);
         }
 
         .collab-card h3 {
-            color: #ff00c7;
+            color: #00ff88;
             margin-bottom: 10px;
             font-size: 1.5rem;
         }
 
         .collab-card .description {
-            color: #b8a8d9;
+            color: #e0fff2;
             margin-bottom: 15px;
             line-height: 1.6;
             display: -webkit-box;
@@ -581,7 +548,7 @@ foreach ($myCollabs as &$collab) {
         }
 
         .members-info {
-            color: #00ffea;
+            color: #00ff88;
             font-size: 0.95rem;
         }
 
@@ -700,7 +667,34 @@ foreach ($myCollabs as &$collab) {
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Header du template admin -->
+    <header>
+        <div class="container">
+            <h1 class="logo">GameHub Admin</h1>
+            <nav>
+                <ul>
+                    <li><a href="/gamehubprjt/view/backoffice/dashboard.php" class="super-button">Dashboard</a></li>
+                    <li><a href="/gamehubprjt/view/backoffice/collabcrud/collaboration.php" class="super-button">Collaborations</a></li>
+                </ul>
+            </nav>
+            <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
+        </div>
+    </header>
+
+    <!-- Sidebar du template admin -->
+    <aside id="sidebar" class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="/gamehubprjt/view/backoffice/dashboard.php">Dashboard</a></li>
+                <li><a href="/gamehubprjt/view/backoffice/collabcrud/collaboration.php">Collaborations</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal dans le layout admin -->
+    <main id="main-content" class="main-content">
+        <section id="collaborations" class="dashboard">
+            <div class="container">
         <div class="header">
             <h1> Collaborations</h1>
             <p>Create or join collaborative projects</p>
@@ -876,7 +870,12 @@ foreach ($myCollabs as &$collab) {
                 </div>
             <?php endif; ?>
         </div>
-    </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Script du template admin -->
+    <script src="admin_script.js"></script>
 
     <script>
         function switchTab(tabName) {

@@ -39,12 +39,6 @@ foreach ($members as $m) {
     }
 }
 
-// Vérifier si le groupe est plein
-if (count($members) >= $collab['max_membres']) {
-    header("Location: ../../frontoffice/collaborations.php?error=full");
-    exit;
-}
-
 // Ajouter l'utilisateur comme membre
 $newMember = new CollabMember(
     null,
@@ -54,6 +48,14 @@ $newMember = new CollabMember(
 );
 
 $memberController->add($newMember);
+
+// Vérifier si le groupe est maintenant plein après l'ajout
+$updatedMembers = $memberController->getMembers($collab_id);
+if (count($updatedMembers) >= $collab['max_membres']) {
+    // Le collab est maintenant complet, rediriger vers la room
+    header("Location: room_collab.php?id=" . $collab_id);
+    exit;
+}
 
 // Redirection vers la page des collaborations avec message de succès
 header("Location: ../../frontoffice/collaborations.php?joined=1&collab_id=" . $collab_id);

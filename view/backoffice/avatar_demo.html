@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Enhanced - Demo</title>
+    <link rel="stylesheet" href="avatar_enhanced.css">
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .demo-header h1 {
+            color: #00ff88;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .demo-section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(0, 255, 136, 0.3);
+        }
+        .demo-section h2 {
+            color: #00ffea;
+            margin-bottom: 1.5rem;
+        }
+        .avatar-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        .avatar-item {
+            text-align: center;
+        }
+        .avatar-item h3 {
+            color: #00ff88;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .control-group {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        .control-group label {
+            display: block;
+            color: #00ffea;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #00ff88, #00ffea);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🎨 Avatar Enhanced System</h1>
+            <p>Système d'avatar expressif et personnalisable</p>
+        </div>
+
+        <!-- Demo 1: Basic Avatar -->
+        <div class="demo-section">
+            <h2>1. Avatar de Base</h2>
+            <div class="avatar-showcase">
+                <div class="avatar-item">
+                    <div id="avatar-basic"></div>
+                    <h3>Avatar Par Défaut</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 2: Random Avatars -->
+        <div class="demo-section">
+            <h2>2. Avatars Aléatoires</h2>
+            <button class="btn" onclick="generateRandomAvatars()">Générer 4 Avatars Aléatoires</button>
+            <div class="avatar-showcase" id="random-avatars"></div>
+        </div>
+
+        <!-- Demo 3: Expressions -->
+        <div class="demo-section">
+            <h2>3. Expressions Faciales</h2>
+            <div class="avatar-showcase" id="expressions-showcase"></div>
+        </div>
+
+        <!-- Demo 4: Level Tiers -->
+        <div class="demo-section">
+            <h2>4. Auras par Niveau</h2>
+            <div class="avatar-showcase" id="tiers-showcase"></div>
+        </div>
+
+        <!-- Demo 5: Customization -->
+        <div class="demo-section">
+            <h2>5. Personnalisation Interactive</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Expression</label>
+                    <select id="expr-select" onchange="updateCustomAvatar()">
+                        <option value="happy">Joyeux</option>
+                        <option value="neutral">Neutre</option>
+                        <option value="sad">Triste</option>
+                        <option value="surprised">Surpris</option>
+                        <option value="cool">Cool</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Style de Cheveux</label>
+                    <select id="hair-style-select" onchange="updateCustomAvatar()">
+                        <option value="short">Court</option>
+                        <option value="long">Long</option>
+                        <option value="spiky">Épicé</option>
+                        <option value="curly">Frisé</option>
+                        <option value="ponytail">Queue de cheval</option>
+                        <option value="bald">Chauve</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Couleur Cheveux</label>
+                    <select id="hair-color-select" onchange="updateCustomAvatar()">
+                        <option value="black">Noir</option>
+                        <option value="brown">Brun</option>
+                        <option value="blonde">Blond</option>
+                        <option value="red">Roux</option>
+                        <option value="blue">Bleu</option>
+                        <option value="green">Vert</option>
+                        <option value="purple">Violet</option>
+                        <option value="pink">Rose</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Niveau</label>
+                    <input type="number" id="level-input" value="5" min="1" max="25" onchange="updateCustomAvatar()">
+                </div>
+            </div>
+            <div class="avatar-showcase">
+                <div class="avatar-item">
+                    <div id="custom-avatar"></div>
+                    <h3>Votre Avatar</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 6: Code Example -->
+        <div class="demo-section">
+            <h2>6. Exemple de Code</h2>
+            <div class="code-block">
+<pre>// Créer un avatar
+const avatar = new AvatarRenderer('avatar-container', {
+    base: { skin_tone: 'light' },
+    face: { expression: 'happy' },
+    hair: { style: 'short', color: 'brown' },
+    body: {
+        torso: { color: '#4a90e2' },
+        legs: { color: '#2c5aa0' }
+    },
+    level: { current_level: 5, tier: 'silver' },
+    badge: { enabled: true, type: 'achievement' }
+});
+
+// Générer un avatar aléatoire
+const random = randomAvatar();
+
+// Générer depuis un selfie
+const fromSelfie = await generateAvatarFromSelfie('selfie.jpg');</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="avatar_enhanced.js"></script>
+    <script src="avatar_renderer.js"></script>
+    <script>
+        // Initialize basic avatar
+        const basicAvatar = new AvatarRenderer('avatar-basic', defaultAvatar);
+
+        // Generate random avatars
+        function generateRandomAvatars() {
+            const container = document.getElementById('random-avatars');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                const random = randomAvatar();
+                const wrapper = document.createElement('div');
+                wrapper.className = 'avatar-item';
+                wrapper.id = `random-${i}`;
+                container.appendChild(wrapper);
+                new AvatarRenderer(`random-${i}`, random);
+            }
+        }
+
+        // Show expressions
+        const expressions = ['happy', 'neutral', 'sad', 'surprised', 'cool'];
+        expressions.forEach((expr, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'avatar-item';
+            wrapper.id = `expr-${index}`;
+            document.getElementById('expressions-showcase').appendChild(wrapper);
+            
+            const config = JSON.parse(JSON.stringify(defaultAvatar));
+            config.face.expression = expr;
+            new AvatarRenderer(`expr-${index}`, config);
+        });
+
+        // Show level tiers
+        const tiers = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
+        tiers.forEach((tier, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'avatar-item';
+            wrapper.id = `tier-${index}`;
+            document.getElementById('tiers-showcase').appendChild(wrapper);
+            
+            const config = JSON.parse(JSON.stringify(defaultAvatar));
+            config.level.tier = tier;
+            config.level.current_level = index * 5 + 3;
+            config.aura.enabled = true;
+            new AvatarRenderer(`tier-${index}`, config);
+        });
+
+        // Custom avatar
+        let customAvatarRenderer = new AvatarRenderer('custom-avatar', defaultAvatar);
+
+        function updateCustomAvatar() {
+            const config = JSON.parse(JSON.stringify(defaultAvatar));
+            config.face.expression = document.getElementById('expr-select').value;
+            config.hair.style = document.getElementById('hair-style-select').value;
+            config.hair.color = document.getElementById('hair-color-select').value;
+            config.level.current_level = parseInt(document.getElementById('level-input').value);
+            config.level.tier = getTierFromLevel(config.level.current_level);
+            config.aura.enabled = true;
+            
+            customAvatarRenderer.updateConfig(config);
+        }
+
+        // Generate random on load
+        generateRandomAvatars();
+    </script>
+</body>
+</html>
+
