@@ -5,10 +5,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 $errors = $_SESSION['article_errors'] ?? []; 
 $input = $_SESSION['article_input'] ?? []; 
-$global_error = $_SESSION['error'] ?? null; // Récupère l'erreur globale
+$global_error = $_SESSION['error'] ?? null;
 unset($_SESSION['article_errors'], $_SESSION['article_input'], $_SESSION['error']);
 
 $current_user_id = 1; 
+
+// Correction du chemin de base pour les assets (ajustez /gamehub si nécessaire)
+$base_path = '/gamehub'; 
 ?>
 
 <!DOCTYPE html>
@@ -17,8 +20,8 @@ $current_user_id = 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub Admin | Créer Article</title>
-    <link rel="stylesheet" href="../assets/css/style.css"> 
-    <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
+    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/style.css"> 
+    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/frontstyle.css"> 
     <style>.error-message { color: #ff0055; margin-top: 5px; font-size: 0.9em; }</style>
 </head>
 <body>
@@ -43,17 +46,25 @@ $current_user_id = 1;
                     <p class="message error-global"><?php echo $global_error; ?></p>
                 <?php endif; ?>
                 
-                <form action="ArticleController.php?action=store" method="POST" novalidate>
+                <form action="ArticleController.php?action=store" method="POST" novalidate enctype="multipart/form-data">
                     
                     <div class="form-group">
                         <label for="title">Titre :</label>
                         <input type="text" name="title" id="title" class="form-control" 
-                               value="<?php echo htmlspecialchars($input['title'] ?? ''); ?>">
+                                value="<?php echo htmlspecialchars($input['title'] ?? ''); ?>">
                         <?php if (isset($errors['title'])): ?>
                             <p class="error-message"><?php echo $errors['title']; ?></p>
                         <?php endif; ?>
                     </div>
                     
+                    <div class="form-group">
+                        <label for="image">Photo de l'Article :</label>
+                        <input type="file" name="image" id="image" class="form-control" accept="image/jpeg,image/png,image/gif">
+                        <small class="hint">Formats acceptés : JPG, PNG, GIF (Max 5MB)</small>
+                        <?php if (isset($errors['image'])): ?>
+                            <p class="error-message"><?php echo $errors['image']; ?></p>
+                        <?php endif; ?>
+                    </div>
                     <div class="form-group">
                         <label for="content">Contenu :</label>
                         <textarea name="content" id="content" class="form-control" rows="10"><?php echo htmlspecialchars($input['content'] ?? ''); ?></textarea>

@@ -1,5 +1,5 @@
 <?php
-// views/article/list.php (CODE COMPLET MIS À JOUR)
+// views/article/list.php (CODE COMPLET FINAL AVEC CHEMIN /gamehub/)
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
@@ -75,6 +75,24 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
         .search-form button:hover {
             background-color: #f40612;
         }
+        
+        /* STYLES POUR L'IMAGE MINIATURE */
+        .article-thumb {
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+            border-radius: 8px 8px 0 0; 
+            margin-bottom: 10px;
+        }
+        .article-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 350px; 
+        }
+        .article-card h4 {
+            min-height: 50px;
+        }
     </style>
 </head>
 <body>
@@ -126,11 +144,23 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
             <div class="deal-cards article-cards">
                 
                 <?php 
-                // La variable $articles est passée par ArticleController::list()
                 if (isset($articles) && is_array($articles) && !empty($articles)) : 
                     foreach ($articles as $article) : 
+                        // CORRECTION FINALE : Ajout du dossier projet 'gamehub'
+                        $image_path_raw = $article['image_path'] ?? '';
+                        $clean_path = ltrim(htmlspecialchars($image_path_raw), '/');
+                        
+                        $project_folder = 'gamehub'; 
+                        
+                        $image_src = '/' . $project_folder . '/' . $clean_path; 
                 ?>
                     <div class="card article-card">
+                        
+                        <?php if (!empty($article['image_path'])): ?>
+                            <img src="<?php echo $image_src; ?>" 
+                                alt="<?php echo htmlspecialchars($article['title']); ?>" 
+                                class="article-thumb">
+                        <?php endif; ?>
                         <h4><?php echo htmlspecialchars($article['title']); ?></h4>
                         
                         <p class="article-meta">

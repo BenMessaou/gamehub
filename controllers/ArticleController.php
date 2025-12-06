@@ -12,8 +12,12 @@ class ArticleController {
     private $articleModel;
 
     public function __construct() {
-        $this->articleModel = new Article();
+        // NOTE: Si votre modèle Article a besoin d'une connexion (db), il faudra lui passer ici.
+        // Exemple: $this->articleModel = new Article($db_connection);
+        $this->articleModel = new Article(); 
     }
+
+    // ... Les autres fonctions (list, show, dashboard, create) restent inchangées ...
 
     // Affiche la liste des articles (Front Office).
     public function list() {
@@ -82,26 +86,68 @@ class ArticleController {
         include '../views/article/create.php';
     }
     
-    // Traite la soumission du formulaire de création (C - Create/Store).
+    // Traite la soumission du formulaire de création (C - Create/Store) - MODIFIÉ POUR GÉRER L'IMAGE
     public function store() {
         $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
-        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Contenu peut être long
-        $user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT) ?: 1; // ID temporaire
-
+        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT) ?: 1;
+        $imagePath = null; // Variable pour stocker le chemin de l'image
+        
         $errors = [];
         
-        // 1. Validation : Titre OBLIGATOIRE et MAX 255
+        // 1. Validation de base
         if (empty($title)) {
             $errors['title'] = "Le titre est obligatoire.";
         } elseif (strlen($title) > 255) {
              $errors['title'] = "Le titre ne doit pas dépasser 255 caractères.";
         }
         
-        // 2. Validation : Contenu OBLIGATOIRE et MIN 50
         if (empty($content)) {
             $errors['content'] = "Le contenu est obligatoire.";
         } elseif (strlen($content) < 50) { 
              $errors['content'] = "Le contenu doit contenir au moins 50 caractères.";
+        }
+
+        // 2. Traitement et validation de l'image
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['image'];
+            // Le chemin absolu pour enregistrer le fichier sur le serveur
+            $uploadDir = __DIR__ . '/../public/uploads/'; 
+            
+            // Assurez-vous que le dossier d'upload existe
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+
+            // Validation du type MIME
+            if (!in_array($file['type'], $allowedTypes)) {
+                $errors['image'] = "Type de fichier non autorisé. Seuls JPG, PNG et GIF sont acceptés.";
+            }
+
+            // Validation de la taille
+            if ($file['size'] > $maxSize) {
+                $errors['image'] = "Le fichier est trop volumineux (max 5MB).";
+            }
+            
+            // Si aucune erreur d'upload, on tente le déplacement
+            if (!isset($errors['image'])) {
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $newFileName = uniqid() . '.' . $extension;
+                $destination = $uploadDir . $newFileName;
+                
+                if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    // C'est le chemin qu'on enregistre dans la DB (relatif au dossier public)
+                    $imagePath = 'public/uploads/' . $newFileName;
+                } else {
+                    $errors['image'] = "Erreur interne lors du déplacement du fichier.";
+                }
+            }
+        } elseif (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+             // Gérer les autres erreurs d'upload PHP (taille max PHP, etc.)
+            $errors['image'] = "Erreur lors du téléchargement de l'image (Code: " . $_FILES['image']['error'] . ").";
         }
 
         if (count($errors) > 0) {
@@ -113,12 +159,16 @@ class ArticleController {
             exit;
         }
         
-        // Succès: Appel au modèle
-        if ($this->articleModel->create($title, $content, $user_id)) {
+        // Succès: Appel au modèle avec le nouveau paramètre $imagePath
+        if ($this->articleModel->create($title, $content, $user_id, $imagePath)) {
             // ✅ Metier 1 : Notification sur la page front
-            $_SESSION['success'] = "✅ NOUVEL ARTICLE! L'article '{$title}' vient d'être publié. Découvrez-le !";
+            $_SESSION['success'] = "✅ NOUVEL ARTICLE! L'article '{$title}' vient d'être publié" . ($imagePath ? " avec une photo ! " : ".") . " Découvrez-le !";
         } else {
-            $_SESSION['error'] = "Erreur lors de la création de l'article.";
+            $_SESSION['error'] = "Erreur lors de la création de l'article dans la base de données.";
+            // Si l'insertion échoue, supprimez l'image téléchargée si elle existe
+            if ($imagePath && file_exists(__DIR__ . '/../' . $imagePath)) {
+                unlink(__DIR__ . '/../' . $imagePath);
+            }
         }
         
         // Redirection vers la liste front pour afficher la notification
@@ -126,6 +176,8 @@ class ArticleController {
         exit;
     }
     
+    // ... Les autres fonctions (edit, update, delete, searchByDate) restent inchangées ...
+
     // Affiche le formulaire d'édition (U - Update).
     public function edit() {
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -188,6 +240,7 @@ class ArticleController {
         }
         
         // Succès: Appel au modèle
+        // NOTE: Si la méthode update du modèle doit aussi gérer l'image, elle doit être mise à jour
         if ($this->articleModel->update($id, $title, $content, $user_id)) {
             $_SESSION['success'] = "L'article ID {$id} a été mis à jour avec succès.";
         } else {
@@ -205,11 +258,18 @@ class ArticleController {
         if (!$id) {
             $_SESSION['error'] = "Erreur: ID de l'article à supprimer est invalide.";
         } else {
+            // Récupérer l'article avant de le supprimer pour obtenir le chemin de l'image
+            $article = $this->articleModel->readOne($id); 
+
             // Suppression des commentaires liés à l'article
             $commentModel = new Comment();
             $commentModel->deleteByArticleId($id); 
 
             if ($this->articleModel->delete($id)) {
+                // Supprimer le fichier image du serveur si le chemin existe
+                if (!empty($article['image_path']) && file_exists(__DIR__ . '/../' . $article['image_path'])) {
+                    unlink(__DIR__ . '/../' . $article['image_path']);
+                }
                 $_SESSION['success'] = "L'article ID {$id} a été supprimé avec succès.";
             } else {
                 $_SESSION['error'] = "Erreur lors de la suppression de l'article ID {$id}.";

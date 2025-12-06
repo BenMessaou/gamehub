@@ -14,7 +14,8 @@ class Article {
 
     // Fonction 1 : Lire tous les articles pour le Front Office (list.php)
     public function readAll() {
-        $query = 'SELECT a.id, a.title, a.created_at, u.nom as author_name 
+        // *** MODIFIÉ : Ajout de a.image_path ***
+        $query = 'SELECT a.id, a.title, a.image_path, a.created_at, u.nom as author_name 
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
                   ORDER BY a.created_at DESC';
@@ -27,11 +28,12 @@ class Article {
     // Fonction 2 : Lire tous les articles pour le Back Office (dashboard.php)
     public function readDashboardArticles() {
         $query = 'SELECT 
-                    a.id, 
-                    a.title, 
-                    a.created_at, 
-                    u.nom as author_name,
-                    u.role as author_role
+                      a.id, 
+                      a.title, 
+                      a.image_path, 
+                      a.created_at, 
+                      u.nom as author_name,
+                      u.role as author_role
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
                   ORDER BY a.created_at DESC';
@@ -42,20 +44,25 @@ class Article {
     }
     
     // Fonction 3 : Créer un nouvel article (C - Create)
-    public function create($title, $content, $user_id) {
+    // *** MODIFIÉ : Ajout du paramètre $imagePath et de created_at ***
+    public function create($title, $content, $user_id, $imagePath = null) {
         $query = 'INSERT INTO ' . $this->table . ' 
                   SET
                     title = :title, 
                     content = :content, 
-                    user_id = :user_id';
+                    user_id = :user_id,
+                    image_path = :image_path, 
+                    created_at = NOW()';
         
         $stmt = $this->conn->prepare($query);
         $title = htmlspecialchars(strip_tags($title));
-        $content = $content; // Laisser les balises si vous utilisez un éditeur WYSIWYG
+        $content = $content; 
         
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        // Liaison du nouveau paramètre image_path
+        $stmt->bindParam(':image_path', $imagePath, $imagePath === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         
         return $stmt->execute();
     }
@@ -63,13 +70,14 @@ class Article {
     // Fonction 4 : Lire un seul article pour l'affichage (R - Read One)
     public function readOne($id) {
         $query = 'SELECT 
-                    a.id, 
-                    a.title, 
-                    a.content, 
-                    a.created_at, 
-                    a.user_id,
-                    u.nom as author_name,
-                    u.role as author_role
+                      a.id, 
+                      a.title, 
+                      a.content, 
+                      a.image_path, 
+                      a.created_at, 
+                      a.user_id,
+                      u.nom as author_name,
+                      u.role as author_role
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
                   WHERE a.id = :id 
@@ -81,6 +89,7 @@ class Article {
     }
     
     // Fonction 5 : Mettre à jour un article existant (U - Update)
+    // NOTE : Pour une mise à jour complète, cette méthode devrait aussi gérer la photo.
     public function update($id, $title, $content, $user_id) {
         $query = 'UPDATE ' . $this->table . ' 
                   SET
@@ -150,7 +159,8 @@ class Article {
      * Fonction 11 (Metier 2) : Lit les articles pour une date spécifique (Tri par Date).
      */
     public function readByDate($date) {
-        $query = 'SELECT a.id, a.title, a.created_at, u.nom as author_name 
+        // *** MODIFIÉ : Ajout de a.image_path ***
+        $query = 'SELECT a.id, a.title, a.image_path, a.created_at, u.nom as author_name 
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
                   WHERE DATE(a.created_at) = :date

@@ -15,6 +15,11 @@ $error = $error ?? ($_SESSION['error'] ?? null);
 
 // Nettoyage de la session après récupération
 unset($_SESSION['success'], $_SESSION['error']);
+
+// *** CORRECTION CRITIQUE DU CHEMIN D'ACCÈS ***
+// Utilisez un chemin absolu pour les assets pour éviter les problèmes de navigation.
+// Changez '/gamehub' si votre dossier racine XAMPP/WAMP est différent.
+$base_path = '/gamehub'; 
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +28,8 @@ unset($_SESSION['success'], $_SESSION['error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - GameHub Articles</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/style.css">
 </head>
 <body>
     <header>
@@ -145,6 +151,6 @@ unset($_SESSION['success'], $_SESSION['error']);
         </section>
     </main>
 
-    <script src="../assets/js/script.js"></script>
+    <script src="<?php echo $base_path; ?>/assets/js/script.js"></script>
 </body>
 </html>

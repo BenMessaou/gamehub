@@ -1,5 +1,5 @@
 <?php
-// views/article/show.php
+// views/article/show.php (CODE COMPLET FINAL AVEC CHEMIN /gamehub/)
 
 // Initialisation de la session et récupération des messages du contrôleur
 if (session_status() === PHP_SESSION_NONE) { 
@@ -21,6 +21,18 @@ $comments = $comments ?? [];
 
 // ID de l'utilisateur actuellement "connecté" (À adapter à votre logique de session/authentification)
 $CURRENT_USER_ID = 1; 
+
+// CODE DE CORRECTION DU CHEMIN (le plus agressif)
+$image_src = '';
+if (!empty($article['image_path'])) {
+    $image_path_raw = $article['image_path'];
+    $clean_path = ltrim(htmlspecialchars($image_path_raw), '/');
+    
+    // CORRECTION FINALE : Ajout du dossier projet 'gamehub'
+    $project_folder = 'gamehub'; 
+    
+    $image_src = '/' . $project_folder . '/' . $clean_path;
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,11 +63,31 @@ $CURRENT_USER_ID = 1;
             color: #00ff88; margin-right: 20px; text-decoration: none;
         }
         .article-header-nav { margin-bottom: 20px; }
+        
+        /* STYLES POUR L'IMAGE PRINCIPALE */
+        .article-main-image {
+            width: 100%; 
+            max-height: 400px; 
+            object-fit: cover; 
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+        }
     </style>
 </head>
 <body>
     <header>
-        </header>
+        <div class="container">
+            <h1 class="logo">GameHub</h1> 
+            <nav>
+                <ul>
+                    <li><a href="ArticleController.php?action=list" class="super-button">Accueil</a></li>
+                    <li><a href="ArticleController.php?action=list" class="super-button">Articles</a></li>
+                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Admin (Back Office)</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <main class="container">
         <div class="article-header-nav">
@@ -72,6 +104,12 @@ $CURRENT_USER_ID = 1;
         <div class="article-view">
             <article class="article-content">
                 <h1><?php echo htmlspecialchars($article['title']); ?></h1>
+                
+                <?php if (!empty($article['image_path'])): ?>
+                    <img src="<?php echo $image_src; ?>" 
+                        alt="<?php echo htmlspecialchars($article['title']); ?>" 
+                        class="article-main-image">
+                <?php endif; ?>
                 <p class="article-meta">
                     Publié le <?php echo date('d/m/Y', strtotime($article['created_at'])); ?> 
                     par **<?php echo htmlspecialchars($article['author_name'] ?? 'Inconnu'); ?>**
