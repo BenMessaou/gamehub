@@ -4,9 +4,9 @@ require_once "../../controller/userController.php";
 
 $error = "";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
     $email    = trim($_POST['email']);
-    $password = $_POST['password']; // plain text
+    $password = $_POST['password'];
 
     $uc = new UserController();
     $user = $uc->getUserByEmail($email);
@@ -15,7 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['user_id']   = $user['id_user'];
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['role']      = 'client';
-
         header("Location: profile.php");
         exit;
     } else {
@@ -51,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </header>
 
 <div class="container" style="margin-top:180px;">
-    <div class="card" >
+    <div class="card">
         <h2 style="color:#00ff88; text-align:center;">Client Login</h2><br>
 
         <?php if($error): ?>
@@ -67,14 +66,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <button type="submit" class="shop-now-btn" style="width:100%;">Login</button>
         </form>
 
-        <!-- FINGERPRINT LOGIN BUTTON — OPTIONAL & SAFE -->
-        <div style="margin-top:40px; text-align:center;">
-            <p style="color:#aaa; margin-bottom:15px;">Login faster next time with:</p>
-            <button onclick="tryFingerprintLogin()" 
-                style="background:#0066ff; color:white; border:none; padding:16px 40px; border-radius:50px; font-size:1.2rem; cursor:pointer; font-weight:bold;">
-                Fingerprint / Face ID
-            </button>
-        </div>
+        <!-- FINGERPRINT BUTTON — CLEAN, BEAUTIFUL, WORKS -->
+        <?php 
+        if (!empty($_POST['email'])) {
+            $uc = new UserController();
+            $u = $uc->getUserByEmail($_POST['email']);
+            if ($u && !empty($u['passkey_credential'])) {
+                echo '
+                <div style="margin-top:35px; text-align:center;">
+                    <p style="color:#00ff88; margin-bottom:15px; font-size:1.1rem;">Or login instantly:</p>
+                    <button onclick="loginWithFingerprint()" 
+                            style="background:linear-gradient(45deg,#0066ff,#00ff88); color:white; border:none; padding:18px 50px; border-radius:50px; font-size:1.4rem; font-weight:bold; cursor:pointer; box-shadow:0 0 30px rgba(0,255,136,0.5);">
+                        Fingerprint / Face ID
+                    </button>
+                </div>';
+            }
+        }
+        ?>
 
         <p style="text-align:center; margin-top:25px; color:#aaa;">
             <a href="verif.php" style="color:#00ff88;">Forgot Password?</a><br><br>
@@ -83,36 +91,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 </div>
 
-<!-- FINGERPRINT LOGIN SCRIPT — DOES NOTHING IF USER HAS NO PASSKEY -->
 <script>
-async function tryFingerprintLogin() {
-    if (!window.PublicKeyCredential) {
-        alert("Your device doesn't support fingerprint login yet");
-        return;
-    }
-
+async function loginWithFingerprint() {
     try {
         const resp = await fetch('passkey_login_challenge.php');
-        if (!resp.ok) throw new Error();
-        const options = await resp.json();
+        const opts = await resp.json();
 
-        const credential = await navigator.credentials.get({ publicKey: options });
+        opts.challenge = Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0));
+        opts.allowCredentials.forEach(c => c.id = Uint8Array.from(atob(c.id), b => b.charCodeAt(0)));
+
+        const cred = await navigator.credentials.get({ publicKey: opts });
 
         const form = document.createElement('form');
-        form.method = "POST";
-        form.action = "";
-
+        form.method = 'POST';
+        form.action = 'passkey_login.php';
         const input = document.createElement('input');
-        input.type = "hidden";
-        input.name = "passkey_credential";
-        input.value = JSON.stringify(credential);
+        input.type = 'hidden';
+        input.name = 'credential';
+        input.value = JSON.stringify(cred);
         form.appendChild(input);
-
         document.body.appendChild(form);
         form.submit();
-
     } catch (e) {
-        alert("No fingerprint registered yet. Register it first in your profile!");
+        alert("No fingerprint registered or not supported");
     }
 }
 </script>

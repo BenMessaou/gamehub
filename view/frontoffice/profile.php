@@ -146,13 +146,19 @@ function e($value) {
                 </ul>
 
                 <!-- FINGERPRINT REGISTRATION — NOW FIXED AND WORKING -->
-                <div style="text-align:center; margin:40px 0;">
-                    <button onclick="registerMyFingerprint()" 
-                            class="shop-now-btn" 
-                            style="padding:18px 50px; font-size:1.3rem; font-weight:bold;">
-                        Register Fingerprint / Face ID
-                    </button>
-                </div>
+                <?php if (empty($user['passkey_credential'])): ?>
+    <div style="text-align:center; margin:40px 0;">
+        <button onclick="registerMyFingerprint()" 
+                class="shop-now-btn" 
+                style="padding:18px 50px; font-size:1.3rem; font-weight:bold;">
+            Register Fingerprint / Face ID
+        </button>
+    </div>
+<?php else: ?>
+    <div style="text-align:center; margin:40px 0; color:#00ff88; font-size:1.4rem; font-weight:bold;">
+        Fingerprint / Face ID is ACTIVE
+    </div>
+<?php endif; ?>
 
                 <!-- 2FA SECTION — UNCHANGED -->
                 <div style="margin: 40px auto; max-width: 600px; padding: 30px; text-align: center;">
@@ -222,28 +228,48 @@ function e($value) {
 <script>
 async function registerMyFingerprint() {
     if (!window.PublicKeyCredential) {
-        alert("Your device doesn't support fingerprint/Face ID login");
+        alert("Your browser/device does not support fingerprint/Face ID login");
         return;
     }
 
     try {
-        const resp = await fetch('passkey_register.php');
-        if (!resp.ok) throw new Error();
+        const response = await fetch('passkey_register.php');
+        if (!response.ok) throw new Error('Server error: ' + response.status);
 
-        const options = await resp.json();
-        const cred = await navigator.credentials.create({ publicKey: options });
+        let options = await response.json();
 
-        await fetch('passkey_save.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cred)
+        // Convert base64 → Uint8Array (required by WebAuthn)
+        options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
+        options.user.id = Uint8Array.from(atob(options.user.id), c => c.charCodeAt(0));
+
+        const credential = await navigator.credentials.create({
+            publicKey: options
         });
 
-        alert("Fingerprint / Face ID registered successfully!");
-        location.reload();
+        // Send back to server
+        const saveResp = await fetch('passkey_save.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: credential.rawId,
+                rawId: Array.from(new Uint8Array(credential.rawId)),
+                type: credential.type,
+                response: {
+                    attestationObject: Array.from(new Uint8Array(credential.response.attestationObject)),
+                    clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON))
+                }
+            })
+        });
+
+        if (saveResp.ok) {
+            alert("Fingerprint / Face ID registered! You can now login with one tap.");
+            location.reload();
+        } else {
+            alert("Save failed");
+        }
     } catch (err) {
         console.error(err);
-        alert("Failed. Try again or use another device.");
+        alert("Registration failed: " + (err.message || "Unknown error"));
     }
 }
 </script>
