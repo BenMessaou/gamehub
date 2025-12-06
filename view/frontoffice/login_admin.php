@@ -67,5 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script src="java.js"></script>
+<?php include "cookie-consent.php"; ?>
 </body>
 </html>

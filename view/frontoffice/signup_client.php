@@ -205,5 +205,6 @@ document.getElementById('passwordField').addEventListener('input', function() {
 });
 </script>
 <script src="java.js"></script>
+<?php include "cookie-consent.php"; ?>
 </body>
 </html>

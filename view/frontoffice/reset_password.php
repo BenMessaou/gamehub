@@ -100,6 +100,6 @@ $userController->updateUser($updatedUser, $userId);
         </p>
     </div>
 </div>
-
+<?php include "cookie-consent.php"; ?>
 </body>
 </html>

@@ -98,6 +98,6 @@ function validateVerifForm() {
     return true;
 }
 </script>
-
+<?php include "cookie-consent.php"; ?>
 </body>
 </html>

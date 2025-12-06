@@ -2,28 +2,24 @@
 session_start();
 require_once "../../controller/userController.php";
 
-$uc = new UserController();
-$users = $uc->listUsers();
-
-$fixedUsers = [];
-foreach ($users as $user) {
-    $user['verified']               = $user['verified'] ?? 0;
-    $user['verification_requested'] = $user['verification_requested'] ?? 0;
-    $fixedUsers[] = $user;
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: ../frontoffice/login_admin.php");
+    exit;
 }
-$users = $fixedUsers;
+
+$uc = new UserController();
+$users = $uc->listUsers()->fetchAll();
+
+// Handle verification approve & delete (your original code)
 if (isset($_POST['approve_verify'])) {
     $id = (int)$_POST['approve_id'];
-    $sql = "UPDATE user SET verified = 1 WHERE id_user = :id";
-    $req = config::getConnexion()->prepare($sql);
-    $req->execute([':id' => $id]);
-    echo '<script>alert("User verified successfully!"); location.reload();</script>';
+    config::getConnexion()->prepare("UPDATE user SET verified = 1 WHERE id_user = ?")->execute([$id]);
+    echo '<script>alert("User verified!"); location.reload();</script>';
 }
-
 if (isset($_POST['delete_user'])) {
     $id = (int)$_POST['delete_id'];
     $uc->deleteUser($id);
-    echo '<script>alert("User deleted successfully!"); location.reload();</script>';
+    echo '<script>alert("User deleted!"); location.reload();</script>';
 }
 ?>
 
@@ -34,10 +30,14 @@ if (isset($_POST['delete_user'])) {
     <title>Backoffice - Users</title>
     <link rel="stylesheet" href="../frontoffice/index.css">
     <style>
-        .status-verified { color:#00ff88; font-weight:bold; }
-        .status-pending  { color:#ffdd00; font-weight:bold; }
-        .status-none     { color:#ff4444; font-weight:bold; }
-        .action-btn { margin: 4px; padding: 8px 14px; font-size: 0.9rem; }
+        table { width:100%; border-collapse:collapse; color:white; margin-top:30px; }
+        th, td { padding:12px; text-align:left; border-bottom:1px solid rgba(0,255,136,0.3); }
+        th { background:rgba(0,255,136,0.15); color:#00ff88; cursor:pointer; user-select:none; }
+        th:hover { background:rgba(0,255,136,0.3); }
+        .action-btn { padding:8px 14px; margin:4px; border:none; border-radius:8px; cursor:pointer; }
+        .search-bar { padding:12px; width:300px; border-radius:8px; border:1px solid #00ff88; background:rgba(255,255,255,0.1); color:white; margin-bottom:20px; }
+        .filters { margin-bottom:20px; }
+        .filters select { padding:10px; margin-right:10px; background:#111; color:#00ff88; border:1px solid #00ff88; border-radius:8px; }
     </style>
 </head>
 <body>
@@ -48,78 +48,163 @@ if (isset($_POST['delete_user'])) {
         <nav>
             <ul>
                 <li><a href="index.php" class="super-button">Dashboard</a></li>
-                <li><a href="../frontoffice/index.php" class="super-button">View Site</a></li>
+                <li><a href="../frontoffice/role.html" class="super-button">View Site</a></li>
                 <li><a href="logout.php" class="super-button">Logout</a></li>
             </ul>
         </nav>
     </div>
 </header>
 
-<div class="container" style="margin-top: 120px;">
-    <div class="form-card">
-        <h2 style="color:#00ff88; text-align:center; margin-bottom:30px;">User Management</h2>
+<div class="container" style="margin-top:140px;">
+    <h2 style="color:#00ff88; text-align:center; margin-bottom:30px;">User Management</h2>
 
-        <table style="width:100%; border-collapse:collapse; color:white;">
-            <tr style="color:#00ff88; font-size:1.2rem;">
-                <th>ID</th>
-                <th>Name</th>
-                <th>Lastname</th>
-                <th>Email</th>
-                <th>CIN</th>
-                <th>Tel</th>
-                <th>Gender</th>
-                <th>Role</th>
-                <th>Status</th>
+    <!-- Search + Filters -->
+    <div class="filters" style="text-align:center;">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search by name, email, CIN...">
+
+        <select id="roleFilter">
+            <option value="">All Roles</option>
+            <option value="client">Client</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <select id="genderFilter">
+            <option value="">All Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="none">Not Verified</option>
+        </select>
+    </div>
+
+    <!-- Users Table -->
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">ID</th>
+                <th onclick="sortTable(1)">Name</th>
+                <th onclick="sortTable(2)">Lastname</th>
+                <th onclick="sortTable(3)">Email</th>
+                <th onclick="sortTable(4)">Role</th>
+                <th onclick="5">Gender</th>
+                <th onclick="sortTable(6)">Status</th>
                 <th>Actions</th>
             </tr>
-
+        </thead>
+        <tbody>
             <?php foreach($users as $u): ?>
-            <tr style="border-bottom:1px solid #333; text-align:center;">
+            <tr 
+                data-role="<?= strtolower($u['role']) ?>" 
+                data-gender="<?= strtolower($u['gender']) ?>"
+                data-status="<?= $u['verified']==1 ? 'verified' : ($u['verification_requested']==1 ? 'pending' : 'none') ?>">
+                
                 <td><?= $u['id_user'] ?></td>
                 <td><?= htmlspecialchars($u['name']) ?></td>
                 <td><?= htmlspecialchars($u['lastname']) ?></td>
                 <td><?= htmlspecialchars($u['email']) ?></td>
-                <td><?= htmlspecialchars($u['cin']) ?></td>
-                <td><?= htmlspecialchars($u['tel']) ?></td>
-                <td><?= ucfirst($u['gender']) ?></td>
                 <td><?= ucfirst($u['role']) ?></td>
+                <td><?= ucfirst($u['gender']) ?></td>
                 <td>
-                    <?php if ($u['verified'] == 1): ?>
-                        <span class="status-verified">Verified</span>
-                    <?php elseif ($u['verification_requested'] == 1): ?>
-                        <span class="status-pending">Pending</span>
+                    <?php if($u['verified']==1): ?>
+                        <span style="color:#00ff88;font-weight:bold;">Verified</span>
+                    <?php elseif($u['verification_requested']==1): ?>
+                        <span style="color:#ffdd00;font-weight:bold;">Pending</span>
                     <?php else: ?>
-                        <span class="status-none">Not Verified</span>
+                        <span style="color:#ff4444;">Not Verified</span>
                     <?php endif; ?>
                 </td>
-                <td style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-                    <a href="update_user.php?id=<?= $u['id_user'] ?>" class="super-button action-btn">Update</a>
+                <td style="text-align:center;">
+                    <a href="update_user.php?id=<?= $u['id_user'] ?>" class="super-button action-btn">Edit</a>
 
-                    <?php if ($u['verification_requested'] == 1 && $u['verified'] == 0): ?>
-                        <form method="POST" style="margin:0;">
+                    <?php if($u['verification_requested']==1 && $u['verified']==0): ?>
+                        <form method="POST" style="display:inline;">
                             <input type="hidden" name="approve_id" value="<?= $u['id_user'] ?>">
-                            <button type="submit" name="approve_verify" class="action-btn"
-                                    style="background:#00ff88; color:black; border:none; border-radius:8px; font-weight:bold;">
-                                Approve
-                            </button>
+                            <button type="submit" name="approve_verify" class="action-btn" style="background:#00ff88;color:black;">Approve</button>
                         </form>
                     <?php endif; ?>
 
-                    <form method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                    <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this user?')">
                         <input type="hidden" name="delete_id" value="<?= $u['id_user'] ?>">
-                        <button type="submit" name="delete_user" class="shop-now-btn">
-                            Delete
-                        </button>
+                        <button type="submit" name="delete_user" style="background:#ff4444;color:white;" class="shop-now-btn">Delete</button>
                     </form>
                 </td>
             </tr>
             <?php endforeach; ?>
-        </table>
+        </tbody>
+    </table>
 
-        <br><br>
-        <a href="add_user.php" class="shop-now-btn">Add New User</a>
+    <div style="text-align:center;margin-top:30px;">
+        <a href="add_user.php" class="shop-now-btn">+ Add New User</a>
     </div>
 </div>
+
+<script>
+// Search + Filter
+const searchInput = document.getElementById('searchInput');
+const roleFilter = document.getElementById('roleFilter');
+const genderFilter = document.getElementById('genderFilter');
+const statusFilter = document.getElementById('statusFilter');
+
+function applyFilters() {
+    const search = searchInput.value.toLowerCase();
+    const role = roleFilter.value;
+    const gender = genderFilter.value;
+    const status = statusFilter.value;
+
+    document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const rowRole = row.dataset.role;
+        const rowGender = row.dataset.gender;
+        const rowStatus = row.dataset.status;
+
+        let show = true;
+        if (search && !text.includes(search)) show = false;
+        if (role && rowRole !== role) show = false;
+        if (gender && rowGender !== gender) show = false;
+        if (status && rowStatus !== status) show = false;
+
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+searchInput.addEventListener('input', applyFilters);
+roleFilter.addEventListener('change', applyFilters);
+genderFilter.addEventListener('change', applyFilters);
+statusFilter.addEventListener('change', applyFilters);
+
+// Sorting when clicking headers
+let sortDirection = {};
+function sortTable(colIndex) {
+    const table = document.getElementById("usersTable");
+    const rows = Array.from(table.tBodies[0].rows);
+
+    // Toggle direction
+    sortDirection[colIndex] = sortDirection[colIndex] === 'asc' ? 'desc' : 'asc';
+
+    rows.sort((a, b) => {
+        let aVal = a.cells[colIndex].textContent.trim();
+        let bVal = b.cells[colIndex].textContent.trim();
+
+        if (!isNaN(aVal) && !isNaN(bVal)) {
+            return sortDirection[colIndex] === 'asc' 
+                ? aVal - bVal 
+                : bVal - aVal;
+        }
+
+        return sortDirection[colIndex] === 'asc' 
+            ? aVal.localeCompare(bVal) 
+            : bVal.localeCompare(aVal);
+    });
+
+    // Re-append rows
+    rows.forEach(row => table.tBodies[0].appendChild(row));
+}
+</script>
 
 </body>
 </html>
