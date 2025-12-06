@@ -1,5 +1,5 @@
 <?php
-// views/article/list.php (CODE COMPLET FINAL AVEC CHEMIN /gamehub/)
+// views/article/list.php (CODE COMPLET FINAL)
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
@@ -136,7 +136,7 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
             <form action="ArticleController.php" method="GET" class="search-form">
                 <input type="hidden" name="action" value="searchByDate">
                 <label for="search_date">Filtrer par date (AAAA-MM-JJ) :</label>
-                <input type="text" id="search_date" name="search_date" placeholder="Ex: 2024-01-30" required>
+                <input type="text" id="search_date" name="search_date" placeholder="Ex: 2024-01-30"> 
                 <button type="submit">Rechercher</button>
             </form>
             <br>
@@ -146,7 +146,6 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
                 <?php 
                 if (isset($articles) && is_array($articles) && !empty($articles)) : 
                     foreach ($articles as $article) : 
-                        // CORRECTION FINALE : Ajout du dossier projet 'gamehub'
                         $image_path_raw = $article['image_path'] ?? '';
                         $clean_path = ltrim(htmlspecialchars($image_path_raw), '/');
                         

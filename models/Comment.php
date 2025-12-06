@@ -1,15 +1,15 @@
 <?php
 // models/Comment.php
 
-require_once 'Database.php';
-
 class Comment {
     private $conn;
-    private $table = 'commentaires'; // Assurez-vous que le nom de la table est correct
+    private $table = 'commentaires'; 
 
-    public function __construct() {
-        $database = Database::getInstance();
-        $this->conn = $database->getConnection();
+    /**
+     * CONSTRUCTEUR CORRIGÉ : Utilise l'Injection de Dépendance.
+     */
+    public function __construct(PDO $db) {
+        $this->conn = $db;
     }
     
     /**
@@ -37,12 +37,12 @@ class Comment {
      */
     public function readByArticleId($article_id) {
         $query = 'SELECT 
-                    c.id,              
-                    c.content, 
-                    c.created_at, 
-                    u.nom as author_name,
-                    c.user_id,         
-                    c.article_id       
+                      c.id,              
+                      c.content, 
+                      c.created_at, 
+                      u.nom as author_name,
+                      c.user_id,         
+                      c.article_id       
                   FROM ' . $this->table . ' c
                   INNER JOIN users u ON c.user_id = u.id_user
                   WHERE c.article_id = :article_id
@@ -92,12 +92,12 @@ class Comment {
      */
     public function readAllComments() {
          $query = 'SELECT 
-                    c.id,              
-                    c.content, 
-                    c.created_at, 
-                    c.article_id,
-                    u.nom as author_name,
-                    a.title as article_title
+                      c.id,              
+                      c.content, 
+                      c.created_at, 
+                      c.article_id,
+                      u.nom as author_name,
+                      a.title as article_title
                   FROM ' . $this->table . ' c
                   INNER JOIN users u ON c.user_id = u.id_user
                   INNER JOIN articles a ON c.article_id = a.id

@@ -1,20 +1,15 @@
 <?php
 // models/Article.php 
 
-require_once 'Database.php';
-
 class Article {
     private $conn;
     private $table = 'articles';
 
-    public function __construct() {
-        $database = Database::getInstance();
-        $this->conn = $database->getConnection();
+    public function __construct(PDO $db) {
+        $this->conn = $db;
     }
 
-    // Fonction 1 : Lire tous les articles pour le Front Office (list.php)
     public function readAll() {
-        // *** MODIFIÉ : Ajout de a.image_path ***
         $query = 'SELECT a.id, a.title, a.image_path, a.created_at, u.nom as author_name 
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
@@ -25,7 +20,6 @@ class Article {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    // Fonction 2 : Lire tous les articles pour le Back Office (dashboard.php)
     public function readDashboardArticles() {
         $query = 'SELECT 
                       a.id, 
@@ -43,8 +37,6 @@ class Article {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    // Fonction 3 : Créer un nouvel article (C - Create)
-    // *** MODIFIÉ : Ajout du paramètre $imagePath et de created_at ***
     public function create($title, $content, $user_id, $imagePath = null) {
         $query = 'INSERT INTO ' . $this->table . ' 
                   SET
@@ -61,13 +53,11 @@ class Article {
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        // Liaison du nouveau paramètre image_path
         $stmt->bindParam(':image_path', $imagePath, $imagePath === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         
         return $stmt->execute();
     }
     
-    // Fonction 4 : Lire un seul article pour l'affichage (R - Read One)
     public function readOne($id) {
         $query = 'SELECT 
                       a.id, 
@@ -88,8 +78,6 @@ class Article {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    // Fonction 5 : Mettre à jour un article existant (U - Update)
-    // NOTE : Pour une mise à jour complète, cette méthode devrait aussi gérer la photo.
     public function update($id, $title, $content, $user_id) {
         $query = 'UPDATE ' . $this->table . ' 
                   SET
@@ -109,7 +97,6 @@ class Article {
         return $stmt->execute();
     }
     
-    // Fonction 6 : Supprimer un article par son ID (D - Delete)
     public function delete($id) {
         $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
         $stmt = $this->conn->prepare($query);
@@ -117,7 +104,6 @@ class Article {
         return $stmt->execute();
     }
     
-    // Fonction 7 : Compte le nombre total d'articles
     public function countTotalArticles() {
         $query = 'SELECT COUNT(*) as total FROM ' . $this->table;
         $stmt = $this->conn->prepare($query);
@@ -126,7 +112,6 @@ class Article {
         return $result['total'] ?? 0;
     }
 
-    // Fonction 8 : Compte le nombre d'auteurs uniques
     public function countUniqueAuthors() {
         $query = 'SELECT COUNT(DISTINCT user_id) as total FROM ' . $this->table;
         $stmt = $this->conn->prepare($query);
@@ -135,7 +120,6 @@ class Article {
         return $result['total'] ?? 0;
     }
 
-    // Fonction 9 : Compte les articles publiés aujourd'hui
     public function countPublishedToday() {
         $query = 'SELECT COUNT(*) as total FROM ' . $this->table . ' WHERE DATE(created_at) = CURDATE()';
         $stmt = $this->conn->prepare($query);
@@ -144,7 +128,6 @@ class Article {
         return $result['total'] ?? 0;
     }
 
-    // Fonction 10 : Compte le nombre total de commentaires. (NOUVEAU)
     public function countTotalComments() {
         $comment_table_name = 'commentaires'; 
         
@@ -155,11 +138,7 @@ class Article {
         return $result['total'] ?? 0;
     }
 
-    /**
-     * Fonction 11 (Metier 2) : Lit les articles pour une date spécifique (Tri par Date).
-     */
     public function readByDate($date) {
-        // *** MODIFIÉ : Ajout de a.image_path ***
         $query = 'SELECT a.id, a.title, a.image_path, a.created_at, u.nom as author_name 
                   FROM ' . $this->table . ' a
                   INNER JOIN users u ON a.user_id = u.id_user
@@ -172,4 +151,6 @@ class Article {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    // 🚫 La méthode readAllContent a été retirée.
 }

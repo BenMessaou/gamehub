@@ -1,20 +1,30 @@
 <?php
-// controllers/CommentController.php
+// controllers/CommentController.php (VERSION CORRIGÉE AVEC INJECTION DE DÉPENDANCE)
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once '../models/Comment.php';
-require_once '../models/Article.php'; // Nécessaire pour les redirections
+// require_once '../models/Article.php'; // Utile si vous avez besoin des méthodes de Article ici, sinon pas obligatoire
 
 class CommentController {
+    
+    private $db;
     private $commentModel;
 
-    public function __construct() {
-        $this->commentModel = new Comment();
+    /**
+     * CONSTRUCTEUR CORRIGÉ : Accepte l'injection de dépendance PDO.
+     * @param PDO $db La connexion à la base de données.
+     */
+    public function __construct(PDO $db) {
+        $this->db = $db;
+        // Instanciation du modèle en lui passant la connexion PDO
+        $this->commentModel = new Comment($this->db); 
     }
-
+    
+    // --- ACTIONS DU CONTRÔLEUR ---
+    
     /**
      * Affiche la liste de tous les commentaires pour modération (CRUD R - Back Office).
      */
@@ -32,6 +42,11 @@ class CommentController {
      * Traite la soumission du formulaire de création de commentaire (CRUD C - Store).
      */
     public function store() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+             header('Location: ArticleController.php?action=list');
+             exit;
+        }
+        
         $user_id = 1; // ID utilisateur temporaire (à adapter à votre système d'authentification)
 
         $article_id = filter_input(INPUT_POST, 'article_id', FILTER_VALIDATE_INT);
@@ -91,7 +106,7 @@ class CommentController {
         
         $article_id = $comment['article_id']; 
         
-        // Le chemin inclut views/comment/edit.php (fourni ci-dessous)
+        // Le chemin inclut views/comment/edit.php
         include '../views/comment/edit.php'; 
         exit;
     }
@@ -144,7 +159,7 @@ class CommentController {
     public function delete() {
         // Accepte l'ID depuis GET (Dashboard) ou POST (Page Article)
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) 
-              ?: filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT); 
+             ?: filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT); 
 
         // Accepte l'ID de l'article depuis GET ou POST pour la redirection
         $article_id = filter_input(INPUT_GET, 'article_id', FILTER_VALIDATE_INT) 
@@ -181,8 +196,33 @@ class CommentController {
     }
 }
 
-// ROUTAGE
-$controller = new CommentController();
+// -------------------------------------------------------------
+
+## ROUTAGE ET INITIALISATION
+
+// ⚠️ INCLUSION DE LA CLASSE DATABASE POUR L'INITIALISATION
+require_once '../models/Database.php'; 
+
+try {
+    // ⭐️ Récupération de l'instance PDO via votre classe Singleton
+    $db = Database::getInstance()->getConnection(); 
+
+    if (!$db instanceof PDO) {
+        throw new Exception("L'instance de connexion à la base de données (PDO) n'est pas disponible.");
+    }
+    
+    // ⭐️ Instanciation du Contrôleur en lui PASSANT LA CONNEXION PDO
+    $controller = new CommentController($db);
+    
+} catch (Exception $e) {
+    // Gestion des erreurs de connexion (important)
+    http_response_code(500);
+    echo "<h1>Erreur critique de connexion</h1>";
+    echo "<p>Veuillez vérifier vos paramètres de base de données. Message d'erreur : " . htmlspecialchars($e->getMessage()) . "</p>";
+    exit;
+}
+
+// Détermination de l'action à exécuter
 $action = $_GET['action'] ?? 'index';
 
 switch ($action) {

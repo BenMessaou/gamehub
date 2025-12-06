@@ -1,5 +1,5 @@
 <?php
-// views/article/show.php (CODE COMPLET FINAL AVEC CHEMIN /gamehub/)
+// views/article/show.php (VERSION CORRIGÉE DU CHEMIN D'IMAGE)
 
 // Initialisation de la session et récupération des messages du contrôleur
 if (session_status() === PHP_SESSION_NONE) { 
@@ -22,16 +22,13 @@ $comments = $comments ?? [];
 // ID de l'utilisateur actuellement "connecté" (À adapter à votre logique de session/authentification)
 $CURRENT_USER_ID = 1; 
 
-// CODE DE CORRECTION DU CHEMIN (le plus agressif)
+// ⭐️ CORRECTION DU CHEMIN D'IMAGE (Simplifié et Robuste)
+$base_path = '/gamehub'; // Assurez-vous que '/gamehub' est bien le nom de votre dossier racine web
 $image_src = '';
 if (!empty($article['image_path'])) {
-    $image_path_raw = $article['image_path'];
-    $clean_path = ltrim(htmlspecialchars($image_path_raw), '/');
-    
-    // CORRECTION FINALE : Ajout du dossier projet 'gamehub'
-    $project_folder = 'gamehub'; 
-    
-    $image_src = '/' . $project_folder . '/' . $clean_path;
+    // Si $article['image_path'] vaut 'public/uploads/xxx.jpg', 
+    // $image_src vaudra '/gamehub/public/uploads/xxx.jpg' (chemin web correct)
+    $image_src = $base_path . '/' . htmlspecialchars($article['image_path']);
 }
 ?>
 
@@ -73,6 +70,56 @@ if (!empty($article['image_path'])) {
             margin: 20px 0;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
         }
+        
+        /* Styles TTS */
+        .tts-controls button {
+            margin-right: 10px;
+            font-size: 1rem;
+            padding: 10px 15px;
+        }
+
+        /* STYLES POUR LE CADRE DU COMMENTAIRE */
+        .comment-form-box {
+            background: rgba(30, 30, 30, 0.8);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .comment-form-box h3 {
+            color: #fff;
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .form-group input[type="text"], 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input[type="text"]:focus, 
+        .form-group textarea:focus {
+            border-color: #00ff88;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -110,20 +157,45 @@ if (!empty($article['image_path'])) {
                         alt="<?php echo htmlspecialchars($article['title']); ?>" 
                         class="article-main-image">
                 <?php endif; ?>
+                
                 <p class="article-meta">
                     Publié le <?php echo date('d/m/Y', strtotime($article['created_at'])); ?> 
                     par **<?php echo htmlspecialchars($article['author_name'] ?? 'Inconnu'); ?>**
                 </p>
+                
                 <div class="article-body">
                     <?php echo nl2br(htmlspecialchars($article['content'])); ?>
                 </div>
-            </article>
+                <div class="tts-controls" style="margin-top: 30px; margin-bottom: 20px;">
+                    <button id="listen-article-btn" class="super-button" style="display: none;">
+                        🔊 Écouter l'article
+                    </button>
+                    <button id="stop-article-btn" class="super-button" style="display:none; background-color: #dc3545;">
+                        ⏹️ Arrêter la lecture
+                    </button>
+                </div>
+                <div id="article-to-read" style="display:none;">
+                    <?php 
+                        echo htmlspecialchars($article['title']) . ". ";
+                        echo htmlspecialchars($article['content']); 
+                    ?>
+                </div>
+                </article>
 
             <div class="comment-section">
                 <div class="comment-form-box">
                     <h3>Poster un Commentaire</h3>
                     <form action="../controllers/CommentController.php?action=store" method="POST">
                         <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                        
+                        <div class="form-group">
+                            <label for="author_name">Votre Nom/Pseudonyme (obligatoire):</label>
+                            <input type="text" id="author_name" name="author_name"
+                                    value="<?php echo htmlspecialchars($input['author_name'] ?? ''); ?>">
+                            <?php if (isset($errors['author_name'])): ?>
+                                <p class="error-message"><?php echo $errors['author_name']; ?></p>
+                            <?php endif; ?>
+                        </div>
                         
                         <div class="form-group">
                             <label for="content">Votre Commentaire:</label>
@@ -143,7 +215,9 @@ if (!empty($article['image_path'])) {
                         <?php foreach ($comments as $comment): ?>
                             <div class="comment-item">
                                 <p class="comment-author">
-                                    Posté par **<?php echo htmlspecialchars($comment['author_name']); ?>** - 
+                                    Posté par **<?php 
+                                        echo htmlspecialchars($comment['author_name'] ?? 'Inconnu'); 
+                                    ?>** - 
                                     <span><?php echo date('d/m/Y à H:i', strtotime($comment['created_at'])); ?></span>
                                 </p>
                                 <p class="comment-content">
@@ -151,7 +225,6 @@ if (!empty($article['image_path'])) {
                                 </p>
                                 
                                 <?php 
-                                // Affiche les boutons si l'utilisateur est l'auteur (ou un admin)
                                 if ($comment['user_id'] == $CURRENT_USER_ID): 
                                 ?>
                                 <div class="comment-actions">
