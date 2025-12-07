@@ -1,6 +1,5 @@
 <?php
 // controllers/ArticleController.php
-// Version SANS la vérification de plagiat et avec validation PHP pour la recherche par date
 
 // Démarrer la session pour stocker les erreurs de validation et les messages de succès
 if (session_status() === PHP_SESSION_NONE) {
@@ -10,16 +9,33 @@ if (session_status() === PHP_SESSION_NONE) {
 // Inclusions des dépendances
 require_once '../models/Article.php';
 require_once '../models/Comment.php';
+require_once '../models/CommentShare.php'; 
+require_once '../models/User.php'; 
 require_once '../models/Database.php'; 
 
 class ArticleController {
     private $db;
     private $articleModel;
+    private $commentShareModel;
 
     public function __construct(PDO $db) {
         $this->db = $db;
         $this->articleModel = new Article($this->db); 
+        $this->commentShareModel = new CommentShare($this->db);
     }
+    
+    /**
+     * Vérifie si l'ID utilisateur existe dans la table users.
+     */
+    private function userExists(int $user_id): bool {
+        // Cette vérification est toujours utile comme ultime garde-fou
+        $query = "SELECT id_user FROM users WHERE id_user = :id LIMIT 1"; 
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
+
 
     // Affiche la liste des articles (Front Office).
     public function list() {
@@ -54,6 +70,13 @@ class ArticleController {
 
         $commentModel = new Comment($this->db);
         $comments = $commentModel->readByArticleId($id);
+
+        // ✅ CORRECTION : Utilisation de l'ID de session si disponible
+        $current_user_id = $_SESSION['id_user'] ?? 1; 
+
+        // Récupérer la liste des utilisateurs pour le partage
+        $userModel = new User($this->db);
+        $recipients = $userModel->readAllUsers($current_user_id); // Exclut l'utilisateur actuel
         
         include '../views/article/show.php';
     }
@@ -94,7 +117,7 @@ class ArticleController {
         
         $errors = [];
         
-        // 1. Validation de base
+        // 1. Validation de base (PHP only)
         if (empty($title)) {
             $errors['title'] = "Le titre est obligatoire.";
         } elseif (strlen($title) > 255) {
@@ -107,7 +130,7 @@ class ArticleController {
              $errors['content'] = "Le contenu doit contenir au moins 50 caractères.";
         }
 
-        // 2. Traitement et validation de l'image
+        // 2. Traitement et validation de l'image (PHP only)
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['image'];
             $uploadDir = __DIR__ . '/../public/uploads/'; 
@@ -206,7 +229,7 @@ class ArticleController {
         
         $errors = [];
         
-        // 1. Validation de base
+        // 1. Validation de base (PHP only)
         if (empty($title)) {
             $errors['title'] = "Le titre est obligatoire.";
         } elseif (strlen($title) > 255) {
@@ -250,8 +273,10 @@ class ArticleController {
             $article = $this->articleModel->readOne($id); 
 
             $commentModel = new Comment($this->db);
+            // Supprimer d'abord les partages liés au commentaire pour éviter les erreurs FK
+            $this->commentShareModel->deleteSharesByArticleId($id); 
             $commentModel->deleteByArticleId($id); 
-
+            
             if ($this->articleModel->delete($id)) {
                 // Supprimer le fichier image
                 if (!empty($article['image_path']) && file_exists(__DIR__ . '/../' . $article['image_path'])) {
@@ -271,7 +296,7 @@ class ArticleController {
     public function searchByDate() {
         $search_date = filter_input(INPUT_GET, 'search_date', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        // CONTRÔLE DE SAISIE CÔTÉ SERVEUR (PHP)
+        // CONTRÔLE DE SAISIE CÔTÉ SERVEUR (PHP only)
         if (empty($search_date)) {
             $_SESSION['error'] = "Veuillez entrer une date pour effectuer la recherche.";
         } elseif (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $search_date)) {
@@ -293,6 +318,81 @@ class ArticleController {
         }
         
         header('Location: ArticleController.php?action=list');
+        exit;
+    }
+
+    // Metier Avancé : Affiche la liste des commentaires partagés (pour l'utilisateur ID 1)
+    public function sharedComments() {
+        // ✅ CORRECTION (329) : Renommage de la variable pour la cohérence
+        $id_user_destinataire = $_SESSION['id_user'] ?? 1; 
+
+        $sharedComments = $this->commentShareModel->getSharedCommentsForUser($id_user_destinataire);
+        
+        $success = $_SESSION['success'] ?? null;
+        unset($_SESSION['success']);
+        
+        include '../views/comment/shared.php';
+    }
+
+    // Metier Avancé : Traite la soumission du formulaire de partage de commentaire
+    public function shareComment() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ArticleController.php?action=list'); 
+            exit;
+        }
+        
+        // RAPPEL BD : id_commentaire, id_user_emetteur, id_user_destinataire
+        
+        // Récupération des ID du POST
+        $id_commentaire = filter_input(INPUT_POST, 'comment_id', FILTER_VALIDATE_INT); // ID Commentaire
+        $id_user_destinataire = filter_input(INPUT_POST, 'recipient_id', FILTER_VALIDATE_INT); // ID Destinataire
+        $article_id = filter_input(INPUT_POST, 'article_id', FILTER_VALIDATE_INT);
+        $recipient_input = $_POST['recipient_id'] ?? null;
+        
+        // ID Émetteur (l'utilisateur connecté)
+        $id_user_emetteur = $_SESSION['id_user'] ?? 1; 
+        
+        $errors = [];
+        
+        // 1. Validation PHP (ID destinataire)
+        if (!$id_user_destinataire) {
+             if (empty($recipient_input)) {
+                 $errors['recipient_id'] = "L'ID du destinataire est obligatoire.";
+             } else {
+                 $errors['recipient_id'] = "L'ID du destinataire doit être un nombre entier valide.";
+             }
+        } elseif ($id_user_emetteur === $id_user_destinataire) {
+             $errors['recipient_id'] = "Vous ne pouvez pas vous partager un commentaire.";
+        } 
+        // VÉRIFICATION : L'utilisateur destinataire existe-t-il ?
+        elseif (!$this->userExists($id_user_destinataire)) {
+             $errors['recipient_id'] = "L'utilisateur ID {$id_user_destinataire} n'existe pas. Partage impossible.";
+        }
+        
+        // 2. Validation PHP (ID commentaire/article)
+        if (!$id_commentaire || !$article_id) {
+            $errors['general'] = "Erreur: ID de commentaire ou d'article invalide.";
+        }
+
+        if (!empty($errors)) {
+            // Affichage de l'erreur la plus pertinente
+            $_SESSION['error'] = $errors['general'] ?? $errors['recipient_id'] ?? "Erreur de validation.";
+        } else {
+            // Tentative de partage
+            // ✅ CORRECTION (Ligne 379 dans la trace) : Utilisation des variables dans l'ordre du modèle (id_commentaire, id_user_emetteur, id_user_destinataire)
+            if ($this->commentShareModel->shareComment($id_commentaire, $id_user_emetteur, $id_user_destinataire)) {
+                $_SESSION['success'] = "Le commentaire a été partagé avec succès à l'utilisateur ID {$id_user_destinataire}.";
+            } else {
+                $_SESSION['error'] = "Erreur lors de l'enregistrement du partage en base de données (peut-être déjà partagé).";
+            }
+        }
+
+        // Redirection vers l'article du commentaire
+        if ($article_id) {
+            header("Location: ArticleController.php?action=show&id=" . $article_id);
+        } else {
+            header('Location: ArticleController.php?action=list'); 
+        }
         exit;
     }
 }
@@ -351,6 +451,14 @@ switch ($action) {
     
     case 'searchByDate':
         $controller->searchByDate();
+        break;
+        
+    case 'sharedComments':
+        $controller->sharedComments();
+        break;
+        
+    case 'shareComment':
+        $controller->shareComment();
         break;
         
     case 'list': 

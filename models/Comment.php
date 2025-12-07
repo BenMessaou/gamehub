@@ -3,24 +3,21 @@
 
 class Comment {
     private $conn;
-    private $table = 'commentaires'; 
+    private $table = 'comments'; 
 
-    /**
-     * CONSTRUCTEUR CORRIGÉ : Utilise l'Injection de Dépendance.
-     */
     public function __construct(PDO $db) {
         $this->conn = $db;
     }
     
     /**
-     * C - Crée un nouveau commentaire (Front Office).
+     * C - Crée un nouveau commentaire.
      */
     public function create($content, $article_id, $user_id) {
         $query = 'INSERT INTO ' . $this->table . ' 
-                  SET
-                    content = :content,
-                    article_id = :article_id,
-                    user_id = :user_id';
+                     SET
+                      content = :content,
+                      article_id = :article_id,
+                      user_id = :user_id';
 
         $stmt = $this->conn->prepare($query);
         $content = strip_tags($content); 
@@ -33,24 +30,24 @@ class Comment {
     }
 
     /**
-     * R - Lit tous les commentaires pour un article (Front Office) avec jointure User.
+     * R - Lit tous les commentaires pour un article.
      */
     public function readByArticleId($article_id) {
         $query = 'SELECT 
-                      c.id,              
+                      c.id,       
                       c.content, 
                       c.created_at, 
                       u.nom as author_name,
-                      c.user_id,         
-                      c.article_id       
+                      c.user_id,      
+                      c.article_id      
                   FROM ' . $this->table . ' c
-                  INNER JOIN users u ON c.user_id = u.id_user
-                  WHERE c.article_id = :article_id
+                  INNER JOIN users u ON c.user_id = u.id_user 
+                  WHERE c.article_id = :article_id 
                   ORDER BY c.created_at DESC';
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute(); // <-- Ligne 51 (où l'erreur se produit)
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -72,13 +69,12 @@ class Comment {
      */
     public function update($id, $content) { 
         $query = 'UPDATE ' . $this->table . ' 
-                  SET 
-                    content = :content,
-                    updated_at = NOW() 
-                  WHERE id = :id';
+                      SET 
+                        content = :content,
+                        updated_at = NOW() 
+                      WHERE id = :id';
 
         $stmt = $this->conn->prepare($query);
-
         $content = strip_tags($content); 
         
         $stmt->bindParam(':content', $content);
@@ -91,17 +87,17 @@ class Comment {
      * R - Lit tous les commentaires pour la modération (Back Office).
      */
     public function readAllComments() {
-         $query = 'SELECT 
-                      c.id,              
-                      c.content, 
-                      c.created_at, 
-                      c.article_id,
-                      u.nom as author_name,
-                      a.title as article_title
-                  FROM ' . $this->table . ' c
-                  INNER JOIN users u ON c.user_id = u.id_user
-                  INNER JOIN articles a ON c.article_id = a.id
-                  ORDER BY c.created_at DESC';
+          $query = 'SELECT 
+                        c.id,       
+                        c.content, 
+                        c.created_at, 
+                        c.article_id, 
+                        u.nom as author_name,
+                        a.title as article_title
+                    FROM ' . $this->table . ' c
+                    INNER JOIN users u ON c.user_id = u.id_user 
+                    INNER JOIN articles a ON c.article_id = a.id 
+                    ORDER BY c.created_at DESC';
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -123,7 +119,7 @@ class Comment {
      * D - Supprime les commentaires liés à un article (utilisé lors de la suppression d'article).
      */
     public function deleteByArticleId($article_id) {
-        $query = 'DELETE FROM ' . $this->table . ' WHERE article_id = :article_id';
+        $query = 'DELETE FROM ' . $this->table . ' WHERE article_id = :article_id'; 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);
         return $stmt->execute();

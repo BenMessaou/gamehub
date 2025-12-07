@@ -39,12 +39,12 @@ class Article {
     
     public function create($title, $content, $user_id, $imagePath = null) {
         $query = 'INSERT INTO ' . $this->table . ' 
-                  SET
-                    title = :title, 
-                    content = :content, 
-                    user_id = :user_id,
-                    image_path = :image_path, 
-                    created_at = NOW()';
+                     SET
+                      title = :title, 
+                      content = :content, 
+                      user_id = :user_id,
+                      image_path = :image_path, 
+                      created_at = NOW()';
         
         $stmt = $this->conn->prepare($query);
         $title = htmlspecialchars(strip_tags($title));
@@ -80,13 +80,13 @@ class Article {
     
     public function update($id, $title, $content, $user_id) {
         $query = 'UPDATE ' . $this->table . ' 
-                  SET
-                    title = :title, 
-                    content = :content, 
-                    user_id = :user_id,
-                    updated_at = NOW() 
-                  WHERE 
-                    id = :id';
+                     SET
+                      title = :title, 
+                      content = :content, 
+                      user_id = :user_id,
+                      updated_at = NOW() 
+                     WHERE 
+                      id = :id';
         $stmt = $this->conn->prepare($query);
         $title = htmlspecialchars(strip_tags($title));
         $content = $content; 
@@ -128,8 +128,12 @@ class Article {
         return $result['total'] ?? 0;
     }
 
+    /**
+     * Correction : Utilise le nom de table correct 'comments'.
+     * Ceci résout Fatal error: ... Table 'gamehub.commentaires' doesn't exist.
+     */
     public function countTotalComments() {
-        $comment_table_name = 'commentaires'; 
+        $comment_table_name = 'comments'; // ✅ CORRECTION
         
         $query = 'SELECT COUNT(*) as total FROM ' . $comment_table_name; 
         $stmt = $this->conn->prepare($query);
@@ -151,6 +155,4 @@ class Article {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    // 🚫 La méthode readAllContent a été retirée.
 }

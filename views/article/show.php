@@ -1,23 +1,24 @@
 <?php
-// views/article/show.php (VERSION CORRIGÉE DU CHEMIN D'IMAGE)
+// views/article/show.php (VERSION CORRIGÉE DU CHEMIN D'IMAGE ET AJOUT DU PARTAGE)
 
 // Initialisation de la session et récupération des messages du contrôleur
 if (session_status() === PHP_SESSION_NONE) { 
     session_start(); 
 }
+// 🛑 LIGNE 6 CORRIGÉE MANUELLEMENT
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 $errors = $_SESSION['comment_errors'] ?? []; 
 $input = $_SESSION['comment_input'] ?? []; 
 unset($_SESSION['success'], $_SESSION['error'], $_SESSION['comment_errors'], $_SESSION['comment_input']);
 
-// $article et $comments sont passés par ArticleController::show()
-
+// $article, $comments, et $recipients sont passés par ArticleController::show()
 if (!isset($article) || empty($article)) {
     header('Location: ArticleController.php?action=list');
     exit;
 }
 $comments = $comments ?? [];
+$recipients = $recipients ?? []; // S'assure que $recipients est défini
 
 // ID de l'utilisateur actuellement "connecté" (À adapter à votre logique de session/authentification)
 $CURRENT_USER_ID = 1; 
@@ -41,7 +42,7 @@ if (!empty($article['image_path'])) {
     <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
     <style>
         /* Styles spécifiques au show.php */
-        .comment-actions { margin-top: 5px; font-size: 0.8rem; }
+        .comment-actions { margin-top: 5px; font-size: 0.8rem; display: flex; align-items: center; flex-wrap: wrap; }
         .action-btn {
             display: inline-block; padding: 5px 10px; margin-right: 5px; 
             border-radius: 5px; text-decoration: none; color: #fff; 
@@ -49,8 +50,10 @@ if (!empty($article['image_path'])) {
         }
         .edit-btn { background-color: #007bff; }
         .delete-btn { background-color: #dc3545; }
+        .share-btn { background-color: #28a745; } /* Nouveau style pour le bouton Partager */
         .edit-btn:hover { background-color: #0056b3; }
         .delete-btn:hover { background-color: #a71d2a; }
+        .share-btn:hover { background-color: #1e7e34; }
         .comment-item {
             background: rgba(0, 0, 0, 0.5); padding: 15px; margin-bottom: 15px;
             border-radius: 10px; border-left: 5px solid #00ff88;
@@ -103,8 +106,10 @@ if (!empty($article['image_path'])) {
             font-weight: bold;
         }
         
+        /* Inclusion du select dans le style des inputs */
         .form-group input[type="text"], 
-        .form-group textarea {
+        .form-group textarea,
+        .share-form select {
             width: 100%;
             padding: 10px;
             border: 1px solid #555;
@@ -116,9 +121,32 @@ if (!empty($article['image_path'])) {
         }
         
         .form-group input[type="text"]:focus, 
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .share-form select:focus {
             border-color: #00ff88;
             outline: none;
+        }
+        
+        /* Style pour le formulaire de partage */
+        .share-form {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .share-form label {
+            color: #fff;
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+        /* Ajustement de la largeur du select dans le formulaire de partage */
+        .share-form select {
+            width: 150px; 
+            padding: 5px;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -131,6 +159,7 @@ if (!empty($article['image_path'])) {
                     <li><a href="ArticleController.php?action=list" class="super-button">Accueil</a></li>
                     <li><a href="ArticleController.php?action=list" class="super-button">Articles</a></li>
                     <li><a href="ArticleController.php?action=dashboard" class="super-button">Admin (Back Office)</a></li>
+                    <li><a href="ArticleController.php?action=sharedComments" class="super-button">✉️ Partagés</a></li>
                 </ul>
             </nav>
         </div>
@@ -185,8 +214,7 @@ if (!empty($article['image_path'])) {
             <div class="comment-section">
                 <div class="comment-form-box">
                     <h3>Poster un Commentaire</h3>
-                    <form action="../controllers/CommentController.php?action=store" method="POST">
-                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                    <form action="../controllers/CommentController.php?action=store" method="POST" novalidate> <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
                         
                         <div class="form-group">
                             <label for="author_name">Votre Nom/Pseudonyme (obligatoire):</label>
@@ -224,23 +252,52 @@ if (!empty($article['image_path'])) {
                                     <?php echo nl2br(htmlspecialchars($comment['content'])); ?>
                                 </p>
                                 
-                                <?php 
-                                if ($comment['user_id'] == $CURRENT_USER_ID): 
-                                ?>
                                 <div class="comment-actions">
+                                    
+                                    <?php 
+                                    if ($comment['user_id'] == $CURRENT_USER_ID): 
+                                    ?>
                                     <a href="../controllers/CommentController.php?action=edit&id=<?php echo $comment['id']; ?>" class="action-btn edit-btn">
                                         Modifier
                                     </a>
                                     
                                     <form action="../controllers/CommentController.php?action=delete" method="POST" style="display:inline-block;" 
-                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                            onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
                                         <input type="hidden" name="id" value="<?php echo $comment['id']; ?>">
                                         <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
                                         <button type="submit" class="action-btn delete-btn">Supprimer</button>
                                     </form>
-                                </div>
-                                <?php endif; ?>
-                            </div>
+                                    <?php endif; ?>
+                                    
+                                    <button class="action-btn share-btn" 
+                                            onclick="document.getElementById('share-form-<?php echo $comment['id']; ?>').style.display = 'flex'; this.style.display = 'none';">
+                                        Partager
+                                    </button>
+                                    
+                                    <form action="ArticleController.php?action=shareComment" method="POST" class="share-form" id="share-form-<?php echo $comment['id']; ?>" 
+                                            style="display:none;">
+                                        
+                                        <input type="hidden" name="comment_id" value="<?php echo $comment['id']; ?>">
+                                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                                        
+                                        <label for="recipient-<?php echo $comment['id']; ?>">Partager à :</label>
+                                        
+                                        <select name="recipient_id" id="recipient-<?php echo $comment['id']; ?>" required>
+                                            <option value="">-- Choisir un utilisateur --</option>
+                                            <?php 
+                                            // La variable $recipients est transmise par ArticleController::show()
+                                            foreach ($recipients as $recipient): 
+                                            ?>
+                                                <option value="<?php echo htmlspecialchars($recipient['id_user']); ?>">
+                                                    <?php echo htmlspecialchars($recipient['nom']); ?> (ID: <?php echo htmlspecialchars($recipient['id_user']); ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        
+                                        <button type="submit" class="action-btn" style="background-color: #3f51b5; padding: 5px 10px;">Envoyer</button>
+                                    </form>
+                                    
+                                </div> </div>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <p style="color: #fff;">Soyez le premier à commenter cet article !</p>
