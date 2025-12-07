@@ -1,5 +1,4 @@
 <?php
-// googleauth.php — NO COMPOSER NEEDED — works instantly
 class GoogleAuthenticator
 {
     public function createSecret($length = 16)

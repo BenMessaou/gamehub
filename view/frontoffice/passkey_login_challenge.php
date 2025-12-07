@@ -1,29 +1,29 @@
 <?php
-session_start();
 require_once "../../controller/userController.php";
 
 $uc = new UserController();
-$users = $uc->listUsers()->fetchAll();
-
 $allowCredentials = [];
 
-foreach ($users as $u) {
+foreach ($uc->listUsers() as $u) {
     if (!empty($u['passkey_credential'])) {
         $cred = json_decode($u['passkey_credential'], true);
-        if ($cred && !empty($cred['id'])) {
+        if (isset($cred['id']) && $cred['id']) {
             $allowCredentials[] = [
                 'type' => 'public-key',
-                'id'   => base64_decode($cred['id'])  // ← decode back to binary
+                'id'   => base64_decode($cred['id'])   
             ];
         }
     }
 }
 
+$challenge = random_bytes(32);
+
 header('Content-Type: application/json');
 echo json_encode([
-    'challenge'        => random_bytes(32),
+    'challenge'        => base64_encode($challenge),
     'timeout'          => 60000,
     'rpId'             => $_SERVER['HTTP_HOST'],
-    'allowCredentials'          => $allowCredentials,
+    'allowCredentials' => $allowCredentials,  
     'userVerification' => 'preferred'
-]);
+], JSON_UNESCAPED_SLASHES);
+?>

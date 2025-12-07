@@ -17,21 +17,16 @@ if (!$user) {
     exit;
 }
 
-// Prevent undefined keys
 $user['verified']               = $user['verified'] ?? 0;
 $user['verification_requested'] = $user['verification_requested'] ?? 0;
 $user['address']                = $user['address'] ?? 'Not set yet';
 
-// Message system
 $message = '';
 $messageType = '';
 
-// Handle verification request
 if (isset($_POST['request_verification'])) {
     try {
         $db = config::getConnexion();
-
-        // Auto-create columns if missing
         $db->exec("ALTER TABLE user ADD COLUMN IF NOT EXISTS verified TINYINT(1) DEFAULT 0");
         $db->exec("ALTER TABLE user ADD COLUMN IF NOT EXISTS verification_requested TINYINT(1) DEFAULT 0");
 
@@ -48,7 +43,7 @@ if (isset($_POST['request_verification'])) {
             $messageType = "warning";
         }
     } catch (Exception $e) {
-        $message = "Error sending request. Please try again.";
+        $message = "Error sending request.";
         $messageType = "error";
     }
 }
@@ -65,22 +60,17 @@ function e($value) {
     <title>My Profile - GameHub</title>
     <link rel="stylesheet" href="index.css">
     <style>
-        .message {
-            padding: 14px 20px;
-            border-radius: 12px;
-            margin: 20px auto;
-            max-width: 600px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
-        }
+        .message { padding: 14px 20px; border-radius: 12px; margin: 20px auto; max-width: 600px; font-weight: bold; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.6); }
         .success { background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid #00ff88; }
         .warning { background: rgba(255, 170, 0, 0.15); color: #ffdd00; border: 1px solid #ffaa00; }
         .error   { background: rgba(255, 0, 0, 0.15); color: #ff4444; border: 1px solid #ff4444; }
-
         .verified-badge   { color:#00ff88; font-weight:bold; font-size:1.3rem; text-shadow:0 0 15px #00ff88; }
         .pending-badge    { color:#ffdd00; font-weight:bold; font-size:1.1rem; }
-        .verify-btn       { margin: 25px auto; display: block; width: fit-content; }
+        .security-card { background: rgba(0, 255, 136, 0.08); border: 1px solid #00ff88; border-radius: 15px; padding: 25px; }
+        .security-title { color: #00ff88; font-size: 1.8rem; text-align: center; margin-bottom: 25px; text-shadow: 0 0 10px #00ff88; }
+        .btn-full { width: 100%; padding: 16px; margin: 12px 0; font-size: 1.2rem; font-weight: bold; border-radius: 50px; }
+        .status-on  { color: #00ff88; font-weight: bold; }
+        .status-off { color: #ff6666; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -105,7 +95,6 @@ function e($value) {
 <main class="main-content">
     <div class="container profile-container">
 
-        <!-- Inline Message -->
         <?php if ($message): ?>
             <div class="message <?= $messageType ?>">
                 <?= $message ?>
@@ -144,46 +133,6 @@ function e($value) {
                     <li><strong>CIN:</strong> <span class="editable"><?= e($user['cin']) ?></span></li>
                     <li><strong>Address:</strong> <span class="editable"><?= e($user['address']) ?></span></li>
                 </ul>
-
-                <!-- FINGERPRINT REGISTRATION — NOW FIXED AND WORKING -->
-                <?php if (empty($user['passkey_credential'])): ?>
-    <div style="text-align:center; margin:40px 0;">
-        <button onclick="registerMyFingerprint()" 
-                class="shop-now-btn" 
-                style="padding:18px 50px; font-size:1.3rem; font-weight:bold;">
-            Register Fingerprint / Face ID
-        </button>
-    </div>
-<?php else: ?>
-    <div style="text-align:center; margin:40px 0; color:#00ff88; font-size:1.4rem; font-weight:bold;">
-        Fingerprint / Face ID is ACTIVE
-    </div>
-<?php endif; ?>
-
-                <!-- 2FA SECTION — UNCHANGED -->
-                <div style="margin: 40px auto; max-width: 600px; padding: 30px; text-align: center;">
-                    <h3 style="color: #00ff88; margin-bottom: 20px;">Two-Factor Authentication (2FA)</h3>
-
-                    <?php if (empty($user['totp_secret'])): ?>
-                        <p style="color: #ccc; margin-bottom: 25px;">
-                            Protect your account with an extra security layer<br>
-                            Use Google Authenticator, Authy, Microsoft Authenticator, etc.
-                        </p>
-                        <a href="2fa_setup.php" class="shop-now-btn" style="padding: 16px 40px; font-size: 1.2rem; font-weight: bold;">
-                            Enable 2FA Now
-                        </a>
-                    <?php else: ?>
-                        <p style="color: #00ff88; font-size: 1.4rem; font-weight: bold;">
-                            2FA IS ACTIVE
-                        </p>
-                        <p style="color: #aaa; margin: 15px 0;">
-                            Your account is protected with an authenticator app
-                        </p>
-                        <a href="2fa_setup.php?disable=1" style="color:#ff4444; text-decoration:underline;">
-                            Disable 2FA (not recommended)
-                        </a>
-                    <?php endif; ?>
-                </div>
             </div>
         </div>
 
@@ -192,14 +141,48 @@ function e($value) {
                 <h4>Bio</h4>
                 <p class="editable">Welcome back, <?= e($user['name']) ?>! Ready to dominate the leaderboard?</p>
             </div>
-            <div class="card">
-                <h4>Genre Interests</h4>
-                <ul class="genre-list">
-                    <li class="super-button">Sci-Fi</li>
-                    <li class="super-button">Horror</li>
-                    <li class="super-button">Action</li>
-                    <li class="super-button">Racing</li>
-                </ul>
+
+            <div class="card security-card">
+                <h4 class="security-title">Verification & Security</h4>
+
+                <p style="text-align:center; margin:20px 0;">
+                    <strong>Account Status:</strong><br>
+                    <?php if ($user['verified'] == 1): ?>
+                        <span class="status-on">VERIFIED</span>
+                    <?php elseif ($user['verification_requested'] == 1): ?>
+                        <span style="color:#ffdd00;">PENDING</span>
+                    <?php else: ?>
+                        <span class="status-off">NOT VERIFIED</span>
+                    <?php endif; ?>
+                </p>
+
+                <p style="text-align:center; margin:25px 0;">
+                    <strong>Two-Factor Authentication:</strong><br>
+                    <span class="<?= !empty($user['totp_secret']) ? 'status-on' : 'status-off' ?>">
+                        <?= !empty($user['totp_secret']) ? 'ENABLED' : 'DISABLED' ?>
+                    </span>
+                </p>
+                <?php if (empty($user['totp_secret'])): ?>
+                    <a href="2fa_setup.php" class="shop-now-btn btn-full">Enable 2FA</a>
+                <?php else: ?>
+                    <a href="2fa_setup.php?disable=1" class="shop-now-btn btn-full" style="background:#ff4444;">Disable 2FA</a>
+                <?php endif; ?>
+
+                <p style="text-align:center; margin:25px 0;">
+                    <strong>Fingerprint / Face ID Login:</strong><br>
+                    <span class="<?= !empty($user['passkey_credential']) ? 'status-on' : 'status-off' ?>">
+                        <?= !empty($user['passkey_credential']) ? 'REGISTERED' : 'NOT REGISTERED' ?>
+                    </span>
+                </p>
+                <?php if (empty($user['passkey_credential'])): ?>
+                    <button onclick="registerMyFingerprint()" class="shop-now-btn btn-full" style="padding:18px; font-size:1.3rem;">
+                        Register Fingerprint / Face ID
+                    </button>
+                <?php else: ?>
+                    <div style="text-align:center; padding:18px; background:#00ff88; color:#000; border-radius:50px; font-weight:bold; font-size:1.3rem;">
+                        Fingerprint Active
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -224,52 +207,45 @@ function e($value) {
     </div>
 </main>
 
-<!-- FINGERPRINT SCRIPT — MOVED OUTSIDE SO IT WORKS -->
 <script>
 async function registerMyFingerprint() {
     if (!window.PublicKeyCredential) {
-        alert("Your browser/device does not support fingerprint/Face ID login");
+        alert("Your browser/device doesn't support fingerprint login.");
         return;
     }
 
     try {
-        const response = await fetch('passkey_register.php');
-        if (!response.ok) throw new Error('Server error: ' + response.status);
+        const resp = await fetch('passkey_register.php');
+        const options = await resp.json();
 
-        let options = await response.json();
-
-        // Convert base64 → Uint8Array (required by WebAuthn)
         options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
         options.user.id = Uint8Array.from(atob(options.user.id), c => c.charCodeAt(0));
 
-        const credential = await navigator.credentials.create({
-            publicKey: options
-        });
+        const cred = await navigator.credentials.create({ publicKey: options });
 
-        // Send back to server
-        const saveResp = await fetch('passkey_save.php', {
+        const data = {
+            rawId: Array.from(new Uint8Array(cred.rawId)),
+            response: {
+                attestationObject: Array.from(new Uint8Array(cred.response.attestationObject)),
+                clientDataJSON: Array.from(new Uint8Array(cred.response.clientDataJSON))
+            },
+            type: cred.type
+        };
+
+        const save = await fetch('passkey_save.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: credential.rawId,
-                rawId: Array.from(new Uint8Array(credential.rawId)),
-                type: credential.type,
-                response: {
-                    attestationObject: Array.from(new Uint8Array(credential.response.attestationObject)),
-                    clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON))
-                }
-            })
+            body: JSON.stringify(data)
         });
 
-        if (saveResp.ok) {
-            alert("Fingerprint / Face ID registered! You can now login with one tap.");
+        if (save.ok) {
+            alert("Fingerprint registered successfully!");
             location.reload();
         } else {
-            alert("Save failed");
+            alert("Failed to save fingerprint.");
         }
     } catch (err) {
-        console.error(err);
-        alert("Registration failed: " + (err.message || "Unknown error"));
+        alert("Registration failed: " + err.message);
     }
 }
 </script>

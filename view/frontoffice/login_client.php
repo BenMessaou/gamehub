@@ -4,14 +4,36 @@ require_once "../../controller/userController.php";
 
 $error = "";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
+// Check if ANY user has registered fingerprint → show button
+$uc = new UserController();
+$anyPasskeyExists = false;
+foreach ($uc->listUsers() as $u) {
+    if (!empty($u['passkey_credential'])) {
+        $anyPasskeyExists = true;
+        break;
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['credential'])) {
     $email    = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $uc = new UserController();
     $user = $uc->getUserByEmail($email);
 
-    if ($user && $user['password'] === $password && strtolower($user['role']) === 'client') {
+    if ($user && $user['locked_until'] && strtotime($user['locked_until']) > time()) {
+        $error = "Account locked for 15 minutes due to too many failed attempts.";
+        $uc->logLogin($user['id_user'], $email, false);
+    }
+    elseif ($user && $user['password'] === $password && strtolower($user['role']) === 'client') {
+        $uc->resetFailedAttempts($user['id_user']);
+        $uc->logLogin($user['id_user'], $email, true);
+
+        if (!empty($user['totp_secret'])) {
+            $_SESSION['pending_2fa_user_id'] = $user['id_user'];
+            header("Location: 2fa_verify.php");
+            exit;
+        }
+
         $_SESSION['user_id']   = $user['id_user'];
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['role']      = 'client';
@@ -19,6 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
         exit;
     } else {
         $error = "Wrong email or password.";
+        if ($user) {
+            $uc->incrementFailedAttempts($user['id_user']);
+            $uc->logLogin($user['id_user'], $email, false);
+        } else {
+            $uc->logLogin(null, $email, false);
+        }
     }
 }
 ?>
@@ -27,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Client Login</title>
+    <title>Client Login - GameHub</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -35,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
 <header>
     <div class="container">
         <h1 class="logo">Gamehub</h1>
-        <img src="logo.png" class="logo1" alt="" >
+        <img src="logo.png" class="logo1" alt="">
 
         <nav>
             <ul>
@@ -51,38 +79,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
 
 <div class="container" style="margin-top:180px;">
     <div class="card">
-        <h2 style="color:#00ff88; text-align:center;">Client Login</h2><br>
+        <h2 style="color:#00ff88; text-align:center; margin-bottom:20px;">Client Login</h2>
 
-        <?php if($error): ?>
-            <div style="color:#ff4444; background:rgba(255,0,0,0.15); padding:12px; border-radius:8px; text-align:center; margin-bottom:20px;">
-                <?= $error ?>
-            </div>
+        <?php if ($error): ?>
+            <p style="color:#ff4444; text-align:center; margin:15px 0; font-weight:bold;">
+                <?= htmlspecialchars($error) ?>
+            </p>
         <?php endif; ?>
 
         <form method="POST">
-            <input type="email" name="email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:15px;"><br>
-            <input type="password" name="password" placeholder="Password" required style="width:100%; padding:12px;"><br><br>
-
-            <button type="submit" class="shop-now-btn" style="width:100%;">Login</button>
+            <div class="input-row">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-row">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="shop-now-btn" style="width:100%; padding:16px; font-size:1.3rem;">
+                Login with Password
+            </button>
         </form>
 
-        <!-- FINGERPRINT BUTTON — CLEAN, BEAUTIFUL, WORKS -->
-        <?php 
-        if (!empty($_POST['email'])) {
-            $uc = new UserController();
-            $u = $uc->getUserByEmail($_POST['email']);
-            if ($u && !empty($u['passkey_credential'])) {
-                echo '
-                <div style="margin-top:35px; text-align:center;">
-                    <p style="color:#00ff88; margin-bottom:15px; font-size:1.1rem;">Or login instantly:</p>
-                    <button onclick="loginWithFingerprint()" 
-                            style="background:linear-gradient(45deg,#0066ff,#00ff88); color:white; border:none; padding:18px 50px; border-radius:50px; font-size:1.4rem; font-weight:bold; cursor:pointer; box-shadow:0 0 30px rgba(0,255,136,0.5);">
-                        Fingerprint / Face ID
-                    </button>
-                </div>';
-            }
-        }
-        ?>
+        <!-- FINGERPRINT LOGIN BUTTON — APPEARS ONLY IF SOMEONE REGISTERED -->
+        <?php if ($anyPasskeyExists): ?>
+            <div style="margin:30px 0;:0;">
+                <button onclick="loginWithFingerprint()" 
+                        style="width:100%; padding:20px; background:#00ff88; color:#000; border:none; border-radius:50px; font-size:1.6rem; font-weight:bold; cursor:pointer; box-shadow:0 0 30px rgba(0,255,136,0.5);">
+                    Fingerprint / Face ID Login
+                </button>
+            </div>
+        <?php endif; ?>
 
         <p style="text-align:center; margin-top:25px; color:#aaa;">
             <a href="verif.php" style="color:#00ff88;">Forgot Password?</a><br><br>
@@ -95,12 +120,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['passkey_login'])) {
 async function loginWithFingerprint() {
     try {
         const resp = await fetch('passkey_login_challenge.php');
+        if (!resp.ok) throw new Error('Server error');
         const opts = await resp.json();
 
+        // Fix challenge and credential IDs
         opts.challenge = Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0));
-        opts.allowCredentials.forEach(c => c.id = Uint8Array.from(atob(c.id), b => b.charCodeAt(0)));
+        if (opts.allowCredentials) {
+            opts.allowCredentials.forEach(cred => {
+                cred.id = Uint8Array.from(atob(cred.id), c => c.charCodeAt(0));
+            });
+        }
 
-        const cred = await navigator.credentials.get({ publicKey: opts });
+        const credential = await navigator.credentials.get({ publicKey: opts });
+
+        const data = {
+            rawId: Array.from(new Uint8Array(credential.rawId)),
+            response: {
+                authenticatorData: Array.from(new Uint8Array(credential.response.authenticatorData)),
+                clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
+                signature: Array.from(new Uint8Array(credential.response.signature))
+            }
+        };
 
         const form = document.createElement('form');
         form.method = 'POST';
@@ -108,16 +148,17 @@ async function loginWithFingerprint() {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'credential';
-        input.value = JSON.stringify(cred);
+        input.value = JSON.stringify(data);
         form.appendChild(input);
         document.body.appendChild(form);
         form.submit();
-    } catch (e) {
-        alert("No fingerprint registered or not supported");
+
+    } catch (err) {
+        console.error(err);
+        alert("Fingerprint not registered or device not supported.");
     }
 }
 </script>
-
 <?php include "cookie-consent.php"; ?>
 </body>
 </html>
