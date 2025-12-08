@@ -4,7 +4,7 @@ require_once "../../controller/userController.php";
 
 $error = "";
 
-// Check if ANY user has registered fingerprint → show button
+
 $uc = new UserController();
 $anyPasskeyExists = false;
 foreach ($uc->listUsers() as $u) {
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['credential'])) {
             </button>
         </form>
 
-        <!-- FINGERPRINT LOGIN BUTTON — APPEARS ONLY IF SOMEONE REGISTERED -->
+        
         <?php if ($anyPasskeyExists): ?>
             <div style="margin:30px 0;:0;">
                 <button onclick="loginWithFingerprint()" 
@@ -152,6 +152,7 @@ async function loginWithFingerprint() {
         form.appendChild(input);
         document.body.appendChild(form);
         form.submit();
+        
 
     } catch (err) {
         console.error(err);
