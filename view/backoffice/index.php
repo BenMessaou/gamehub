@@ -22,7 +22,6 @@ if (isset($_POST['delete_user'])) {
     echo '<script>alert("User deleted!"); location.reload();</script>';
 }
 
-// FETCH LOGIN LOGS + STATS
 $db = config::getConnexion();
 $loginLogs = $db->query("
     SELECT ll.*, u.name, u.email 
@@ -82,8 +81,6 @@ $uniqueUsersToday = $db->query("SELECT COUNT(DISTINCT user_id) FROM login_log WH
             font-size:1.2rem; 
             letter-spacing:1px;
         }
-
-        /* LOGIN LOG TABLE */
         .login-table { width:100%; border-collapse:collapse; margin-top:30px; }
         .login-table th { background:rgba(0,255,136,0.2); color:#00ff88; }
         .login-table td { padding:12px; }
@@ -110,8 +107,6 @@ $uniqueUsersToday = $db->query("SELECT COUNT(DISTINCT user_id) FROM login_log WH
 <div class="container" style="margin-top:100px;">
 
     <h2 class="section-title">Admin Dashboard</h2>
-
-    <!-- LOGIN STATISTICS -->
     <h3 class="section-title">Login Activity Overview</h3>
     <div class="stats-grid">
         <div class="stat-card">
@@ -135,8 +130,6 @@ $uniqueUsersToday = $db->query("SELECT COUNT(DISTINCT user_id) FROM login_log WH
             <div class="stat-label">Active Users Today</div>
         </div>
     </div>
-
-    <!-- RECENT LOGIN LOGS -->
     <h3 class="section-title">Recent Login Activity</h3>
     <div class="card">
         <table class="login-table">
@@ -251,7 +244,6 @@ $uniqueUsersToday = $db->query("SELECT COUNT(DISTINCT user_id) FROM login_log WH
 </div>
 
 <script>
-// Search + Filter
 const searchInput = document.getElementById('searchInput');
 const roleFilter = document.getElementById('roleFilter');
 const genderFilter = document.getElementById('genderFilter');

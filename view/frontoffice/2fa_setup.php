@@ -6,13 +6,13 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once "../../controller/userController.php";
-require_once "googleauth.php";           // our no-composer file
+require_once "googleauth.php";          
 
 $ga = new GoogleAuthenticator();
 $uc = new UserController();
 $user = $uc->getUserById($_SESSION['user_id']);
 
-// If user wants to disable 2FA
+// ken yheb inahi 2fa
 if (isset($_GET['disable'])) {
     config::getConnexion()
            ->prepare("UPDATE user SET totp_secret = NULL WHERE id_user = ?")
@@ -21,17 +21,14 @@ if (isset($_GET['disable'])) {
     exit;
 }
 
-// Generate secret + QR code if not already set
+// generati el qr code wel seceret code
 if (empty($user['totp_secret'])) {
-    $secret = $ga->createSecret();                                      // generate
+    $secret = $ga->createSecret();                                    
     $qrCodeUrl = $ga->getQRCodeGoogleUrl('GameHub - '.$user['email'], $secret);
-
-    // Save it immediately to database
     config::getConnexion()
            ->prepare("UPDATE user SET totp_secret = ? WHERE id_user = ?")
            ->execute([$secret, $_SESSION['user_id']]);
 } else {
-    // 2FA already enabled → reuse existing secret for QR code
     $secret = $user['totp_secret'];
     $qrCodeUrl = $ga->getQRCodeGoogleUrl('GameHub - '.$user['email'], $secret);
 }
