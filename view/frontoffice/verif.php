@@ -1,8 +1,6 @@
 <?php
 session_start();
 require_once "../../controller/userController.php";
-
-// MANUAL PHPMailer — NO COMPOSER!
 require_once 'PHPMailer/PHPMailer.php';
 require_once 'PHPMailer/SMTP.php';
 require_once 'PHPMailer/Exception.php';
@@ -33,8 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'nourkahlaoui1234@gmail.com';           // ← CHANGE THIS
-            $mail->Password   = 'fdof mbwg esxu tzma';    // ← CHANGE THIS
+            $mail->Username   = 'nourkahlaoui1234@gmail.com';           
+            $mail->Password   = 'fdof mbwg esxu tzma';    
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 

@@ -132,7 +132,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="input-row">
 <input type="password" name="password" id="passwordField" placeholder="Create Password" required autocomplete="new-password">
         </div>
-<!-- Password Strength Meter (this will appear) -->
 <div id="passwordStrengthMeter" class="password-strength">
     <div class="strength-bar">
         <div id="strengthBar" class="fill"></div>

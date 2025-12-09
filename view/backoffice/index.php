@@ -10,7 +10,6 @@ if (!isset($_SESSION['admin_id'])) {
 $uc = new UserController();
 $users = $uc->listUsers()->fetchAll();
 
-// Handle verification approve & delete
 if (isset($_POST['approve_verify'])) {
     $id = (int)$_POST['approve_id'];
     config::getConnexion()->prepare("UPDATE user SET verified = 1 WHERE id_user = ?")->execute([$id]);
@@ -161,7 +160,7 @@ $uniqueUsersToday = $db->query("SELECT COUNT(DISTINCT user_id) FROM login_log WH
         </table>
     </div>
 
-    <!-- USER MANAGEMENT -->
+
     <h3 class="section-title">User Management</h3>
     <div class="filters">
         <input type="text" id="searchInput" class="search-bar" placeholder="Search by name, email, CIN...">
