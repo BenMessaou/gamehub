@@ -284,7 +284,6 @@ roleFilter.addEventListener('change', applyFilters);
 genderFilter.addEventListener('change', applyFilters);
 statusFilter.addEventListener('change', applyFilters);
 
-// Sorting
 let sortDirection = {};
 function sortTable(colIndex) {
     const table = document.getElementById("usersTable");
