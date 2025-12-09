@@ -122,8 +122,6 @@ async function loginWithFingerprint() {
         const resp = await fetch('passkey_login_challenge.php');
         if (!resp.ok) throw new Error('Server error');
         const opts = await resp.json();
-
-        // Fix challenge and credential IDs
         opts.challenge = Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0));
         if (opts.allowCredentials) {
             opts.allowCredentials.forEach(cred => {

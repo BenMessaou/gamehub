@@ -1,8 +1,7 @@
 <?php
-// view/frontoffice/passkey_save.php
+
 session_start();
 
-// LOG EVERYTHING TO A FILE SO YOU SEE WHAT'S HAPPENING
 file_put_contents('debug_log.txt', "passkey_save.php called at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 
 if (!isset($_SESSION['user_id'])) {
