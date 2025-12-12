@@ -17,7 +17,7 @@ class CartoonAvatarRenderer {
             },
             hair: {
                 style: 'short-rounded',
-                color: '#333333'
+                color: '#000000'
             },
             face: {
                 expression: 'happy',

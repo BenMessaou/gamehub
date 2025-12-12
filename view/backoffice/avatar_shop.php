@@ -14,6 +14,8 @@ $userId = $isLoggedIn ? $_SESSION['user_id'] : 1; // ID par défaut pour le dév
     <link rel="stylesheet" href="avatar_shop.css">
     <link rel="stylesheet" href="avatar_cartoon.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- html2canvas pour capturer l'avatar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Avatar AI Analyzer -->
     <script src="avatar_ai_analyzer.js"></script>
 </head>

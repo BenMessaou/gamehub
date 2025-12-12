@@ -1,0 +1,215 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    ARCHITECTURE MVC - GAMEHUB PRO                            ║
+║                         Vue Simplifiée                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+                    ┌─────────────────────────────────┐
+                    │        UTILISATEUR               │
+                    │      (Navigateur Web)            │
+                    └──────────────┬──────────────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    │                           │
+            ┌───────▼────────┐         ┌────────▼────────┐
+            │  FRONTOFFICE   │         │   BACKOFFICE    │
+            │   (Public)     │         │    (Admin)      │
+            └───────┬────────┘         └────────┬────────┘
+                    │                           │
+                    └───────────┬───────────────┘
+                                 │
+                    ┌────────────▼────────────┐
+                    │                         │
+                    │      ┌─────────┐       │
+                    │      │  VIEW   │       │
+                    │      │   (V)    │       │
+                    │      └────┬────┘       │
+                    │           │            │
+                    │           │ Appelle     │
+                    │           │            │
+                    │      ┌────▼────┐      │
+                    │      │CONTROLLER│      │
+                    │      │   (C)    │      │
+                    │      └────┬────┘      │
+                    │           │            │
+                    │           │ Utilise    │
+                    │           │            │
+                    │      ┌────▼────┐      │
+                    │      │  MODEL  │       │
+                    │      │   (M)    │      │
+                    │      └────┬────┘      │
+                    │           │            │
+                    │           │            │
+                    │      ┌────▼────┐      │
+                    │      │  CONFIG │      │
+                    │      │  (DB)    │      │
+                    │      └─────────┘      │
+                    │                        │
+                    └────────────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          COMPOSANTS PRINCIPAUX                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ VIEW (Vue) - Interface Utilisateur                                          │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ • index.php                    → Page d'accueil                               │
+│ • detail.php                   → Détail d'un jeu                            │
+│ • collaborations.php            → Liste des collaborations                  │
+│ • room_collab.php              → Chat en temps réel                          │
+│ • admindashboard.php           → Dashboard admin                            │
+│ • create_collab.php            → Créer une collaboration                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ CONTROLLER (Contrôleur) - Logique Métier                                    │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ • ProjectController            → Gestion des jeux (CRUD)                    │
+│ • CollabProjectController      → Gestion projets collaboratifs              │
+│ • CollabMessageController      → Gestion des messages                        │
+│ • CollabMemberController       → Gestion des membres                        │
+│ • MessageModerationController  → Modération automatique                      │
+│ • CollabTaskController         → Gestion des tâches                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ MODEL (Modèle) - Données                                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ • Project                      → Entité Jeu                                  │
+│ • CollabProject                → Entité Projet collaboratif                │
+│ • CollabMessage                 → Entité Message                             │
+│ • CollabMember                  → Entité Membre                             │
+│ • CollabTask                    → Entité Tâche                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ CONFIG - Configuration                                                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ • config.php                   → Connexion base de données (PDO)           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          FLUX DE DONNÉES                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+    UTILISATEUR
+         │
+         │ 1. Requête HTTP
+         ▼
+    ┌─────────┐
+    │  VIEW   │  ← Affiche l'interface
+    └────┬────┘
+         │
+         │ 2. Appelle
+         ▼
+    ┌─────────┐
+    │CONTROLLER│ ← Traite la logique
+    └────┬────┘
+         │
+         │ 3. Utilise
+         ▼
+    ┌─────────┐
+    │  MODEL  │  ← Structure des données
+    └────┬────┘
+         │
+         │ 4. Accède à
+         ▼
+    ┌─────────┐
+    │  CONFIG │  ← Connexion DB
+    └────┬────┘
+         │
+         │ 5. Requête SQL
+         ▼
+    ┌─────────┐
+    │ DATABASE│  ← MySQL
+    └────┬────┘
+         │
+         │ 6. Retour données
+         ▼
+    ┌─────────┐
+    │CONTROLLER│ ← Traite les données
+    └────┬────┘
+         │
+         │ 7. Retour à la vue
+         ▼
+    ┌─────────┐
+    │  VIEW   │  ← Affiche les résultats
+    └────┬────┘
+         │
+         │ 8. HTML rendu
+         ▼
+    UTILISATEUR
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    EXEMPLE : AFFICHER UN JEU                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. Utilisateur visite → detail.php?id=5
+2. detail.php appelle → ProjectController::getProjectById(5)
+3. Controller utilise → config::getConnexion()
+4. Controller exécute → SELECT * FROM projects WHERE id = 5
+5. Database retourne → Array avec les données du jeu
+6. Controller retourne → $project à la vue
+7. detail.php affiche → HTML avec les informations du jeu
+8. Utilisateur voit → La page du jeu
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    EXEMPLE : CRÉER UNE COLLABORATION                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. Utilisateur remplit → Formulaire create_collab.php
+2. POST vers → create_collab.php
+3. create_collab.php crée → new CollabProject(...)
+4. create_collab.php appelle → CollabProjectController::create($collab)
+5. Controller exécute → INSERT INTO collab_project ...
+6. Database retourne → ID du projet créé
+7. Controller retourne → $newId
+8. create_collab.php redirige → view_collab.php?id=$newId
+9. Utilisateur voit → Le nouveau projet collaboratif
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          RÈGLES MVC                                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✓ VIEW appelle CONTROLLER (jamais directement MODEL ou DATABASE)
+✓ CONTROLLER utilise MODEL (jamais directement DATABASE)
+✓ MODEL est une simple structure de données (getters/setters)
+✓ CONFIG fournit l'accès à la base de données
+✓ Chaque composant a une responsabilité unique
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    STRUCTURE DES DOSSIERS                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+gamehubprjt/
+├── config/              → Configuration
+│   └── config.php
+│
+├── controller/          → Contrôleurs (Logique)
+│   ├── ProjectController.php
+│   └── controllercollab/
+│       ├── CollabProjectController.php
+│       ├── CollabMessageController.php
+│       └── ...
+│
+├── model/               → Modèles (Données)
+│   ├── Project.php
+│   └── collab/
+│       ├── CollabProject.php
+│       └── ...
+│
+└── view/                → Vues (Interface)
+    ├── frontoffice/     → Site public
+    │   ├── index.php
+    │   └── ...
+    └── backoffice/      → Administration
+        ├── projectscrud/
+        └── collabcrud/
+
+

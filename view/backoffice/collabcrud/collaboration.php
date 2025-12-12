@@ -211,6 +211,175 @@ foreach ($myCollabs as &$collab) {
             flex-wrap: wrap;
         }
 
+        /* Barre de recherche intelligente */
+        .search-container {
+            margin: 30px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid rgba(0, 255, 136, 0.6);
+            border-radius: 50px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
+        }
+
+        .search-box:focus-within {
+            border-color: rgba(0, 255, 136, 0.9);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .search-icon {
+            font-size: 1.3rem;
+            margin-right: 12px;
+            color: #00ff88;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 1rem;
+            padding: 5px 0;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .clear-search-btn {
+            background: rgba(255, 51, 92, 0.3);
+            border: 1px solid rgba(255, 51, 92, 0.6);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #ff335c;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .clear-search-btn:hover {
+            background: rgba(255, 51, 92, 0.5);
+            transform: scale(1.1);
+        }
+
+        .search-results-info {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            border-radius: 10px;
+            color: #00ff88;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        /* Options de filtrage */
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #00ff88;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .filter-select:hover {
+            border-color: rgba(0, 255, 136, 0.8);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: rgba(0, 255, 136, 1);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .clear-filters-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 51, 92, 0.2);
+            border: 1px solid rgba(255, 51, 92, 0.5);
+            border-radius: 8px;
+            color: #ff335c;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .clear-filters-btn:hover {
+            background: rgba(255, 51, 92, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Styles pour les résultats filtrés */
+        .collabs-list-table tbody tr.hidden {
+            display: none;
+        }
+
+        .collabs-list-table tbody tr.highlight {
+            background: rgba(0, 255, 136, 0.2) !important;
+            border-left: 4px solid #00ff88;
+        }
+
+        .status-section.hidden {
+            display: none;
+        }
+
+        /* Styles pour les cartes filtrées */
+        .collab-card.hidden {
+            display: none;
+        }
+
+        .collab-card.highlight {
+            border-color: #00ff88 !important;
+            box-shadow: 0 12px 35px rgba(0, 255, 136, 0.9) !important;
+            transform: translateY(-5px);
+        }
+
         /* Super Button - From admin dashboard template */
         .tab-button {
             position: relative;
@@ -706,6 +875,53 @@ foreach ($myCollabs as &$collab) {
             </div>
         <?php endif; ?>
 
+        <!-- Barre de recherche intelligente avec filtres -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="collabSearchInput" class="search-input" placeholder="Rechercher une collaboration (titre, description, owner ID, statut)..." autocomplete="off">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;" title="Effacer la recherche">✕</button>
+            </div>
+            
+            <!-- Options de filtrage -->
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label class="filter-label">📊 Statut:</label>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="all">Tous</option>
+                        <option value="ouvert">Open</option>
+                        <option value="en_cours">In Progress</option>
+                        <option value="ferme">Closed</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">📅 Date:</label>
+                    <select id="filterDate" class="filter-select">
+                        <option value="all">Toutes</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                        <option value="year">Cette année</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">👥 Membres:</label>
+                    <select id="filterMembers" class="filter-select">
+                        <option value="all">Tous</option>
+                        <option value="empty">Vides (0 membre)</option>
+                        <option value="partial">Partiellement remplis</option>
+                        <option value="full">Complets</option>
+                    </select>
+                </div>
+                
+                <button id="clearFiltersBtn" class="clear-filters-btn" title="Réinitialiser les filtres">🔄 Réinitialiser</button>
+            </div>
+            
+            <div id="searchResultsInfo" class="search-results-info" style="display: none;"></div>
+        </div>
+
         <div class="tabs">
             <button class="tab-button active" onclick="switchTab('list')">📋 Collaborations List</button>
             <button class="tab-button" onclick="switchTab('create')">➕ Create Collaboration</button>
@@ -763,8 +979,13 @@ foreach ($myCollabs as &$collab) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($collabsList as $collab): ?>
-                                        <tr>
+                                    <?php foreach ($collabsList as $collab): 
+                                        $currentMembersCount = $memberController->countMembers($collab['id']);
+                                    ?>
+                                        <tr data-statut="<?php echo htmlspecialchars($collab['statut']); ?>" 
+                                            data-date="<?php echo htmlspecialchars($collab['date_creation']); ?>"
+                                            data-members="<?php echo $currentMembersCount; ?>"
+                                            data-max-members="<?php echo $collab['max_membres']; ?>">
                                             <td class="collab-name"><?php echo htmlspecialchars($collab['titre']); ?></td>
                                             <td class="owner-id"><?php echo htmlspecialchars($collab['owner_id']); ?></td>
                                             <td class="creation-date"><?php echo date('Y-m-d H:i', strtotime($collab['date_creation'])); ?></td>
@@ -828,7 +1049,11 @@ foreach ($myCollabs as &$collab) {
             <?php else: ?>
                 <div class="collabs-grid">
                     <?php foreach ($myCollabs as $collab): ?>
-                        <div class="collab-card">
+                        <div class="collab-card" 
+                             data-statut="<?php echo htmlspecialchars($collab['statut']); ?>" 
+                             data-date="<?php echo htmlspecialchars($collab['date_creation']); ?>"
+                             data-members="<?php echo $collab['current_members']; ?>"
+                             data-max-members="<?php echo $collab['max_membres']; ?>">
                             <?php if (!empty($collab['image'])): ?>
                                 <img src="<?php echo htmlspecialchars($collab['image']); ?>" alt="<?php echo htmlspecialchars($collab['titre']); ?>">
                             <?php else: ?>
@@ -899,6 +1124,275 @@ foreach ($myCollabs as &$collab) {
                 event.target.classList.add('active');
             }
         }
+
+        // Recherche intelligente des collaborations avec filtres
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('collabSearchInput');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const searchResultsInfo = document.getElementById('searchResultsInfo');
+            const filterStatus = document.getElementById('filterStatus');
+            const filterDate = document.getElementById('filterDate');
+            const filterMembers = document.getElementById('filterMembers');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            
+            if (!searchInput) return;
+
+            // Fonction pour vérifier si une date correspond au filtre
+            function matchesDateFilter(dateString, filter) {
+                if (filter === 'all') return true;
+                
+                const date = new Date(dateString);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                
+                switch(filter) {
+                    case 'today':
+                        return date >= today;
+                    case 'week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return date >= weekAgo;
+                    case 'month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(monthAgo.getMonth() - 1);
+                        return date >= monthAgo;
+                    case 'year':
+                        const yearAgo = new Date(today);
+                        yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+                        return date >= yearAgo;
+                    default:
+                        return true;
+                }
+            }
+
+            // Fonction pour vérifier si le nombre de membres correspond au filtre
+            function matchesMembersFilter(currentMembers, maxMembers, filter) {
+                if (filter === 'all') return true;
+                
+                switch(filter) {
+                    case 'empty':
+                        return currentMembers === 0;
+                    case 'partial':
+                        return currentMembers > 0 && currentMembers < maxMembers;
+                    case 'full':
+                        return currentMembers >= maxMembers;
+                    default:
+                        return true;
+                }
+            }
+
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                const statusFilter = filterStatus ? filterStatus.value : 'all';
+                const dateFilter = filterDate ? filterDate.value : 'all';
+                const membersFilter = filterMembers ? filterMembers.value : 'all';
+                
+                // Afficher/masquer le bouton clear
+                const hasFilters = statusFilter !== 'all' || dateFilter !== 'all' || membersFilter !== 'all';
+                if (searchTerm.length > 0 || hasFilters) {
+                    if (clearSearchBtn) clearSearchBtn.style.display = 'flex';
+                } else {
+                    if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+                    if (searchResultsInfo) searchResultsInfo.style.display = 'none';
+                }
+
+                if (searchTerm.length === 0 && !hasFilters) {
+                    // Réinitialiser l'affichage
+                    document.querySelectorAll('.collabs-list-table tbody tr').forEach(tr => {
+                        tr.classList.remove('hidden', 'highlight');
+                    });
+                    document.querySelectorAll('.status-section').forEach(section => {
+                        section.classList.remove('hidden');
+                    });
+                    document.querySelectorAll('.collab-card').forEach(card => {
+                        card.classList.remove('hidden', 'highlight');
+                    });
+                    return;
+                }
+
+                // Rechercher dans toutes les collaborations
+                let totalMatches = 0;
+                
+                // Recherche dans le tableau (onglet Liste)
+                const statusSections = document.querySelectorAll('.status-section');
+                
+                statusSections.forEach(section => {
+                    const table = section.querySelector('.collabs-list-table');
+                    if (!table) return;
+                    
+                    const rows = table.querySelectorAll('tbody tr');
+                    let sectionMatches = 0;
+                    
+                    rows.forEach(row => {
+                        const collabName = row.querySelector('.collab-name')?.textContent.toLowerCase() || '';
+                        const ownerId = row.querySelector('.owner-id')?.textContent.toLowerCase() || '';
+                        const creationDate = row.querySelector('.creation-date')?.textContent.toLowerCase() || '';
+                        
+                        // Récupérer les données depuis les attributs data
+                        const rowStatut = row.getAttribute('data-statut') || '';
+                        const rowDate = row.getAttribute('data-date') || '';
+                        const rowMembers = parseInt(row.getAttribute('data-members') || '0');
+                        const rowMaxMembers = parseInt(row.getAttribute('data-max-members') || '0');
+                        
+                        // Vérifier la recherche textuelle
+                        const textMatches = searchTerm.length === 0 || 
+                            collabName.includes(searchTerm) ||
+                            ownerId.includes(searchTerm) ||
+                            creationDate.includes(searchTerm);
+                        
+                        // Vérifier les filtres
+                        const statusMatches = statusFilter === 'all' || rowStatut === statusFilter;
+                        const dateMatches = dateFilter === 'all' || matchesDateFilter(rowDate, dateFilter);
+                        const membersMatches = membersFilter === 'all' || matchesMembersFilter(rowMembers, rowMaxMembers, membersFilter);
+                        
+                        // La ligne correspond si tous les critères sont remplis
+                        const matches = textMatches && statusMatches && dateMatches && membersMatches;
+                        
+                        if (matches) {
+                            row.classList.remove('hidden');
+                            if (searchTerm.length > 0) {
+                                row.classList.add('highlight');
+                            }
+                            sectionMatches++;
+                            totalMatches++;
+                        } else {
+                            row.classList.add('hidden');
+                            row.classList.remove('highlight');
+                        }
+                    });
+                    
+                    // Masquer la section si aucun résultat
+                    if (sectionMatches === 0) {
+                        section.classList.add('hidden');
+                    } else {
+                        section.classList.remove('hidden');
+                    }
+                });
+
+                // Recherche dans les cartes (onglet My Collaborations)
+                const collabCards = document.querySelectorAll('.collab-card');
+                collabCards.forEach(card => {
+                    const cardTitle = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                    const cardDescription = card.querySelector('.description')?.textContent.toLowerCase() || '';
+                    const cardInfo = card.querySelector('.collab-info')?.textContent.toLowerCase() || '';
+                    
+                    // Récupérer les données depuis les attributs data
+                    const cardStatut = card.getAttribute('data-statut') || '';
+                    const cardDate = card.getAttribute('data-date') || '';
+                    const cardMembers = parseInt(card.getAttribute('data-members') || '0');
+                    const cardMaxMembers = parseInt(card.getAttribute('data-max-members') || '0');
+                    
+                    // Vérifier la recherche textuelle
+                    const textMatches = searchTerm.length === 0 || 
+                        cardTitle.includes(searchTerm) ||
+                        cardDescription.includes(searchTerm) ||
+                        cardInfo.includes(searchTerm);
+                    
+                    // Vérifier les filtres
+                    const statusMatches = statusFilter === 'all' || cardStatut === statusFilter;
+                    const dateMatches = dateFilter === 'all' || matchesDateFilter(cardDate, dateFilter);
+                    const membersMatches = membersFilter === 'all' || matchesMembersFilter(cardMembers, cardMaxMembers, membersFilter);
+                    
+                    // La carte correspond si tous les critères sont remplis
+                    const matches = textMatches && statusMatches && dateMatches && membersMatches;
+                    
+                    if (matches) {
+                        card.classList.remove('hidden');
+                        if (searchTerm.length > 0) {
+                            card.classList.add('highlight');
+                        }
+                        totalMatches++;
+                    } else {
+                        card.classList.add('hidden');
+                        card.classList.remove('highlight');
+                    }
+                });
+
+                // Afficher les informations de recherche
+                const activeFilters = [];
+                if (statusFilter !== 'all') {
+                    const statusNames = { 'ouvert': 'Open', 'en_cours': 'In Progress', 'ferme': 'Closed' };
+                    activeFilters.push(`Statut: ${statusNames[statusFilter] || statusFilter}`);
+                }
+                if (dateFilter !== 'all') {
+                    const dateNames = { 'today': 'Aujourd\'hui', 'week': 'Cette semaine', 'month': 'Ce mois', 'year': 'Cette année' };
+                    activeFilters.push(`Date: ${dateNames[dateFilter] || dateFilter}`);
+                }
+                if (membersFilter !== 'all') {
+                    const membersNames = { 'empty': 'Vides', 'partial': 'Partiellement remplis', 'full': 'Complets' };
+                    activeFilters.push(`Membres: ${membersNames[membersFilter] || membersFilter}`);
+                }
+                
+                let infoText = '';
+                if (totalMatches > 0) {
+                    infoText = `🔍 ${totalMatches} collaboration(s) trouvée(s)`;
+                    if (searchTerm.length > 0) {
+                        infoText += ` pour "${searchTerm}"`;
+                    }
+                    if (activeFilters.length > 0) {
+                        infoText += ` | Filtres: ${activeFilters.join(', ')}`;
+                    }
+                    searchResultsInfo.textContent = infoText;
+                    searchResultsInfo.style.display = 'block';
+                    searchResultsInfo.style.background = 'rgba(0, 255, 136, 0.15)';
+                    searchResultsInfo.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+                    searchResultsInfo.style.color = '#00ff88';
+                } else {
+                    infoText = `❌ Aucune collaboration trouvée`;
+                    if (searchTerm.length > 0) {
+                        infoText += ` pour "${searchTerm}"`;
+                    }
+                    if (activeFilters.length > 0) {
+                        infoText += ` | Filtres: ${activeFilters.join(', ')}`;
+                    }
+                    searchResultsInfo.textContent = infoText;
+                    searchResultsInfo.style.display = 'block';
+                    searchResultsInfo.style.background = 'rgba(255, 51, 92, 0.15)';
+                    searchResultsInfo.style.borderColor = 'rgba(255, 51, 92, 0.5)';
+                    searchResultsInfo.style.color = '#ff335c';
+                }
+            }
+
+            // Écouter les changements dans le champ de recherche
+            searchInput.addEventListener('input', performSearch);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    performSearch();
+                    searchInput.blur();
+                }
+            });
+
+            // Écouter les changements dans les filtres
+            if (filterStatus) {
+                filterStatus.addEventListener('change', performSearch);
+            }
+            if (filterDate) {
+                filterDate.addEventListener('change', performSearch);
+            }
+            if (filterMembers) {
+                filterMembers.addEventListener('change', performSearch);
+            }
+
+            // Bouton pour effacer la recherche
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function() {
+                    searchInput.value = '';
+                    performSearch();
+                    searchInput.focus();
+                });
+            }
+
+            // Bouton pour réinitialiser les filtres
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', function() {
+                    if (filterStatus) filterStatus.value = 'all';
+                    if (filterDate) filterDate.value = 'all';
+                    if (filterMembers) filterMembers.value = 'all';
+                    performSearch();
+                });
+            }
+        });
     </script>
 
     <!-- Modal des statistiques -->

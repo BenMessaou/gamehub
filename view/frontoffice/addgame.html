@@ -1,51 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add a Game - GameHub Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="collaborations.css">
   <link rel="stylesheet" href="c.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+  <!-- Chatbot IA -->
+  <link rel="stylesheet" href="../backoffice/collabcrud/chatbot.css">
 </head>
 <body>
-    <script src="c.js"></script>
-    <script src="validation.js"></script>
-            <!-- HEADER -->
-            <header class="header">
-                <a href="index.php">
-                <img src="assests/l1ogo.png" alt="GameHub Pro" class="logo">
-                </a>
-                <nav>
-                <ul class="nav-links">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="index.php#new-games">Recent Games</a></li>
-                    <li><a href="index.php#about">About</a></li>
-                    <li><a href="index.php#team">Team</a></li>
-                    <li><a href="index.php#contact">Contact</a></li>
-                    <li><a href="addgame.html" class="add-game-btn active"><span>Add your game</span></a></li>
-                </ul>
-                </nav>
-                <div class="burger-container">
-                <div class="burger"></div>
-                </div>
-            </header>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        <img src="assests/logo.png" alt="Logo GameHub Pro" class="header-logo">
+        <h1 class="logo">GameHub Pro</h1>
+      </div>
+      <nav style="flex: 1; display: flex; justify-content: center;">
+        <ul>
+          <li><a href="index.php" class="super-button">Home</a></li>
+          <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
+          <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
+          <li><a href="index.php#about" class="super-button">About</a></li>
+        </ul>
+      </nav>
+      
+      <button id="sidebar-toggle" class="sidebar-toggle" style="flex-shrink: 0;">☰</button>
+    </div>
+  </header>
 
-            <!-- SECTION AJOUT DE JEU -->
-            <section class="add-game-section">
-                <div class="container">
-                <h1 class="section-title">Publish Your Game on GameHub Pro</h1>
-                <p class="section-description">
-                    Fill out the form below to submit your game for validation. 
-                </p>
+  <aside id="sidebar" class="sidebar">
+    <nav>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php#new-games">Recent Games</a></li>
+        <li><a href="collaborations.php"> Collaborations</a></li>
+        <li><a href="index.php#about">About</a></li>
+      </ul>
+    </nav>
+  </aside>
 
-                <!-- Success/Error Messages -->
-                <div id="message-container" style="display: none; margin-bottom: 24px; padding: 16px; border-radius: 8px;">
-                    <div id="message-content"></div>
-                </div>
+  <main id="main-content" class="main-content">
+    <!-- Images décoratives flottantes en arrière-plan -->
+    <div class="decorative-images">
+      <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-1">
+      <img src="assests/game5.png" alt="Decor" class="decor-img decor-img-2">
+      <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-3">
+    </div>
 
-                <!-- FORMULAIRE (enctype pour upload fichier) -->
-                <form action="control/add_game.php" method="POST" enctype="multipart/form-data" class="game-form">
+    <div class="animated-strip">
+      <div class="strip-content">
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/3.png" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/1.png"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/1.png" />
+        <img src="assests/house.jpg" />
+        <img src="assests/5.png"  />
+        <img src="assests/girl.jpg"  />
+      </div>
+    </div>
+
+    <!-- SECTION AJOUT DE JEU -->
+    <div class="collabs-container">
+      <div class="collabs-header">
+        <h1>Publish Your Game</h1>
+        <a href="index.php#new-games" class="super-button">
+          ← Back to Games
+        </a>
+      </div>
+
+      <div class="collab-card" style="max-width: 900px; margin: 0 auto;">
+        <p class="description" style="text-align: center; margin-bottom: 2rem; color: #ccc;">
+          Fill out the form below to submit your game for validation.
+        </p>
+
+        <!-- Success/Error Messages -->
+        <div id="message-container" style="display: none; margin-bottom: 24px; padding: 16px; border-radius: 8px;">
+          <div id="message-content"></div>
+        </div>
+
+        <!-- FORMULAIRE (enctype pour upload fichier) -->
+        <form action="control/add_game.php" method="POST" enctype="multipart/form-data" class="game-form">
 
                     <!-- Nom du jeu -->
                     <div class="form-group">
@@ -146,38 +200,89 @@
                     <small>Max. 10 keywords</small>
                     </div>
 
-                    <!-- BOUTONS -->
-                    <div class="form-actions">
-                    <button type="submit" class="submit-btn">
-                        Submit for Validation
-                    </button>
-                    <a href="javascript:history.back()" class="cancel-btn">
-                        Cancel
-                    </a>
-                    </div>
-                </form>
+          <!-- BOUTONS -->
+          <div class="card-actions" style="justify-content: center; margin-top: 2rem; gap: 1rem;">
+            <button type="submit" class="btn-view" style="background: rgba(0, 255, 136, 0.2); color: #00ff88; border-color: rgba(0, 255, 136, 0.5); padding: 12px 28px; font-size: 1rem; cursor: pointer;">
+              Submit for Validation
+            </button>
+            <a href="javascript:history.back()" class="btn-view" style="background: rgba(255, 51, 92, 0.2); color: #ff335c; border-color: rgba(255, 51, 92, 0.5);">
+              Cancel
+            </a>
+          </div>
+        </form>
 
-                <!-- AIDE -->
-                <div class="help-box">
-                    <h3>Need Help?</h3>
-                    <p>
-                    <i class="fas fa-envelope"></i> <a href="mailto:support@gamehubpro.com">support@gamehubpro.com</a><br>
-                    <i class="fas fa-book"></i> <a href="guide-soumission.html" target="_blank">Submission Guide</a>
-                    </p>
-                </div>
-                </div>
-            </section>
+        <!-- AIDE -->
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 1.5rem; border-radius: 12px; margin-top: 2rem; border: 1px solid rgba(0, 255, 136, 0.2);">
+          <h3 style="color: #00ff88; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);">Need Help?</h3>
+          <p style="color: #ccc; line-height: 1.8;">
+            📧 <a href="mailto:support@gamehubpro.com" style="color: #00ffea; text-decoration: none;">support@gamehubpro.com</a><br>
+            📖 <a href="guide-soumission.html" target="_blank" style="color: #00ffea; text-decoration: none;">Submission Guide</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
 
-            <!-- FOOTER -->
-            <footer class="footer">
-                <div class="container">
-                <p>© 2025 GameHub Pro | All rights reserved | Tunis, Tunisia</p>
-                </div>
-            </footer>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section about">
+        <h3>GameHub Pro</h3>
+        <p>The platform that connects independent developers with players from around the world.</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="index.php#new-games">Recent Games</a></li>
+          <li><a href="#" class="dashboard-link" id="dashboardFooterBtn">Dashboard</a></li>
+          <li><a href="collaborations.php"> Collaborations</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 GameHub Pro | All rights reserved | Tunis, Tunisia</p>
+    </div>
+  </footer>
 
-<script>
-// Handle success/error messages and placeholder removal
-document.addEventListener('DOMContentLoaded', function() {
+  <!-- Chatbot HTML -->
+  <?php include '../backoffice/collabcrud/chatbot.html'; ?>
+  
+  <script src="c.js"></script>
+  <script src="validation.js"></script>
+  <script src="collaborations.js"></script>
+  <script src="../backoffice/collabcrud/chatbot.js"></script>
+  <script>
+  // Dashboard button management in footer
+  document.addEventListener('DOMContentLoaded', function() {
+    const dashboardFooterBtn = document.getElementById('dashboardFooterBtn');
+    
+    if (dashboardFooterBtn) {
+      dashboardFooterBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Display alert indicating admin login
+        alert('You are logged in as administrator.\n\nTo access the Dashboard, please enter the access code.');
+        
+        // Request the code
+        const code = prompt('Enter the Dashboard access code:');
+        
+        // Verify the code
+        if (code === '0000') {
+          // Correct code, redirect to collaboration dashboard
+          window.location.href = '../backoffice/projectscrud/projectlist.php';
+        } else if (code === null) {
+          // User cancelled
+          return;
+        } else {
+          // Incorrect code
+          alert('Incorrect code. Access denied.');
+        }
+      });
+    }
+  });
+
+  // Handle success/error messages and placeholder removal
+  (function() {
   // Handle success/error messages from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const messageContainer = document.getElementById('message-container');
@@ -259,9 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-});
+  })();
 </script>
-<script src="validation.js"></script>
 
 
 </body>

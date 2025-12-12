@@ -38,18 +38,81 @@ if ($acceptedList instanceof PDOStatement) {
 }
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$filterCategory = isset($_GET['filter_category']) ? $_GET['filter_category'] : '';
+$filterLocation = isset($_GET['filter_location']) ? $_GET['filter_location'] : '';
+$filterDeveloper = isset($_GET['filter_developer']) ? $_GET['filter_developer'] : '';
 
-if ($search !== '') {
-    $needle = mb_strtolower($search);
-    $list = array_filter($list, function ($project) use ($needle) {
-        $haystack = mb_strtolower(
-            ($project['nom'] ?? '') . ' ' .
-            ($project['developpeur'] ?? '') . ' ' .
-            ($project['categorie'] ?? '') . ' ' .
-            ($project['lieu'] ?? '')
-        );
-        return strpos($haystack, $needle) !== false;
+// Get unique values for filters
+$allCategories = [];
+$allLocations = [];
+$allDevelopers = [];
+foreach ($list as $project) {
+    if (!empty($project['categorie'])) {
+        $allCategories[$project['categorie']] = true;
+    }
+    if (!empty($project['lieu'])) {
+        $allLocations[$project['lieu']] = true;
+    }
+    if (!empty($project['developpeur'])) {
+        $allDevelopers[$project['developpeur']] = true;
+    }
+}
+$allCategories = array_keys($allCategories);
+$allLocations = array_keys($allLocations);
+$allDevelopers = array_keys($allDevelopers);
+sort($allCategories);
+sort($allLocations);
+sort($allDevelopers);
+
+// Smart search and filtering
+if ($search !== '' || $filterCategory !== '' || $filterLocation !== '' || $filterDeveloper !== '') {
+    $list = array_filter($list, function ($project) use ($search, $filterCategory, $filterLocation, $filterDeveloper) {
+        // Search filter
+        if ($search !== '') {
+            $needle = mb_strtolower($search);
+            $searchTerms = explode(' ', $needle);
+            $haystack = mb_strtolower(
+                ($project['nom'] ?? '') . ' ' .
+                ($project['developpeur'] ?? '') . ' ' .
+                ($project['categorie'] ?? '') . ' ' .
+                ($project['lieu'] ?? '') . ' ' .
+                ($project['description'] ?? '') . ' ' .
+                implode(' ', json_decode($project['plateformes'] ?? '[]', true) ?? [])
+            );
+            
+            // Smart search: all terms must be found (AND logic)
+            $allTermsFound = true;
+            foreach ($searchTerms as $term) {
+                if (trim($term) !== '' && strpos($haystack, trim($term)) === false) {
+                    $allTermsFound = false;
+                    break;
+                }
+            }
+            if (!$allTermsFound) {
+                return false;
+            }
+        }
+        
+        // Category filter
+        if ($filterCategory !== '' && ($project['categorie'] ?? '') !== $filterCategory) {
+            return false;
+        }
+        
+        // Location filter
+        if ($filterLocation !== '' && ($project['lieu'] ?? '') !== $filterLocation) {
+            return false;
+        }
+        
+        // Developer filter
+        if ($filterDeveloper !== '' && ($project['developpeur'] ?? '') !== $filterDeveloper) {
+            return false;
+        }
+        
+        return true;
     });
+    
+    // Re-index array after filtering
+    $list = array_values($list);
 }
 
 // Calculate statistics (use all projects for stats)
@@ -178,13 +241,19 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GameHub | Projects</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../frontoffice/collaborations.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/lineicons.css" />
     <link rel="stylesheet" href="styles.css" />
     <style>
+        /* Styles pour la table avec le template */
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+        tbody tr:hover {
+            background: rgba(0, 255, 136, 0.08) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
         .hero-card {
             display: flex;
             align-items: center;
@@ -297,11 +366,25 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: var(--text-light);
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
         }
         .empty-state h3 {
             font-family: Orbitron, sans-serif;
             margin-bottom: 16px;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        .empty-state p {
+            color: #ccc;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .neon-field {
             background: rgba(5, 0, 20, 0.75);
@@ -318,64 +401,179 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
         }
     </style>
 </head>
-<body class="admin-body">
-
-<header class="admin-header">
-    <div class="container">
-        <div class="admin-logo">
-            <img src="../../frontoffice/assests/logo.png" alt="GameHub Logo">
-            GameHub Admin
-        </div>
-        <nav class="admin-nav">
-            <a href="#" class="nav-link" id="statisticsBtn">Statistiques</a>
-            <a href="projectlist.php" class="nav-link active">Projects</a>
-            <a href="addProject.php" class="nav-link">Add Project</a>
-            <a href="../collabcrud/collaboration.php" class="nav-link">🤝 Collab</a>
-        </nav>
+<body>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+      <h1 class="logo" style="flex-shrink: 0; margin: 0;">GameHub Admin</h1>
+      <nav style="flex: 1; display: flex; justify-content: center;">
+        <ul style="display: flex; list-style: none; gap: 1rem; margin: 0; padding: 0; flex-wrap: wrap; justify-content: center;">
+          <li style="margin: 0;"><a href="#" class="super-button" id="statisticsBtn">Statistiques</a></li>
+          <li style="margin: 0;"><a href="projectlist.php" class="super-button">Projects</a></li>
+          <li style="margin: 0;"><a href="addProject.php" class="super-button">Add Project</a></li>
+          <li style="margin: 0;"><a href="../collabcrud/collaboration.php" class="super-button">🤝 Collab</a></li>
+        </ul>
+      </nav>
+      <button id="sidebar-toggle" class="sidebar-toggle" style="flex-shrink: 0; margin-left: 1rem;">☰</button>
     </div>
-</header>
+  </header>
 
-<main class="admin-main">
+  <aside id="sidebar" class="sidebar">
+    <nav>
+      <ul>
+        <li><a href="#" id="statisticsBtnSidebar">Statistiques</a></li>
+        <li><a href="projectlist.php">Projects</a></li>
+        <li><a href="addProject.php">Add Project</a></li>
+        <li><a href="../collabcrud/collaboration.php">🤝 Collab</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main id="main-content" class="main-content">
+    <!-- Images décoratives flottantes en arrière-plan -->
+    <div class="decorative-images">
+      <img src="../../frontoffice/assests/logo.png" alt="Decor" class="decor-img decor-img-1">
+      <img src="../../frontoffice/assests/game5.png" alt="Decor" class="decor-img decor-img-2">
+      <img src="../../frontoffice/assests/logo.png" alt="Decor" class="decor-img decor-img-3">
+    </div>
+
+    <div class="animated-strip">
+      <div class="strip-content">
+        <img src="../../frontoffice/assests/nim.jpg" />
+        <img src="../../frontoffice/assests/rambling.jpg" />
+        <img src="../../frontoffice/assests/house.jpg" />
+        <img src="../../frontoffice/assests/planet.jpg"  />
+        <img src="../../frontoffice/assests/girl.jpg"  />
+
+        <img src="../../frontoffice/assests/nim.jpg" />
+        <img src="../../frontoffice/assests/rambling.jpg" />
+        <img src="../../frontoffice/assests/3.png" />
+        <img src="../../frontoffice/assests/planet.jpg"  />
+        <img src="../../frontoffice/assests/1.png"  />
+        <img src="../../frontoffice/assests/nim.jpg" />
+        <img src="../../frontoffice/assests/rambling.jpg" />
+        <img src="../../frontoffice/assests/house.jpg" />
+        <img src="../../frontoffice/assests/planet.jpg"  />
+        <img src="../../frontoffice/assests/girl.jpg"  />
+        <img src="../../frontoffice/assests/nim.jpg" />
+        <img src="../../frontoffice/assests/rambling.jpg" />
+        <img src="../../frontoffice/assests/house.jpg" />
+        <img src="../../frontoffice/assests/planet.jpg"  />
+        <img src="../../frontoffice/assests/girl.jpg"  />
+        <img src="../../frontoffice/assests/nim.jpg" />
+        <img src="../../frontoffice/assests/1.png" />
+        <img src="../../frontoffice/assests/house.jpg" />
+        <img src="../../frontoffice/assests/5.png"  />
+        <img src="../../frontoffice/assests/girl.jpg"  />
+      </div>
+    </div>
+
     <div class="container">
 
-        <section class="hero-card">
-            <div>
+        <div class="collabs-container">
+            <div class="collabs-header">
                 <h1><?= $statusFilter === 'en_attente' ? 'Pending Projects' : 'Accepted Projects' ?></h1>
-                <p><?= $statusFilter === 'en_attente' 
-                    ? 'Review and manage projects submitted by users. Accept or reject submissions to publish them on the platform.'
-                    : 'View and manage all accepted projects that are published on the platform. You can edit or remove projects from here.' ?></p>
-            </div>
-            <div class="d-flex flex-column gap-2">
-                <a href="addProject.php" class="btn-validate text-decoration-none text-center">+ Ajouter un projet</a>
-                <a href="index1.html" class="btn-ghost"><i class="lni lni-arrow-left"></i> Retour dashboard</a>
-            </div>
-        </section>
-
-        <section class="admin-section table-wrapper">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-                <div>
-                    <h2>Liste des projets</h2>
-                    <p class="section-subtitle"><?= count($list) ?> entr&eacute;es affich&eacute;es<?= $search !== '' ? " &bull; filtre &laquo; " . htmlspecialchars($search) . " &raquo;" : ''; ?></p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="addProject.php" class="super-button">➕ Add Project</a>
+                    <a href="index1.html" class="super-button">← Back to Dashboard</a>
                 </div>
-                <div class="d-flex gap-2 flex-wrap">
+            </div>
+
+        <div class="collabs-container">
+            <div class="collabs-header" style="margin-bottom: 2rem;">
+                <h2 style="color: #fff; font-size: 2rem; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5); margin: 0;">
+                    Liste des projets
+                </h2>
+                <p style="color: #ccc; margin-top: 0.5rem;">
+                    <?= count($list) ?> entr&eacute;es affich&eacute;es<?= $search !== '' ? " &bull; filtre &laquo; " . htmlspecialchars($search) . " &raquo;" : ''; ?>
+                </p>
+            </div>
+
+            <!-- Filtres avancés -->
+            <div style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(0, 255, 136, 0.3); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
                     <!-- Status filter tabs -->
-                    <div class="d-flex gap-2">
-                        <a href="?status=en_attente<?= $search ? '&search=' . urlencode($search) : '' ?>" 
-                           class="btn-outline <?= $statusFilter === 'en_attente' ? 'active' : '' ?>" 
-                           style="<?= $statusFilter === 'en_attente' ? 'background: rgba(255, 0, 199, 0.3); border-color: var(--primary);' : '' ?>">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                        <a href="?status=en_attente<?= $search ? '&search=' . urlencode($search) : '' ?><?= $filterCategory ? '&filter_category=' . urlencode($filterCategory) : '' ?><?= $filterLocation ? '&filter_location=' . urlencode($filterLocation) : '' ?><?= $filterDeveloper ? '&filter_developer=' . urlencode($filterDeveloper) : '' ?>" 
+                           class="super-button <?= $statusFilter === 'en_attente' ? 'active' : '' ?>" 
+                           style="<?= $statusFilter === 'en_attente' ? 'background: rgba(255, 0, 199, 0.3); border-color: rgba(255, 0, 199, 0.8);' : '' ?>">
                             Pending (<?= $pendingCount ?>)
                         </a>
-                        <a href="?status=publie<?= $search ? '&search=' . urlencode($search) : '' ?>" 
-                           class="btn-success <?= $statusFilter === 'publie' ? 'active' : '' ?>"
+                        <a href="?status=publie<?= $search ? '&search=' . urlencode($search) : '' ?><?= $filterCategory ? '&filter_category=' . urlencode($filterCategory) : '' ?><?= $filterLocation ? '&filter_location=' . urlencode($filterLocation) : '' ?><?= $filterDeveloper ? '&filter_developer=' . urlencode($filterDeveloper) : '' ?>" 
+                           class="super-button <?= $statusFilter === 'publie' ? 'active' : '' ?>"
                            style="<?= $statusFilter === 'publie' ? 'background: rgba(0, 255, 234, 0.3); border-color: rgba(0, 255, 234, 0.8);' : '' ?>">
                             Accepted (<?= $acceptedCount ?>)
                         </a>
                     </div>
-                    <form class="d-flex gap-2" method="GET" action="">
+                    
+                    <!-- Search bar -->
+                    <form id="searchForm" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; flex: 1; justify-content: flex-end; min-width: 300px;" method="GET" action="">
                         <input type="hidden" name="status" value="<?= $statusFilter ?>">
-                        <input type="text" name="search" value="<?= htmlspecialchars($search); ?>" class="form-control neon-field" placeholder="Rechercher un jeu, un studio...">
-                        <button type="submit" class="btn-outline">Filtrer</button>
+                        <input type="hidden" name="filter_category" id="filter_category" value="<?= htmlspecialchars($filterCategory); ?>">
+                        <input type="hidden" name="filter_location" id="filter_location" value="<?= htmlspecialchars($filterLocation); ?>">
+                        <input type="hidden" name="filter_developer" id="filter_developer" value="<?= htmlspecialchars($filterDeveloper); ?>">
+                        <input type="text" name="search" id="searchInput" value="<?= htmlspecialchars($search); ?>" 
+                               style="padding: 12px 20px; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50px; color: #fff; font-size: 14px; flex: 1; min-width: 200px; max-width: 400px; transition: all 0.3s ease;" 
+                               placeholder="Rechercher un jeu, un studio, catégorie..."
+                               onfocus="this.style.borderColor='rgba(0, 255, 136, 0.6)'; this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.3)';"
+                               onblur="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.boxShadow='none';">
+                        <button type="submit" class="super-button" style="padding: 12px 24px; white-space: nowrap;">🔍 Rechercher</button>
                     </form>
+                </div>
+                
+                <!-- Filtres avancés -->
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 136, 0.2);">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; color: #00ff88; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600;">Catégorie</label>
+                        <select id="categoryFilter" style="width: 100%; padding: 10px 15px; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50px; color: #fff; font-size: 14px; cursor: pointer; transition: all 0.3s ease;"
+                                onchange="updateFilters()"
+                                onfocus="this.style.borderColor='rgba(0, 255, 136, 0.6)'; this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.3)';"
+                                onblur="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.boxShadow='none';">
+                            <option value="">Toutes les catégories</option>
+                            <?php foreach ($allCategories as $cat): ?>
+                                <option value="<?= htmlspecialchars($cat); ?>" <?= $filterCategory === $cat ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cat); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; color: #00ff88; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600;">Lieu</label>
+                        <select id="locationFilter" style="width: 100%; padding: 10px 15px; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50px; color: #fff; font-size: 14px; cursor: pointer; transition: all 0.3s ease;"
+                                onchange="updateFilters()"
+                                onfocus="this.style.borderColor='rgba(0, 255, 136, 0.6)'; this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.3)';"
+                                onblur="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.boxShadow='none';">
+                            <option value="">Tous les lieux</option>
+                            <?php foreach ($allLocations as $loc): ?>
+                                <option value="<?= htmlspecialchars($loc); ?>" <?= $filterLocation === $loc ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($loc); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; color: #00ff88; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600;">Développeur</label>
+                        <select id="developerFilter" style="width: 100%; padding: 10px 15px; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50px; color: #fff; font-size: 14px; cursor: pointer; transition: all 0.3s ease;"
+                                onchange="updateFilters()"
+                                onfocus="this.style.borderColor='rgba(0, 255, 136, 0.6)'; this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.3)';"
+                                onblur="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.boxShadow='none';">
+                            <option value="">Tous les développeurs</option>
+                            <?php foreach ($allDevelopers as $dev): ?>
+                                <option value="<?= htmlspecialchars($dev); ?>" <?= $filterDeveloper === $dev ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($dev); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <?php if ($search !== '' || $filterCategory !== '' || $filterLocation !== '' || $filterDeveloper !== ''): ?>
+                        <div style="display: flex; align-items: flex-end;">
+                            <a href="?status=<?= $statusFilter ?>" class="super-button" style="padding: 10px 20px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border-color: rgba(255, 51, 92, 0.5);">
+                                ✕ Réinitialiser
+                            </a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -383,78 +581,85 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
                 <div class="empty-state">
                     <h3>Aucun projet trouv&eacute;</h3>
                     <p>Essayez de retirer le filtre ou ajoutez une nouvelle fiche.</p>
-                    <a href="addProject.php" class="btn-validate text-decoration-none mt-3 d-inline-flex align-items-center gap-2">
-                        <i class="lni lni-plus"></i> Cr&eacute;er un projet
+                    <a href="addProject.php" class="super-button" style="margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        ➕ Cr&eacute;er un projet
                     </a>
                 </div>
             <?php else: ?>
-                <div class="table-container">
-                    <table class="admin-table">
+                <div style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); border-radius: 15px; padding: 2rem; border: 1px solid rgba(0, 255, 136, 0.3); box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2); overflow-x: auto; position: relative;">
+                    <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff); animation: rotate 4s linear infinite; z-index: -1; opacity: 0.05; pointer-events: none;"></div>
+                    <table style="width: 100%; border-collapse: collapse; color: #fff; position: relative; z-index: 1;">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>D&eacute;veloppeur</th>
-                            <th>Date cr&eacute;ation</th>
-                            <th>Cat&eacute;gorie</th>
-                            <th>&Acirc;ge</th>
-                            <th>Lieu</th>
-                            <th>Plateformes</th>
-                            <th class="text-end">Actions</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">ID</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Nom</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">D&eacute;veloppeur</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Date cr&eacute;ation</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Cat&eacute;gorie</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">&Acirc;ge</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Lieu</th>
+                            <th style="padding: 1rem; text-align: left; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Plateformes</th>
+                            <th style="padding: 1rem; text-align: right; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-bottom: 2px solid rgba(0, 255, 136, 0.3);">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($list as $project) : ?>
                             <?php $plateformes = json_decode($project['plateformes'], true) ?? []; ?>
-                            <tr>
-                                <td><span class="project-id">#<?= $project['id']; ?></span></td>
-                                <td><?= htmlspecialchars($project['nom']); ?></td>
-                                <td><?= htmlspecialchars($project['developpeur']); ?></td>
-                                <td><?= htmlspecialchars($project['date_creation']); ?></td>
-                                <td><?= htmlspecialchars($project['categorie']); ?></td>
-                                <td><?= $project['age_recommande'] ?? "--"; ?></td>
-                                <td><?= $project['lieu'] ?? "--"; ?></td>
-                                <td>
+                            <tr style="border-bottom: 1px solid rgba(0, 255, 136, 0.1); transition: all 0.3s ease;" 
+                                onmouseover="this.style.background='rgba(0, 255, 136, 0.05)'; this.style.transform='scale(1.01)';" 
+                                onmouseout="this.style.background='transparent'; this.style.transform='scale(1)';">
+                                <td style="padding: 1rem;">
+                                    <span style="font-family: 'Orbitron', sans-serif; font-size: 0.95rem; color: #00ffea; font-weight: 600;">
+                                        #<?= $project['id']; ?>
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem; color: #fff;"><?= htmlspecialchars($project['nom']); ?></td>
+                                <td style="padding: 1rem; color: #ccc;"><?= htmlspecialchars($project['developpeur']); ?></td>
+                                <td style="padding: 1rem; color: #ccc;"><?= htmlspecialchars($project['date_creation']); ?></td>
+                                <td style="padding: 1rem;">
+                                    <span style="display: inline-block; padding: 4px 12px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 15px; font-size: 0.85rem;">
+                                        <?= htmlspecialchars($project['categorie']); ?>
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem; color: #ccc;"><?= $project['age_recommande'] ?? "--"; ?></td>
+                                <td style="padding: 1rem; color: #ccc;"><?= $project['lieu'] ?? "--"; ?></td>
+                                <td style="padding: 1rem;">
                                     <?php if (count($plateformes) > 0): ?>
                                         <?php foreach ($plateformes as $platform): ?>
-                                            <span class="platform-chip"><?= htmlspecialchars(trim($platform)); ?></span>
+                                            <span style="display: inline-block; padding: 4px 12px; background: rgba(0, 255, 234, 0.12); border: 1px solid rgba(0, 255, 234, 0.3); color: #00ffea; border-radius: 15px; font-size: 0.8rem; margin: 2px;">
+                                                <?= htmlspecialchars(trim($platform)); ?>
+                                            </span>
                                         <?php endforeach; ?>
                                     <?php else: ?>
-                                        <span class="text-muted">--</span>
+                                        <span style="color: #888;">--</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <div class="action-buttons justify-content-end">
-                                        <a href="showproject.php?id=<?= $project['id']; ?>" class="btn-outline" title="View">
-                                            <i class="lni lni-eye"></i>
-                                            <span>View</span>
+                                <td style="padding: 1rem; text-align: right;">
+                                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap; align-items: center;">
+                                        <a href="showproject.php?id=<?= $project['id']; ?>" class="btn-view" title="View" style="padding: 8px 16px; font-size: 0.85rem; white-space: nowrap;">
+                                            👁️ View
                                         </a>
                                         <?php if ($statusFilter === 'en_attente'): ?>
                                             <!-- Actions for pending projects -->
-                                            <a href="updateproject.php?id=<?= $project['id']; ?>" class="btn-warning" title="Edit">
-                                                <i class="lni lni-pencil"></i>
-                                                <span>Edit</span>
+                                            <a href="updateproject.php?id=<?= $project['id']; ?>" class="btn-view" title="Edit" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 200, 0, 0.2); color: #ffc800; border-color: rgba(255, 200, 0, 0.5); white-space: nowrap;">
+                                                ✏️ Edit
                                             </a>
-                                            <form method="POST" action="approveProject.php" style="display: inline;">
+                                            <form method="POST" action="approveProject.php" style="display: inline; margin: 0;">
                                                 <input type="hidden" name="id" value="<?= $project['id']; ?>">
-                                                <button type="submit" class="btn-success" title="Accept">
-                                                    <i class="lni lni-checkmark-circle"></i>
-                                                    <span>Accept</span>
+                                                <button type="submit" class="btn-view" title="Accept" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(0, 255, 136, 0.2); color: #00ff88; border-color: rgba(0, 255, 136, 0.5); cursor: pointer; white-space: nowrap; font-family: inherit;">
+                                                    ✅ Accept
                                                 </button>
                                             </form>
-                                            <a href="deleteproject.php?id=<?= $project['id']; ?>" class="btn-danger-ghost" onclick="return confirm('Reject and delete this project?')">
-                                                <i class="lni lni-close"></i>
-                                                <span>Reject</span>
+                                            <a href="deleteproject.php?id=<?= $project['id']; ?>" class="btn-view" onclick="return confirm('Reject and delete this project?')" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 51, 92, 0.2); color: #ff335c; border-color: rgba(255, 51, 92, 0.5); white-space: nowrap;">
+                                                ❌ Reject
                                             </a>
                                         <?php else: ?>
                                             <!-- Actions for accepted projects -->
-                                            <a href="updateproject.php?id=<?= $project['id']; ?>" class="btn-warning" title="Edit">
-                                                <i class="lni lni-pencil"></i>
-                                                <span>Edit</span>
+                                            <a href="updateproject.php?id=<?= $project['id']; ?>" class="btn-view" title="Edit" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 200, 0, 0.2); color: #ffc800; border-color: rgba(255, 200, 0, 0.5); white-space: nowrap;">
+                                                ✏️ Edit
                                             </a>
-                                            <a href="deleteproject.php?id=<?= $project['id']; ?>" class="btn-danger-ghost" onclick="return confirm('Delete this project?')">
-                                                <i class="lni lni-trash"></i>
-                                                <span>Delete</span>
+                                            <a href="deleteproject.php?id=<?= $project['id']; ?>" class="btn-view" onclick="return confirm('Delete this project?')" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(255, 51, 92, 0.2); color: #ff335c; border-color: rgba(255, 51, 92, 0.5); white-space: nowrap;">
+                                                🗑️ Delete
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -465,14 +670,29 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
                     </table>
                 </div>
             <?php endif; ?>
-        </section>
-
+        </div>
     </div>
-</main>
+  </main>
 
-<footer class="admin-footer">
-    GameHub Admin &bull; Propuls&eacute; par la team XR Labs
-</footer>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section about">
+        <h3>GameHub Admin</h3>
+        <p>Propulsé par la team XR Labs</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="projectlist.php">Projects</a></li>
+          <li><a href="addProject.php">Add Project</a></li>
+          <li><a href="../collabcrud/collaboration.php">Collaborations</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 GameHub Pro | All rights reserved | Tunis, Tunisia</p>
+    </div>
+  </footer>
 
 <!-- Modale des statistiques -->
 <div id="statisticsModal" class="statistics-modal" style="display: none;">
@@ -1488,8 +1708,113 @@ $stats['avgPlatforms'] = $stats['total'] > 0 ? round($stats['totalPlatforms'] / 
 }
 </style>
 
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-<script>
+  <script src="../../frontoffice/collaborations.js"></script>
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
+  <script>
+  // Sidebar toggle pour les statistiques
+  document.addEventListener('DOMContentLoaded', function() {
+    const statisticsBtnSidebar = document.getElementById('statisticsBtnSidebar');
+    if (statisticsBtnSidebar) {
+      statisticsBtnSidebar.addEventListener('click', function(e) {
+        e.preventDefault();
+        const statisticsBtn = document.getElementById('statisticsBtn');
+        if (statisticsBtn) {
+          statisticsBtn.click();
+        }
+      });
+    }
+  });
+  
+  </script>
+  <script>
+  // Smart Search and Filter System
+  function updateFilters() {
+    const category = document.getElementById('categoryFilter').value;
+    const location = document.getElementById('locationFilter').value;
+    const developer = document.getElementById('developerFilter').value;
+    const search = document.getElementById('searchInput').value;
+    const status = '<?= $statusFilter ?>';
+    
+    // Update hidden inputs
+    document.getElementById('filter_category').value = category;
+    document.getElementById('filter_location').value = location;
+    document.getElementById('filter_developer').value = developer;
+    
+    // Build URL
+    const params = new URLSearchParams();
+    params.set('status', status);
+    if (search) params.set('search', search);
+    if (category) params.set('filter_category', category);
+    if (location) params.set('filter_location', location);
+    if (developer) params.set('filter_developer', developer);
+    
+    // Submit form or update URL
+    window.location.href = '?' + params.toString();
+  }
+  
+  // Real-time search with debounce
+  let searchTimeout;
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const searchValue = this.value.trim();
+        
+        // Show search suggestions or perform live search
+        if (searchValue.length >= 2) {
+          searchTimeout = setTimeout(() => {
+            // Optionally perform live search without page reload
+            // For now, we'll just highlight matching terms
+            highlightSearchTerms(searchValue);
+          }, 500);
+        } else {
+          clearHighlights();
+        }
+      });
+      
+      // Submit on Enter
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('searchForm').submit();
+        }
+      });
+    }
+  });
+  
+  function highlightSearchTerms(term) {
+    const rows = document.querySelectorAll('tbody tr');
+    const terms = term.toLowerCase().split(' ').filter(t => t.length > 0);
+    
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      let matches = true;
+      
+      terms.forEach(t => {
+        if (text.indexOf(t) === -1) {
+          matches = false;
+        }
+      });
+      
+      if (matches) {
+        row.style.opacity = '1';
+        row.style.display = '';
+      } else {
+        row.style.opacity = '0.3';
+      }
+    });
+  }
+  
+  function clearHighlights() {
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      row.style.opacity = '1';
+      row.style.display = '';
+    });
+  }
+  </script>
+  <script>
 // Données des statistiques depuis PHP
 const statsData = {
     categories: <?= json_encode(array_slice($stats['categories'], 0, 8, true)); ?>,

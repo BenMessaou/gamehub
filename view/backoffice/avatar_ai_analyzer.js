@@ -7,7 +7,7 @@ class AvatarAIAnalyzer {
             { name: 'light', colors: ['#ffdbac', '#f4c2a1', '#e6c19a'] },
             { name: 'medium', colors: ['#d4a574', '#c68642', '#b8763a'] },
             { name: 'tan', colors: ['#c68642', '#a0724a', '#8d5524'] },
-            { name: 'dark', colors: ['#8d5524', '#6b4423', '#4a2c1a'] }
+            { name: 'dark', colors: ['#8d5524', '#d8bda6ff', '#caad9bff'] }
         ];
         
         this.hairColorPalette = [

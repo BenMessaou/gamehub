@@ -147,17 +147,33 @@ if (isset($_GET['status_error'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($collab['titre']); ?> - GameHub Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
             background: #1a1a1a;
             color: #fff;
+            line-height: 1.6;
         }
         h2 {
             color: #00ff88;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 25px 0;
+            letter-spacing: -0.5px;
+        }
+        h3 {
+            color: #00ff88;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.3px;
         }
         .back-link {
             display: inline-block;
@@ -179,9 +195,17 @@ if (isset($_GET['status_error'])) {
         .info-box {
             background: rgba(0, 255, 136, 0.1);
             border: 1px solid rgba(0, 255, 136, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        .info-box b {
+            color: #00ff88;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
         }
         .members-list {
             list-style: none;
@@ -227,6 +251,147 @@ if (isset($_GET['status_error'])) {
             background: rgba(255, 215, 0, 0.3) !important;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
             transform: translateY(-2px);
+        }
+        /* Section des boutons d'action */
+        .action-buttons-container {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        .action-btn-edit {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+        .action-btn-edit:hover {
+            background: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .action-btn-join {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+        .action-btn-join:hover {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        .action-btn-delete {
+            background: rgba(255, 51, 92, 0.2);
+            color: #ff335c;
+            border-color: rgba(255, 51, 92, 0.5);
+        }
+        .action-btn-delete:hover {
+            background: rgba(255, 51, 92, 0.3);
+            box-shadow: 0 0 20px rgba(255, 51, 92, 0.5);
+        }
+        .action-btn-status {
+            background: rgba(0, 255, 234, 0.2);
+            color: #00ffea;
+            border-color: rgba(0, 255, 234, 0.5);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            border: 2px solid;
+        }
+        .action-btn-full {
+            background: rgba(255, 51, 92, 0.2);
+            color: #ff335c;
+            border-color: rgba(255, 51, 92, 0.5);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            border: 2px solid;
+        }
+        /* Section header avec bouton */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .section-header h3 {
+            margin: 0;
+        }
+        .section-btn {
+            padding: 10px 20px;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            text-decoration: none;
+            border-radius: 10px;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-btn:hover {
+            background: rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+        .section-btn-blue {
+            background: rgba(0, 132, 255, 0.2);
+            color: #0084FF;
+            border-color: rgba(0, 132, 255, 0.5);
+        }
+        .section-btn-blue:hover {
+            background: rgba(0, 132, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 132, 255, 0.3);
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .action-buttons-container {
+                flex-direction: column;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
     <style>
@@ -644,8 +809,10 @@ if (isset($_GET['status_error'])) {
 <?php } ?>
 
 <div class="info-box">
-<b>Description:</b><br>
-    <?php echo nl2br(htmlspecialchars($collab['description'])); ?>
+    <b>Description:</b>
+    <div style="color: rgba(255, 255, 255, 0.9); margin-top: 8px;">
+        <?php echo nl2br(htmlspecialchars($collab['description'])); ?>
+    </div>
 </div>
 
 <div class="info-box">
@@ -667,14 +834,14 @@ if (isset($_GET['status_error'])) {
     <b>Current members:</b> <?php echo count($members); ?> / <?php echo $collab['max_membres']; ?>
 </div>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <h3 style="margin: 0;">Members List:</h3>
+<div class="section-header">
+    <h3>👥 Members List</h3>
     <?php if (($isOwner || !$isLoggedIn) && count($members) < $collab['max_membres']): ?>
-        <a href="create_member.php?collab_id=<?php echo $collab_id; ?>" style="padding: 8px 16px; background: rgba(0, 255, 136, 0.2); color: #00ff88; text-decoration: none; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.5); font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
+        <a href="create_member.php?collab_id=<?php echo $collab_id; ?>" class="section-btn">
             ➕ Add a member
         </a>
     <?php elseif (count($members) >= $collab['max_membres']): ?>
-        <a href="room_collab.php?id=<?php echo $collab_id; ?>" style="padding: 8px 16px; background: rgba(0, 132, 255, 0.2); color: #0084FF; text-decoration: none; border-radius: 8px; border: 2px solid rgba(0, 132, 255, 0.5); font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
+        <a href="room_collab.php?id=<?php echo $collab_id; ?>" class="section-btn section-btn-blue">
             🏠 Room Collab
         </a>
     <?php endif; ?>
@@ -800,31 +967,32 @@ foreach ($members as $m) {
 </div>
 <?php endif; ?>
 
-<hr>
+<hr style="margin: 30px 0; border: none; border-top: 2px solid rgba(0, 255, 136, 0.2);">
 
-<div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 20px;">
+<div class="action-buttons-container">
     <!-- Bouton Modifier - Visible par tous -->
-    <a href="edit_collab.php?id=<?php echo $collab_id; ?>" style="padding: 12px 24px; background: rgba(255, 215, 0, 0.2); color: #ffd700; text-decoration: none; border-radius: 10px; border: 2px solid rgba(255, 215, 0, 0.5); font-weight: 600; transition: all 0.3s ease; display: inline-block;">
+    <a href="edit_collab.php?id=<?php echo $collab_id; ?>" class="action-btn action-btn-edit">
         ✏️ Modifier
     </a>
 
 <?php
     // Actions disponibles seulement si l'utilisateur est connecté
     if ($isLoggedIn) {
-// Le user n'est pas membre → bouton "Rejoindre"
+        // Le user n'est pas membre → bouton "Rejoindre"
         if (!$isMember && !$isOwner && count($members) < $collab['max_membres']) {
 ?>
-            <form action="join_collab.php" method="POST" style="display: inline;">
-        <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-                <button type="submit" style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit;">
+            <form action="join_collab.php" method="POST" class="join-collab-form-dev" style="display: inline;">
+                <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
+                <input type="hidden" name="user_id" value="">
+                <button type="submit" class="action-btn action-btn-join">
                     ➕ Join this project
                 </button>
             </form>
         <?php 
         } elseif ($isMember) {
-            echo "<span style=\"padding: 12px 24px; background: rgba(0, 255, 234, 0.2); color: #00ffea; border-radius: 10px; border: 2px solid rgba(0, 255, 234, 0.5); font-weight: 600; display: inline-block;\">✓ Déjà membre</span>";
+            echo "<span class=\"action-btn-status\">✓ Déjà membre</span>";
         } elseif (count($members) >= $collab['max_membres']) {
-            echo "<span style=\"padding: 12px 24px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border-radius: 10px; border: 2px solid rgba(255, 51, 92, 0.5); font-weight: 600; display: inline-block;\">✗ Complet</span>";
+            echo "<span class=\"action-btn-full\">✗ Complet</span>";
         }
     }
     
@@ -836,7 +1004,7 @@ foreach ($members as $m) {
             <?php if (!$isLoggedIn): ?>
                 <input type="hidden" name="dev_mode" value="1">
             <?php endif; ?>
-            <button type="submit" onclick="return confirm('Are you sure you want to delete this collaboration?<?php echo !$isLoggedIn ? ' (Developer mode)' : ''; ?>');" style="padding: 12px 24px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border: 2px solid rgba(255, 51, 92, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.3s ease;" title="<?php echo !$isLoggedIn ? 'Mode développeur - Suppression autorisée' : 'Seul le propriétaire peut supprimer'; ?>" onmouseover="this.style.background='rgba(255, 51, 92, 0.3)'; this.style.boxShadow='0 0 15px rgba(255, 51, 92, 0.5)';" onmouseout="this.style.background='rgba(255, 51, 92, 0.2)'; this.style.boxShadow='none';">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this collaboration?<?php echo !$isLoggedIn ? ' (Developer mode)' : ''; ?>');" class="action-btn action-btn-delete" title="<?php echo !$isLoggedIn ? 'Mode développeur - Suppression autorisée' : 'Seul le propriétaire peut supprimer'; ?>">
                 🗑️ Supprimer<?php echo !$isLoggedIn ? ' (Dev)' : ''; ?>
             </button>
     </form>
@@ -847,16 +1015,16 @@ foreach ($members as $m) {
         // Mode développeur - permettre de rejoindre même sans connexion
         if (count($members) < $collab['max_membres']) {
         ?>
-            <form action="join_collab.php" method="POST" style="display: inline;">
+            <form action="join_collab.php" method="POST" class="join-collab-form-dev" style="display: inline;">
                 <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-                <input type="hidden" name="user_id" value="1">
-                <button type="submit" onclick="return confirm('Do you want to join this collaboration? (Developer mode - User ID: 1)');" style="padding: 12px 24px; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit;" title="Mode développeur">
+                <input type="hidden" name="user_id" value="">
+                <button type="submit" class="action-btn action-btn-join" title="Mode développeur - choisir un ID">
                     ➕ Join (Dev mode)
                 </button>
     </form>
 <?php
         } else {
-            echo "<span style=\"padding: 12px 24px; background: rgba(255, 51, 92, 0.2); color: #ff335c; border-radius: 10px; border: 2px solid rgba(255, 51, 92, 0.5); font-weight: 600; display: inline-block;\">✗ Complet</span>";
+            echo "<span class=\"action-btn-full\">✗ Complet</span>";
         }
     }
     ?>
@@ -1224,5 +1392,31 @@ function deleteMessage(messageId, collabId) {
 <?php endif; ?>
 
     <script src="emoji_picker.js"></script>
+    <script>
+    // Mode admin (non connecté) : demander un ID avant de rejoindre
+    document.addEventListener('DOMContentLoaded', function() {
+        const devJoinForms = document.querySelectorAll('.join-collab-form-dev');
+        devJoinForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const userIdInput = form.querySelector('input[name="user_id"]');
+                let chosenId = prompt("Entrez l'ID utilisateur à utiliser (mode admin) :", "1");
+                if (!chosenId) {
+                    e.preventDefault();
+                    return false;
+                }
+                chosenId = chosenId.trim();
+                if (!/^[0-9]+$/.test(chosenId)) {
+                    e.preventDefault();
+                    alert("ID invalide. Merci de saisir uniquement des chiffres.");
+                    return false;
+                }
+                if (userIdInput) {
+                    userIdInput.value = chosenId;
+                }
+                return true;
+            });
+        });
+    });
+    </script>
 </body>
 </html>

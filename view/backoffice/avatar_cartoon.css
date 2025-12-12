@@ -8,16 +8,41 @@
     width: 200px;
     height: 300px;
     filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
-    animation: avatarBounce 3s infinite ease-in-out;
+    animation: idle 3s infinite ease-in-out;
 }
 
-/* Avatar bounce animation */
+/* Ground shadow */
+.avatar-cartoon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 25px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    filter: blur(4px);
+    z-index: 0;
+}
+
+/* Avatar bounce animation - Improved idle breathing */
 @keyframes avatarBounce {
     0%, 100% { 
         transform: translateY(0px);
     }
     50% { 
-        transform: translateY(-3px);
+        transform: translateY(-6px);
+    }
+}
+
+/* Idle animation - Breathing */
+@keyframes idle {
+    0%, 100% { 
+        transform: translateY(0px);
+    }
+    50% { 
+        transform: translateY(-6px);
     }
 }
 
@@ -54,33 +79,31 @@
 
 .avatar-head-cartoon {
     position: relative;
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    width: 150px;
+    height: 150px;
+    background: #ffe1c9;
     border-radius: 50%;
     z-index: 10;
-    box-shadow: 
-        0 5px 20px rgba(0, 0, 0, 0.15),
-        inset 0 -10px 30px rgba(0, 0, 0, 0.1);
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
+    border: 3px solid #2a2a2a;
+    overflow: visible;
+    box-shadow: none;
 }
 
-/* Skin tone variants */
+/* Skin tone variants - 2D flat colors */
 .avatar-head-cartoon.skin-light {
-    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    background: #ffe1c9;
 }
 
 .avatar-head-cartoon.skin-medium {
-    background: linear-gradient(135deg, #d4a574, #c68642);
+    background: #d4a574;
 }
 
 .avatar-head-cartoon.skin-tan {
-    background: linear-gradient(135deg, #c68642, #a0724a);
+    background: #c68642;
 }
 
 .avatar-head-cartoon.skin-dark {
-    background: linear-gradient(135deg, #8d5524, #6b4423);
+    background: #8d5524;
 }
 
 /* ============================================
@@ -91,87 +114,89 @@
     position: absolute;
     top: 0;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 9;
+    transform: translateX(-50%) !important;
+    z-index: 11;
     pointer-events: none;
 }
 
-/* Court arrondi */
+/* Court arrondi - 2D centré */
 .hair-short-rounded {
-    width: 100px;
-    height: 45px;
-    background: #333;
-    border-radius: 50% 50% 30% 30%;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 150px;
+    height: 75px;
+    background: #2b2b2b;
+    border-radius: 75px 75px 20px 20px;
+    top: -12px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
-/* Long ondulé */
+/* Long ondulé - 2D centré */
 .hair-long-wavy {
-    width: 110px;
-    height: 85px;
-    background: #333;
-    border-radius: 50% 50% 40% 40%;
+    width: 155px;
+    height: 95px;
+    background: #2b2b2b;
+    border-radius: 77px 77px 25px 25px;
     top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 
-        0 0 0 2px rgba(0, 0, 0, 0.1),
-        inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
 .hair-long-wavy::before {
     content: '';
     position: absolute;
     bottom: -20px;
-    left: 10px;
+    left: 15px;
     width: 30px;
     height: 40px;
     background: inherit;
     border-radius: 0 0 50% 50%;
-    transform: rotate(-10deg);
+    border: 1px solid #1a1a1a;
 }
 
 .hair-long-wavy::after {
     content: '';
     position: absolute;
     bottom: -20px;
-    right: 10px;
+    right: 15px;
     width: 30px;
     height: 40px;
     background: inherit;
     border-radius: 0 0 50% 50%;
-    transform: rotate(10deg);
+    border: 1px solid #1a1a1a;
 }
 
-/* Spiky (piques) */
+/* Spiky (piques) - 2D centré */
 .hair-spiky {
-    width: 105px;
-    height: 55px;
-    background: #333;
+    width: 150px;
+    height: 65px;
+    background: #2b2b2b;
     top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
     clip-path: polygon(
         20% 0%, 30% 20%, 40% 0%, 50% 25%, 
         60% 0%, 70% 20%, 80% 0%, 100% 15%, 
         100% 100%, 0% 100%, 0% 15%
     );
+    border: 2px solid #1a1a1a;
 }
 
-/* Afro */
+/* Afro - 2D centré */
 .hair-afro {
-    width: 125px;
-    height: 65px;
-    background: #333;
+    width: 160px;
+    height: 85px;
+    background: #2b2b2b;
     border-radius: 50%;
     top: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 
-        0 0 0 3px rgba(0, 0, 0, 0.1),
-        inset 0 -5px 15px rgba(0, 0, 0, 0.3);
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
 .hair-afro::before,
@@ -183,45 +208,46 @@
     background: inherit;
     border-radius: 50%;
     top: 10px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #1a1a1a;
 }
 
 .hair-afro::before {
-    left: 15px;
+    left: 20px;
 }
 
 .hair-afro::after {
-    right: 15px;
+    right: 20px;
 }
 
-/* Frange */
+/* Frange - 2D centré */
 .hair-bangs {
-    width: 95px;
-    height: 38px;
-    background: #333;
-    border-radius: 50% 50% 20% 20%;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 150px;
+    height: 55px;
+    background: #2b2b2b;
+    border-radius: 75px 75px 20px 20px;
+    top: -8px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
     clip-path: polygon(
         0% 0%, 15% 100%, 25% 0%, 35% 100%, 
         45% 0%, 55% 100%, 65% 0%, 75% 100%, 
         85% 0%, 100% 100%, 100% 0%
     );
+    border: 2px solid #1a1a1a;
 }
 
-/* Mohawk (crête) */
+/* Mohawk (crête) - 2D centré */
 .hair-mohawk {
-    width: 22px;
-    height: 65px;
-    background: #333;
-    top: -28px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 11px 11px 0 0;
-    box-shadow: 
-        0 0 0 2px rgba(0, 0, 0, 0.2),
-        inset 0 -10px 20px rgba(0, 0, 0, 0.3);
+    width: 30px;
+    height: 80px;
+    background: #2b2b2b;
+    top: -32px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-radius: 15px 15px 0 0;
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
 .hair-mohawk::before {
@@ -234,22 +260,21 @@
     height: 8px;
     background: inherit;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #1a1a1a;
 }
 
-/* Chignon / Bun */
+/* Chignon / Bun - 2D */
 .hair-bun {
     width: 50px;
     height: 50px;
     background: #333;
     border-radius: 50%;
     top: -22px;
-    right: 15px;
+    right: 20px;
     left: auto;
     transform: none;
-    box-shadow: 
-        0 0 0 2px rgba(0, 0, 0, 0.1),
-        inset 0 -5px 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
 .hair-bun::before {
@@ -262,18 +287,20 @@
     height: 20px;
     background: inherit;
     border-radius: 0 0 50% 50%;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #1a1a1a;
 }
 
-/* Queue de cheval */
+/* Queue de cheval - 2D centré */
 .hair-ponytail {
     width: 90px;
     height: 35px;
     background: #333;
     border-radius: 50% 50% 20% 20%;
     top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: absolute;
+    border: 2px solid #1a1a1a;
 }
 
 .hair-ponytail::after {
@@ -286,7 +313,7 @@
     height: 50px;
     background: inherit;
     border-radius: 0 0 50% 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #1a1a1a;
 }
 
 /* ============================================
@@ -331,7 +358,7 @@
     height: 100%;
 }
 
-/* Eyes Styles */
+/* Eyes Styles - Cartoon with reflections */
 .eye-happy {
     fill: #000;
 }
@@ -339,12 +366,28 @@
 .eye-happy::before {
     content: '';
     position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #fff;
+    width: 8px;
+    height: 8px;
+    background: white;
     border-radius: 50%;
-    top: 2px;
-    left: 2px;
+    top: 4px;
+    left: 4px;
+}
+
+/* Eye base style for all eyes */
+.avatar-face-svg svg .eye {
+    fill: #000;
+}
+
+.avatar-face-svg svg .eye::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
 }
 
 .eye-surprised {
@@ -417,7 +460,7 @@
     position: absolute;
     width: 20px;
     height: 15px;
-    background: radial-gradient(circle, rgba(255, 179, 186, 0.6) 0%, transparent 70%);
+    background: rgba(255, 179, 186, 0.5);
     border-radius: 50%;
 }
 
@@ -435,20 +478,14 @@
 
 .avatar-torso-cartoon {
     position: relative;
-    width: 90px;
-    height: 100px;
-    background: linear-gradient(135deg, #4a90e2 0%, #3a78c8 50%, #2c5aa0 100%);
-    border-radius: 25px 25px 18px 18px;
+    width: 130px;
+    height: 150px;
+    background: #4aa3ff;
+    border-radius: 35px;
     margin-top: -15px;
     z-index: 5;
-    box-shadow: 
-        0 6px 20px rgba(0, 0, 0, 0.25),
-        inset 0 -8px 15px rgba(0, 0, 0, 0.15),
-        inset 0 4px 10px rgba(255, 255, 255, 0.2);
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    transition: all 0.3s ease;
+    border: 3px solid #2a2a2a;
     overflow: visible;
-    animation: torsoBreathe 3.5s infinite ease-in-out;
 }
 
 /* Torso breathing animation */
@@ -461,7 +498,7 @@
     }
 }
 
-/* Col du torse */
+/* Col du torse - 2D */
 .avatar-torso-cartoon::before {
     content: '';
     position: absolute;
@@ -470,16 +507,13 @@
     transform: translateX(-50%);
     width: 50px;
     height: 20px;
-    background: linear-gradient(135deg, #4a90e2 0%, #3a78c8 100%);
+    background: #4a90e2;
     border-radius: 25px 25px 0 0;
-    border: 3px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid #2a2a2a;
     border-bottom: none;
-    box-shadow: 
-        0 -2px 5px rgba(0, 0, 0, 0.15),
-        inset 0 2px 5px rgba(255, 255, 255, 0.2);
 }
 
-/* Séparation des manches */
+/* Séparation des manches - 2D */
 .avatar-torso-cartoon::after {
     content: '';
     position: absolute;
@@ -487,8 +521,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background: #2a2a2a;
 }
 
 /* Torso shape variations */
@@ -531,13 +564,27 @@
 }
 
 .arm {
-    width: 25px;
-    height: 50px;
-    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
-    border-radius: 12px;
+    width: 45px;
+    height: 120px;
+    background: #ffdbac;
+    border-radius: 25px;
     position: relative;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid #2a2a2a;
+}
+
+/* Shoulder joint - 2D */
+.arm::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 20px;
+    background: #ffdbac;
+    border-radius: 25px 25px 10px 10px;
+    border: 3px solid #2a2a2a;
+    border-bottom: none;
 }
 
 .arms-rest .arm:first-child {
@@ -550,7 +597,7 @@
     margin-left: auto;
 }
 
-/* Sleeve */
+/* Sleeve - 2D */
 .arm-sleeve {
     position: absolute;
     top: 0;
@@ -559,20 +606,20 @@
     height: 25px;
     background: #4a90e2;
     border-radius: 12px 12px 8px 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #2a2a2a;
 }
 
-/* Hand */
+/* Hand - 2D */
 .arm-hand {
     position: absolute;
-    bottom: -8px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 18px;
-    height: 18px;
-    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    width: 28px;
+    height: 22px;
+    background: #ffdbac;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 3px solid #2a2a2a;
 }
 
 /* Arm Position: Open (welcoming) */
@@ -624,29 +671,25 @@
 }
 
 .leg {
-    width: 35px;
-    height: 80px;
-    background: #2c5aa0;
-    border-radius: 15px 15px 20px 20px;
+    width: 50px;
+    height: 140px;
+    background: #2356a5;
+    border-radius: 25px;
     position: relative;
-    box-shadow: 
-        0 5px 15px rgba(0, 0, 0, 0.2),
-        inset 0 -3px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    border: 3px solid #2a2a2a;
 }
 
-/* Foot */
+/* Foot - 2D */
 .leg-foot {
     position: absolute;
-    bottom: -12px;
+    bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
-    width: 40px;
-    height: 15px;
-    background: #1a1a1a;
-    border-radius: 20px 20px 5px 5px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    width: 60px;
+    height: 25px;
+    background: #000;
+    border-radius: 10px;
+    border: 3px solid #2a2a2a;
 }
 
 /* ============================================
@@ -875,18 +918,33 @@
     }
     
     .avatar-head-cartoon {
-        width: 90px;
-        height: 90px;
+        width: 120px;
+        height: 120px;
     }
     
     .avatar-torso-cartoon {
-        width: 70px;
-        height: 80px;
+        width: 100px;
+        height: 120px;
+    }
+    
+    .arm {
+        width: 35px;
+        height: 90px;
     }
     
     .leg {
-        width: 28px;
-        height: 60px;
+        width: 40px;
+        height: 110px;
+    }
+    
+    .leg-foot {
+        width: 50px;
+        height: 20px;
+    }
+    
+    .avatar-cartoon::after {
+        width: 110px;
+        height: 20px;
     }
 }
 

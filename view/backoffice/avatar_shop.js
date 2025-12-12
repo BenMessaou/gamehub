@@ -898,49 +898,115 @@ function randomizeAvatar() {
 }
 
 // Download avatar
-function downloadAvatar() {
-    const avatar3d = document.getElementById('avatar-3d');
+async function downloadAvatar() {
+    // Trouver le conteneur de l'avatar cartoon
+    const avatarContainer = document.getElementById('cartoon-avatar-container');
+    const avatarElement = avatarContainer?.querySelector('.avatar-cartoon') || avatarContainer?.querySelector('.avatar-cartoon-container');
     
-    // Create canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = 500;
-    canvas.height = 600;
-    const ctx = canvas.getContext('2d');
-    
-    // Draw background
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw avatar (simplified)
-    ctx.fillStyle = '#ffdbac';
-    ctx.beginPath();
-    ctx.arc(250, 150, 60, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Draw torso
-    if (currentAvatar.shirt) {
-        const shirtData = avatarData.shirt.find(s => s.id === currentAvatar.shirt);
-        ctx.fillStyle = shirtData ? shirtData.color : '#4a90e2';
-        ctx.fillRect(200, 220, 100, 120);
+    if (!avatarContainer && !avatarElement) {
+        showNotification('Erreur : Avatar non trouvé', 'error');
+        return;
     }
     
-    // Draw legs
-    if (currentAvatar.pants) {
-        const pantsData = avatarData.pants.find(p => p.id === currentAvatar.pants);
-        ctx.fillStyle = pantsData ? pantsData.color : '#2c5aa0';
-        ctx.fillRect(210, 340, 80, 100);
+    // Cible : l'élément avatar réel ou son conteneur
+    const targetElement = avatarElement || avatarContainer;
+    
+    // Vérifier si html2canvas est disponible
+    if (typeof html2canvas === 'undefined') {
+        // Charger html2canvas depuis CDN
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => captureAndDownload();
+        document.head.appendChild(script);
+    } else {
+        captureAndDownload();
     }
     
-    // Convert to image and download
-    canvas.toBlob(function(blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'mon-avatar.png';
-        a.click();
-        URL.revokeObjectURL(url);
-        showNotification('Avatar téléchargé ! ⬇️');
-    });
+    function captureAndDownload() {
+        // Afficher un message de chargement
+        showNotification('Capture de l\'avatar en cours...', 'info');
+        
+        // Attendre un peu pour s'assurer que tous les éléments sont rendus
+        setTimeout(() => {
+            // Calculer les dimensions optimales
+            const rect = targetElement.getBoundingClientRect();
+            const width = Math.max(rect.width, 400);
+            const height = Math.max(rect.height, 500);
+            
+            // Options pour html2canvas - optimisées pour capturer tous les détails
+            const options = {
+                backgroundColor: '#1a1a2e', // Fond sombre
+                scale: 3, // Très haute qualité pour capturer tous les détails
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                width: width,
+                height: height,
+                x: rect.left,
+                y: rect.top,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                scrollX: 0,
+                scrollY: 0,
+                // Options importantes pour capturer les pseudo-éléments et les détails CSS
+                ignoreElements: (element) => {
+                    // Ne pas ignorer les éléments de l'avatar
+                    return false;
+                },
+                onclone: (clonedDoc) => {
+                    // S'assurer que tous les styles sont préservés dans le clone
+                    const clonedElement = clonedDoc.querySelector('#cartoon-avatar-container') || 
+                                        clonedDoc.querySelector('.avatar-cartoon') ||
+                                        clonedDoc.querySelector('.avatar-cartoon-container');
+                    if (clonedElement) {
+                        // Forcer l'affichage de tous les éléments
+                        clonedElement.style.display = 'block';
+                        clonedElement.style.visibility = 'visible';
+                        clonedElement.style.opacity = '1';
+                        // S'assurer que tous les enfants sont visibles
+                        const allChildren = clonedElement.querySelectorAll('*');
+                        allChildren.forEach(child => {
+                            child.style.display = '';
+                            child.style.visibility = 'visible';
+                            child.style.opacity = '1';
+                        });
+                    }
+                }
+            };
+            
+            html2canvas(targetElement, options).then(canvas => {
+                // Créer un canvas final avec padding pour un meilleur rendu
+                const padding = 40;
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = canvas.width + (padding * 2);
+                finalCanvas.height = canvas.height + (padding * 2);
+                const ctx = finalCanvas.getContext('2d');
+                
+                // Fond sombre élégant
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+                
+                // Dessiner l'avatar capturé au centre avec padding
+                ctx.drawImage(canvas, padding, padding);
+                
+                // Convertir en image et télécharger
+                finalCanvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'mon-avatar-' + Date.now() + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showNotification('Avatar téléchargé avec tous les détails ! ⬇️', 'success');
+                }, 'image/png', 1.0); // Qualité maximale
+            }).catch(error => {
+                console.error('Erreur lors de la capture:', error);
+                showNotification('Erreur lors du téléchargement. Veuillez réessayer.', 'error');
+            });
+        }, 100); // Petit délai pour s'assurer que tout est rendu
+    }
 }
 
 // Save avatar
@@ -972,6 +1038,34 @@ function saveAvatar() {
         if (data.success) {
             showModal();
             showNotification('Avatar sauvegardé ! ✅');
+            
+            // Rediriger vers room_collab.php après 2 secondes pour voir l'avatar dans le cercle
+            setTimeout(function() {
+                // Essayer de trouver l'ID de collaboration depuis l'URL ou la session
+                // Si on vient de room_collab.php, on peut utiliser document.referrer
+                const referrer = document.referrer;
+                const collabIdMatch = referrer.match(/[?&]id=(\d+)/);
+                
+                if (collabIdMatch) {
+                    // Rediriger vers la room collab avec l'ID trouvé
+                    window.location.href = 'collabcrud/room_collab.php?id=' + collabIdMatch[1] + '&avatar_saved=1';
+                } else {
+                    // Sinon, essayer de trouver dans l'URL actuelle ou rediriger vers les collaborations
+                    const currentUrl = window.location.href;
+                    const currentMatch = currentUrl.match(/[?&]collab_id=(\d+)/);
+                    
+                    if (currentMatch) {
+                        window.location.href = 'collabcrud/room_collab.php?id=' + currentMatch[1] + '&avatar_saved=1';
+                    } else {
+                        // Par défaut, retourner à la page précédente ou aux collaborations
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            window.location.href = '../frontoffice/collaborations.php';
+                        }
+                    }
+                }
+            }, 2000);
         } else {
             showNotification('Erreur lors de la sauvegarde ❌');
         }

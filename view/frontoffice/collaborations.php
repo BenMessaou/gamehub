@@ -69,6 +69,8 @@ foreach ($collabs as &$collab) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborations - GameHub Pro</title>
     <link rel="stylesheet" href="collaborations.css">
+    <!-- Chatbot IA -->
+    <link rel="stylesheet" href="../backoffice/collabcrud/chatbot.css">
 </head>
 <body>
     <header>
@@ -256,10 +258,10 @@ foreach ($collabs as &$collab) {
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <?php if ($canJoin): ?>
-                                        <form action="../backoffice/collabcrud/join_collab.php" method="POST" style="display: inline;">
+                                        <form action="../backoffice/collabcrud/join_collab.php" method="POST" class="join-collab-form-dev" style="display: inline;">
                                             <input type="hidden" name="collab_id" value="<?php echo $collab['id']; ?>">
-                                            <input type="hidden" name="user_id" value="1">
-                                            <button type="submit" class="btn-join" onclick="return confirm('Do you want to join this collaboration? (Developer mode - User ID: 1)');" title="Developer mode - Uses user ID 1">
+                                            <input type="hidden" name="user_id" value="">
+                                            <button type="submit" class="btn-join" title="Choisir un ID (mode admin)">
                                                 ➕ Join
                                             </button>
                                         </form>
@@ -299,7 +301,35 @@ foreach ($collabs as &$collab) {
         </div>
     </footer>
 
+    <!-- Chatbot HTML -->
+    <?php include '../backoffice/collabcrud/chatbot.html'; ?>
+    
     <script src="collaborations.js"></script>
+    <script src="../backoffice/collabcrud/chatbot.js"></script>
+    <script>
+    // Mode admin (non connecté) : demander un ID avant de rejoindre
+    document.addEventListener('DOMContentLoaded', function() {
+        const devJoinForms = document.querySelectorAll('.join-collab-form-dev');
+        devJoinForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const userIdInput = form.querySelector('input[name="user_id"]');
+                let chosenId = prompt("Entrez l'ID utilisateur à utiliser (mode admin) :", "1");
+                if (!chosenId) {
+                    e.preventDefault();
+                    return false;
+                }
+                chosenId = chosenId.trim();
+                if (!/^[0-9]+$/.test(chosenId)) {
+                    e.preventDefault();
+                    alert("ID invalide. Merci de saisir uniquement des chiffres.");
+                    return false;
+                }
+                userIdInput.value = chosenId;
+                return true;
+            });
+        });
+    });
+    </script>
     <script>
     // Dashboard button management in footer
     document.addEventListener('DOMContentLoaded', function() {

@@ -37,8 +37,10 @@ foreach ($messages as $msg) {
     $formattedMessages[] = [
         'id' => $msg['id'],
         'user_id' => $msg['user_id'],
-        'message' => $msg['message'],
-        'date_message' => $msg['date_message']
+        'message' => $msg['message'] ?? '',
+        'date_message' => $msg['date_message'],
+        'audio_path' => $msg['audio_path'] ?? null,
+        'audio_duration' => isset($msg['audio_duration']) ? intval($msg['audio_duration']) : null
     ];
 }
 

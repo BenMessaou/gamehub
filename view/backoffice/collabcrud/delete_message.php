@@ -3,45 +3,62 @@ session_start();
 
 // Mode développeur : permettre l'accès même sans connexion
 $isLoggedIn = isset($_SESSION['user_id']);
-$defaultUserId = 1;
+$userId = $isLoggedIn ? $_SESSION['user_id'] : 1; // ID par défaut pour le développeur
 
-require_once __DIR__ . "/../../../controller/controllercollab/CollabMessageController.php";
-require_once __DIR__ . "/../../../controller/controllercollab/CollabProjectController.php";
+header('Content-Type: application/json');
 
-if (!isset($_GET['id']) || !isset($_GET['collab_id'])) {
-    die("Paramètres manquants.");
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
 }
 
-$id = intval($_GET['id']);
-$collab_id = intval($_GET['collab_id']);
+// Get JSON data
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
 
-$controller = new CollabMessageController();
-$message = $controller->getMessageById($id);
+if (!$data || !isset($data['message_id'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Message ID is required']);
+    exit;
+}
+
+$messageId = intval($data['message_id']);
+
+// Charger controllers
+require_once __DIR__ . "/../../../controller/controllercollab/CollabMessageController.php";
+
+$messageController = new CollabMessageController();
+
+// Vérifier que le message existe et que l'utilisateur est le propriétaire
+$message = $messageController->getMessageById($messageId);
 
 if (!$message) {
-    die("Message introuvable.");
+    http_response_code(404);
+    echo json_encode(['success' => false, 'message' => 'Message not found']);
+    exit;
 }
 
-// Vérifier les permissions : seul l'auteur du message ou le propriétaire peut supprimer
-$user_id = $isLoggedIn ? $_SESSION['user_id'] : $defaultUserId;
-
-if ($isLoggedIn) {
-    $projectController = new CollabProjectController();
-    $collab = $projectController->getById($collab_id);
-    
-    if (!$collab) {
-        die("Projet introuvable.");
-    }
-    
-    $isOwner = ($collab['owner_id'] == $user_id);
-    $isAuthor = ($message['user_id'] == $user_id);
-    
-    if (!$isOwner && !$isAuthor) {
-        die("Erreur : vous n'avez pas la permission de supprimer ce message.");
-    }
+// Vérifier que l'utilisateur est le propriétaire du message
+if ($message['user_id'] != $userId) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'You can only delete your own messages']);
+    exit;
 }
 
-$controller->delete($id);
-header("Location: view_collab.php?id=" . $collab_id . "&message_deleted=1");
-exit;
+// Supprimer le message
+$success = $messageController->delete($messageId);
+
+if ($success) {
+    echo json_encode([
+        'success' => true,
+        'message' => 'Message supprimé avec succès'
+    ]);
+} else {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Erreur lors de la suppression du message'
+    ]);
+}
 ?>

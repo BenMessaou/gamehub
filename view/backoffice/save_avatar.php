@@ -30,36 +30,50 @@ if (!isset($data['avatar_data'])) {
     exit;
 }
 
-// Here you would save to database
-// Example structure:
-/*
-CREATE TABLE IF NOT EXISTS `user_avatars` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `user_id` INT NOT NULL,
-    `avatar_data` TEXT NOT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX `idx_user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-*/
+// Database connection
+require_once __DIR__ . "/../../config/config.php";
+$db = config::getConnexion();
 
-// For now, we'll just return success
-// In production, you would:
-// 1. Connect to database
-// 2. Save avatar_data as JSON
-// 3. Optionally save avatar image if generated
+$avatarData = json_encode($data['avatar_data']);
+$avatarName = $data['avatar_name'] ?? 'Mon Qbit';
 
-$avatarData = $data['avatar_data'];
-$avatarName = $data['avatar_name'] ?? 'Mon Avatar';
+try {
+    // Check if an avatar already exists for this user
+    $sqlCheck = "SELECT id FROM user_avatars WHERE user_id = ?";
+    $stmtCheck = $db->prepare($sqlCheck);
+    $stmtCheck->execute([$userId]);
+    $existingAvatar = $stmtCheck->fetch(PDO::FETCH_ASSOC);
 
-// Simulate save operation
-$response = [
-    'success' => true,
-    'message' => 'Avatar sauvegardé avec succès !',
-    'avatar_id' => rand(1000, 9999), // In production, use actual ID from database
-    'avatar_name' => $avatarName,
-    'saved_at' => date('Y-m-d H:i:s')
-];
+    if ($existingAvatar) {
+        // Update existing avatar
+        $sql = "UPDATE user_avatars SET avatar_name = ?, avatar_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        $success = $stmt->execute([$avatarName, $avatarData, $existingAvatar['id']]);
+        $avatarId = $existingAvatar['id'];
+    } else {
+        // Insert new avatar
+        $sql = "INSERT INTO user_avatars (user_id, avatar_name, avatar_data) VALUES (?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $success = $stmt->execute([$userId, $avatarName, $avatarData]);
+        $avatarId = $db->lastInsertId();
+    }
+
+    if ($success) {
+        $response = [
+            'success' => true,
+            'message' => 'Avatar sauvegardé avec succès !',
+            'avatar_id' => $avatarId,
+            'avatar_name' => $avatarName,
+            'saved_at' => date('Y-m-d H:i:s')
+        ];
+    } else {
+        $response = ['success' => false, 'message' => 'Erreur lors de la sauvegarde de l\'avatar.'];
+    }
+
+} catch (PDOException $e) {
+    error_log("Erreur PDO lors de la sauvegarde de l'avatar: " . $e->getMessage());
+    $response = ['success' => false, 'message' => 'Erreur serveur lors de la sauvegarde de l\'avatar.'];
+}
 
 echo json_encode($response);
 

@@ -28,10 +28,11 @@ class CollabMessageController {
     }
 
     // ============================================
-    // 2. RÉCUPÉRER LES MESSAGES D’UN PROJET (READ)
+    // 2. RÉCUPÉRER LES MESSAGES D'UN PROJET (READ)
     // ============================================
     public function getMessages($collab_id) {
-        $sql = "SELECT * FROM collab_messages 
+        $sql = "SELECT id, collab_id, user_id, message, audio_path, audio_duration, date_message 
+                FROM collab_messages 
                 WHERE collab_id = ?
                 ORDER BY date_message ASC";
 
