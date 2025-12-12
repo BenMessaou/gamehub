@@ -81,12 +81,13 @@ function e($value) {
         <img src="logo.png" class="logo1" alt="">
         <nav>
             <ul>
-                <li><a href="index.php" class="super-button">Home</a></li>
-                <li><a href="#deals" class="super-button">Deals</a></li>
-                <li><a href="#deals" class="super-button">Shop Now</a></li>
-                <li><a href="#contact" class="super-button">Contact</a></li>
+                <li><a href="index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="#deals" class="super-button">Shop </a></li>
+                <li><a href="#contact" class="super-button">Article</a></li><li><a class="super-button" href="logout.php">feedback</a></li>
                 <li><a class="super-button" href="profile.php">Profile</a></li>
-                <li><a class="super-button" href="logout.php">Logout</a></li>
+                
             </ul>
         </nav>
     </div>
