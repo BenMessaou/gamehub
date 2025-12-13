@@ -1,0 +1,97 @@
+{
+  "avatar": {
+    "id": "avatar_001",
+    "version": "2.0",
+    "metadata": {
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "generated_from_selfie": false,
+      "selfie_url": null
+    },
+    "base": {
+      "skin_tone": "#ffdbac",
+      "skin_tone_variant": "light",
+      "head_shape": "circle",
+      "head_size": 120
+    },
+    "face": {
+      "expression": "happy",
+      "expression_intensity": 0.8,
+      "eyes": {
+        "type": "default",
+        "color": "#000000",
+        "size": "medium",
+        "position": "default"
+      },
+      "mouth": {
+        "type": "smile",
+        "color": "#ff6b6b",
+        "size": "medium"
+      },
+      "eyebrows": {
+        "type": "default",
+        "color": "#2c2c2c",
+        "position": "default"
+      }
+    },
+    "hair": {
+      "style": "short",
+      "color": "#4a4a4a",
+      "variant": "spiky",
+      "position": "top",
+      "opacity": 1.0
+    },
+    "body": {
+      "torso": {
+        "color": "#4a90e2",
+        "shape": "rectangle",
+        "width": 100,
+        "height": 120
+      },
+      "legs": {
+        "color": "#2c5aa0",
+        "shape": "rectangle",
+        "width": 80,
+        "height": 100
+      }
+    },
+    "accessories": {
+      "head": [],
+      "face": [],
+      "body": [],
+      "legs": []
+    },
+    "level": {
+      "current_level": 5,
+      "experience": 1250,
+      "next_level_exp": 2000,
+      "tier": "silver"
+    },
+    "aura": {
+      "enabled": true,
+      "type": "glow",
+      "color": "#00ff88",
+      "intensity": 0.6,
+      "animation": "pulse"
+    },
+    "badge": {
+      "enabled": true,
+      "type": "achievement",
+      "icon": "⭐",
+      "position": "top-right",
+      "color": "#ffd700",
+      "glow": true
+    },
+    "animation": {
+      "idle": "bounce",
+      "speed": "normal",
+      "enabled": true
+    },
+    "customization": {
+      "locked_items": [],
+      "unlocked_items": ["hair_short", "hair_long", "glasses_round", "cap_blue"],
+      "premium_items": []
+    }
+  }
+}
+

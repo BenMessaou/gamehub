@@ -1,0 +1,749 @@
+/* Enhanced Avatar System - Advanced Styling */
+
+/* ============================================
+   AVATAR BASE - Improved Design
+   ============================================ */
+
+.avatar-enhanced {
+    position: relative;
+    display: inline-block;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+.avatar-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   HEAD - Enhanced with Expressions
+   ============================================ */
+
+.avatar-head-enhanced {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+    border-radius: 50%;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Skin tone variants */
+.avatar-head-enhanced.skin-light {
+    background: linear-gradient(135deg, #ffdbac, #f4c2a1);
+}
+
+.avatar-head-enhanced.skin-medium {
+    background: linear-gradient(135deg, #d4a574, #c68642);
+}
+
+.avatar-head-enhanced.skin-tan {
+    background: linear-gradient(135deg, #c68642, #a0724a);
+}
+
+.avatar-head-enhanced.skin-dark {
+    background: linear-gradient(135deg, #8d5524, #6b4423);
+}
+
+/* Face Features */
+.avatar-face-features {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+}
+
+/* Eyes */
+.avatar-eyes-enhanced {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.eye {
+    width: 12px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    position: relative;
+}
+
+.eye.wink::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #000;
+    border-radius: 0;
+}
+
+/* Eyebrows */
+.avatar-eyebrows {
+    position: absolute;
+    top: 28%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 25px;
+}
+
+.eyebrow {
+    width: 20px;
+    height: 4px;
+    background: #2c2c2c;
+    border-radius: 2px;
+}
+
+.eyebrow.raised {
+    transform: rotate(-5deg);
+}
+
+.eyebrow.lowered {
+    transform: rotate(5deg);
+}
+
+/* Mouth - Expressions */
+.avatar-mouth {
+    position: absolute;
+    bottom: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 15px;
+}
+
+.mouth-smile {
+    width: 30px;
+    height: 15px;
+    border: 3px solid #ff6b6b;
+    border-top: none;
+    border-radius: 0 0 30px 30px;
+    background: transparent;
+}
+
+.mouth-frown {
+    width: 30px;
+    height: 15px;
+    border: 3px solid #4a90e2;
+    border-bottom: none;
+    border-radius: 30px 30px 0 0;
+    background: transparent;
+}
+
+.mouth-line {
+    width: 30px;
+    height: 2px;
+    background: #666;
+    border-radius: 1px;
+}
+
+.mouth-circle {
+    width: 12px;
+    height: 12px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.mouth-smirk {
+    width: 20px;
+    height: 10px;
+    border: 2.5px solid #ff6b6b;
+    border-top: none;
+    border-right: none;
+    border-radius: 0 0 0 20px;
+    background: transparent;
+    transform: rotate(-5deg);
+}
+
+/* ============================================
+   HAIR STYLES - SVG-based
+   ============================================ */
+
+.avatar-hair {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    pointer-events: none;
+}
+
+.hair-short {
+    width: 100px;
+    height: 60px;
+    background: #4a4a4a;
+    border-radius: 50px 50px 30px 30px;
+    position: relative;
+}
+
+.hair-short::before,
+.hair-short::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 20px;
+    background: #4a4a4a;
+    border-radius: 50%;
+}
+
+.hair-short::before {
+    left: 10px;
+    top: -5px;
+}
+
+.hair-short::after {
+    right: 10px;
+    top: -5px;
+}
+
+.hair-long {
+    width: 110px;
+    height: 80px;
+    background: #4a4a4a;
+    border-radius: 50px 50px 40px 40px;
+    position: relative;
+}
+
+.hair-long::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 40px;
+    background: #4a4a4a;
+    border-radius: 0 0 30px 30px;
+}
+
+.hair-spiky {
+    width: 100px;
+    height: 50px;
+    position: relative;
+}
+
+.hair-spike {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 25px solid #4a4a4a;
+}
+
+.hair-spike:nth-child(1) { left: 20px; top: 0; }
+.hair-spike:nth-child(2) { left: 40px; top: -5px; }
+.hair-spike:nth-child(3) { left: 60px; top: 0; }
+.hair-spike:nth-child(4) { left: 80px; top: -3px; }
+
+.hair-curly {
+    width: 100px;
+    height: 70px;
+    background: #4a4a4a;
+    border-radius: 50%;
+    position: relative;
+}
+
+.hair-curly::before,
+.hair-curly::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #4a4a4a;
+    border-radius: 50%;
+}
+
+.hair-curly::before {
+    left: 5px;
+    top: 10px;
+}
+
+.hair-curly::after {
+    right: 5px;
+    top: 10px;
+}
+
+.hair-ponytail {
+    width: 100px;
+    height: 60px;
+    background: #4a4a4a;
+    border-radius: 50px 50px 30px 30px;
+    position: relative;
+}
+
+.hair-ponytail::after {
+    content: '';
+    position: absolute;
+    right: -15px;
+    top: 20px;
+    width: 30px;
+    height: 50px;
+    background: #4a4a4a;
+    border-radius: 15px;
+}
+
+/* Hair Colors */
+.hair-black { background-color: #2c2c2c !important; }
+.hair-brown { background-color: #4a4a4a !important; }
+.hair-blonde { background-color: #f4d03f !important; }
+.hair-red { background-color: #e74c3c !important; }
+.hair-blue { background-color: #3498db !important; }
+.hair-green { background-color: #2ecc71 !important; }
+.hair-purple { background-color: #9b59b6 !important; }
+.hair-pink { background-color: #e91e63 !important; }
+
+/* ============================================
+   ACCESSORIES
+   ============================================ */
+
+/* Glasses */
+.avatar-glasses {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    width: 90px;
+    height: 30px;
+}
+
+.glasses-round {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.glasses-lens {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #2c2c2c;
+    border-radius: 50%;
+    background: rgba(200, 200, 255, 0.1);
+}
+
+.glasses-bridge {
+    width: 8px;
+    height: 3px;
+    background: #2c2c2c;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.glasses-square .glasses-lens {
+    border-radius: 5px;
+}
+
+/* Sunglasses */
+.glasses-sunglasses .glasses-lens {
+    background: linear-gradient(180deg, #1a1a1a 0%, #2c2c2c 100%);
+    border-color: #1a1a1a;
+}
+
+/* Cap */
+.avatar-cap {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 7;
+    width: 110px;
+    height: 40px;
+    background: #4a90e2;
+    border-radius: 50px 50px 0 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-cap::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 8px;
+    background: #4a90e2;
+    border-radius: 4px;
+}
+
+/* Beanie */
+.avatar-beanie {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 7;
+    width: 100px;
+    height: 50px;
+    background: #2c2c2c;
+    border-radius: 50px 50px 20px 20px;
+}
+
+.avatar-beanie::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 15px;
+    background: #ff6b6b;
+    border-radius: 10px;
+}
+
+/* Crown */
+.avatar-crown {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 7;
+    width: 60px;
+    height: 40px;
+}
+
+.crown-spike {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 20px solid #ffd700;
+}
+
+.crown-spike:nth-child(1) { left: 5px; }
+.crown-spike:nth-child(2) { left: 22px; }
+.crown-spike:nth-child(3) { left: 39px; }
+
+/* Backpack */
+.avatar-backpack-enhanced {
+    position: absolute;
+    top: 20px;
+    right: -30px;
+    z-index: 3;
+    width: 45px;
+    height: 65px;
+    background: #4a90e2;
+    border-radius: 8px 15px 15px 8px;
+    box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.backpack-strap {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    width: 8px;
+    height: 40px;
+    background: #2c5aa0;
+    border-radius: 4px;
+}
+
+/* ============================================
+   LEVEL AURAS - Dynamic Glow Effects
+   ============================================ */
+
+.avatar-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.aura-bronze {
+    background: radial-gradient(circle, rgba(205, 127, 50, 0.4) 0%, transparent 70%);
+    box-shadow: 0 0 30px rgba(205, 127, 50, 0.6);
+}
+
+.aura-silver {
+    background: radial-gradient(circle, rgba(192, 192, 192, 0.4) 0%, transparent 70%);
+    box-shadow: 0 0 40px rgba(232, 232, 232, 0.7);
+}
+
+.aura-gold {
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, transparent 70%);
+    box-shadow: 0 0 50px rgba(255, 237, 78, 0.8);
+}
+
+.aura-platinum {
+    background: radial-gradient(circle, rgba(229, 228, 226, 0.5) 0%, transparent 70%);
+    box-shadow: 0 0 60px rgba(255, 255, 255, 0.9);
+}
+
+.aura-diamond {
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, transparent 70%);
+    box-shadow: 0 0 70px rgba(0, 255, 255, 1);
+}
+
+/* Aura Animations */
+.aura-pulse {
+    animation: auraPulse 2s ease-in-out infinite;
+}
+
+.aura-glow {
+    animation: auraGlow 3s ease-in-out infinite;
+}
+
+.aura-rotate {
+    animation: auraRotate 4s linear infinite;
+}
+
+@keyframes auraPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes auraGlow {
+    0%, 100% {
+        box-shadow: 0 0 30px currentColor;
+        opacity: 0.5;
+    }
+    50% {
+        box-shadow: 0 0 60px currentColor;
+        opacity: 0.9;
+    }
+}
+
+@keyframes auraRotate {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.avatar-badge {
+    position: absolute;
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid;
+}
+
+.avatar-badge.top-right {
+    top: -5px;
+    right: -5px;
+}
+
+.avatar-badge.top-left {
+    top: -5px;
+    left: -5px;
+}
+
+.avatar-badge.bottom-right {
+    bottom: -5px;
+    right: -5px;
+}
+
+.avatar-badge.bottom-left {
+    bottom: -5px;
+    left: -5px;
+}
+
+.badge-achievement {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-color: #ffd700;
+    color: #000;
+}
+
+.badge-vip {
+    background: linear-gradient(135deg, #ff00c7, #ff6b9d);
+    border-color: #ff00c7;
+    color: #fff;
+}
+
+.badge-moderator {
+    background: linear-gradient(135deg, #00ff88, #00ffea);
+    border-color: #00ff88;
+    color: #000;
+}
+
+.badge-creator {
+    background: linear-gradient(135deg, #00ffea, #00b8d4);
+    border-color: #00ffea;
+    color: #000;
+}
+
+.badge-legend {
+    background: linear-gradient(135deg, #ff6b35, #ff8c42);
+    border-color: #ff6b35;
+    color: #fff;
+}
+
+.badge-glow {
+    animation: badgeGlow 2s ease-in-out infinite;
+}
+
+@keyframes badgeGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px currentColor;
+    }
+    50% {
+        box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+}
+
+/* ============================================
+   ANIMATIONS - Idle Animations
+   ============================================ */
+
+.avatar-enhanced.animate-bounce {
+    animation: avatarBounce 2s ease-in-out infinite;
+}
+
+.avatar-enhanced.animate-float {
+    animation: avatarFloat 3s ease-in-out infinite;
+}
+
+.avatar-enhanced.animate-wiggle {
+    animation: avatarWiggle 1.5s ease-in-out infinite;
+}
+
+@keyframes avatarBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes avatarFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+    75% {
+        transform: translateY(-8px) rotate(-1deg);
+    }
+}
+
+@keyframes avatarWiggle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-3deg);
+    }
+    75% {
+        transform: rotate(3deg);
+    }
+}
+
+/* Expression Animations */
+.avatar-head-enhanced.expression-happy {
+    animation: expressionHappy 3s ease-in-out infinite;
+}
+
+.avatar-head-enhanced.expression-surprised {
+    animation: expressionSurprised 2s ease-in-out infinite;
+}
+
+@keyframes expressionHappy {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes expressionSurprised {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    25% {
+        transform: scale(1.08) rotate(-2deg);
+    }
+    75% {
+        transform: scale(1.08) rotate(2deg);
+    }
+}
+
+/* ============================================
+   BODY - Enhanced
+   ============================================ */
+
+.avatar-torso-enhanced {
+    width: 100px;
+    height: 120px;
+    background: #4a90e2;
+    border-radius: 15px;
+    margin: -15px auto 0;
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.avatar-legs-enhanced {
+    width: 80px;
+    height: 100px;
+    background: #2c5aa0;
+    border-radius: 10px;
+    margin: 0.5rem auto 0;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .avatar-head-enhanced {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .avatar-torso-enhanced {
+        width: 80px;
+        height: 100px;
+    }
+    
+    .avatar-legs-enhanced {
+        width: 65px;
+        height: 80px;
+    }
+}
+

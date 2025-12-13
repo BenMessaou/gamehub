@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add a Game - GameHub Pro</title>
+  <link rel="stylesheet" href="collaborations.css">
+  <link rel="stylesheet" href="c.css">
+  <!-- Chatbot IA -->
+  <link rel="stylesheet" href="../backoffice/collabcrud/chatbot.css">
+</head>
+<body>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        <img src="assests/logo.png" alt="Logo GameHub Pro" class="header-logo">
+        <h1 class="logo">GameHub Pro</h1>
+      </div>
+      <nav style="flex: 1; display: flex; justify-content: center;">
+        <ul>
+          <li><a href="index.php" class="super-button">Home</a></li>
+          <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
+          <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
+          <li><a href="index.php#about" class="super-button">About</a></li>
+        </ul>
+      </nav>
+      
+      <button id="sidebar-toggle" class="sidebar-toggle" style="flex-shrink: 0;">☰</button>
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <nav>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php#new-games">Recent Games</a></li>
+        <li><a href="collaborations.php"> Collaborations</a></li>
+        <li><a href="index.php#about">About</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main id="main-content" class="main-content">
+    <!-- Images décoratives flottantes en arrière-plan -->
+    <div class="decorative-images">
+      <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-1">
+      <img src="assests/game5.png" alt="Decor" class="decor-img decor-img-2">
+      <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-3">
+    </div>
+
+    <div class="animated-strip">
+      <div class="strip-content">
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/3.png" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/1.png"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/rambling.jpg" />
+        <img src="assests/house.jpg" />
+        <img src="assests/planet.jpg"  />
+        <img src="assests/girl.jpg"  />
+        <img src="assests/nim.jpg" />
+        <img src="assests/1.png" />
+        <img src="assests/house.jpg" />
+        <img src="assests/5.png"  />
+        <img src="assests/girl.jpg"  />
+      </div>
+    </div>
+
+    <!-- SECTION AJOUT DE JEU -->
+    <div class="collabs-container">
+      <div class="collabs-header">
+        <h1>Publish Your Game</h1>
+        <a href="index.php#new-games" class="super-button">
+          ← Back to Games
+        </a>
+      </div>
+
+      <div class="collab-card" style="max-width: 900px; margin: 0 auto;">
+        <p class="description" style="text-align: center; margin-bottom: 2rem; color: #ccc;">
+          Fill out the form below to submit your game for validation.
+        </p>
+
+        <!-- Success/Error Messages -->
+        <div id="message-container" style="display: none; margin-bottom: 24px; padding: 16px; border-radius: 8px;">
+          <div id="message-content"></div>
+        </div>
+
+        <!-- FORMULAIRE (enctype pour upload fichier) -->
+        <form action="control/add_game.php" method="POST" enctype="multipart/form-data" class="game-form">
+
+                    <!-- Nom du jeu -->
+                    <div class="form-group">
+                    <label for="nom"><span class="required"></span></label>
+                    <input type="text" id="nom" name="nom" required placeholder="Ex: Eternal Quest" maxlength="100">
+                    </div>
+
+                    <!-- Développeur / Studio -->
+                    <div class="form-group">
+                    <label for="developpeur"><span class="required"></span></label>
+                    <input type="text" id="developpeur" name="developpeur" required placeholder="Ex: Alex Dupont / Pixel Studio" maxlength="100">
+                    </div>
+
+                    <!-- Date de création -->
+                    <div class="form-group">
+                    <label for="date_creation"><span class="required"></span></label>
+                    <input type="date" id="date_creation" name="date_creation" required>
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="form-group">
+                    <label for="categorie"><span class="required"></span></label>
+                    <select id="categorie" name="categorie" required>
+                        <option value="" disabled selected>Choose a category</option>
+                        <option value="Action">Action</option>
+                        <option value="Aventure">Adventure</option>
+                        <option value="RPG">RPG</option>
+                        <option value="Stratégie">Strategy</option>
+                        <option value="Puzzle">Puzzle</option>
+                        <option value="Plateforme">Platform</option>
+                        <option value="Simulation">Simulation</option>
+                        <option value="Course">Racing</option>
+                        <option value="Horreur">Horror</option>
+                        <option value="Sport">Sports</option>
+                        <option value="Combat">Fighting</option>
+                        <option value="Autres">Others</option>
+                    </select>
+                    </div>
+
+                    <!-- Âge recommandé -->
+                    <div class="form-group">
+                    <label for="age_recommande"></label>
+                    <select id="age_recommande" name="age_recommande">
+                        <option value="" selected>None</option>
+                        <option value="7+">7+</option>
+                        <option value="12+">12+</option>
+                        <option value="16+">16+</option>
+                        <option value="18+">18+</option>
+                    </select>
+                    </div>
+
+                    <!-- Lieu de développement -->
+                    <div class="form-group">
+                    <label for="lieu"></label>
+                    <input type="text" id="lieu" name="lieu" placeholder="Ex: Tunis, Tunisie" maxlength="100">
+                    </div>
+
+                    <!-- Description détaillée -->
+                    <div class="form-group">
+                    <label for="description"><span class="required"></span></label>
+                    <textarea id="description" name="description" rows="6" required 
+                                placeholder="Describe your game: story, gameplay, universe, mechanics, target audience... (min. 150 characters)"></textarea>
+                    </div>
+
+                    <!-- Image de couverture -->
+                    <div class="form-group">
+                    <label for="image"><span class="required"></span></label>
+                    <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif" required>
+                    <small>Formats: JPG, PNG, GIF | Max: 5 MB | Recommended: 1200x600 px</small>
+                    </div>
+
+                    <!-- Captures d’écran -->
+                    <div class="form-group">
+                    <label for="screenshots"></label>
+                    <input type="file" id="screenshots" name="screenshots[]" accept="image/jpeg,image/png" multiple>
+                    <small>Max: 3 MB per image</small>
+                    </div>
+
+                    <!-- Trailer YouTube -->
+                    <div class="form-group">
+                    <label for="trailer"><span class="required"></span></label>
+                    <input type="url" id="trailer" name="trailer" required 
+                            placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+
+                    <!-- Lien de téléchargement -->
+                    <div class="form-group">
+                    <label for="lien_telechargement"></label>
+                    <input type="url" id="lien_telechargement" name="lien_telechargement" 
+                            placeholder="https://monjeu.com/download">
+                    </div>
+
+                    <!-- Mots-clés -->
+                    <div class="form-group">
+                    <label for="tags"></label>
+                    <input type="text" id="tags" name="tags" 
+                            placeholder="Ex: fantasy, open-world, coop, pixel art">
+                    <small>Max. 10 keywords</small>
+                    </div>
+
+          <!-- BOUTONS -->
+          <div class="card-actions" style="justify-content: center; margin-top: 2rem; gap: 1rem;">
+            <button type="submit" class="btn-view" style="background: rgba(0, 255, 136, 0.2); color: #00ff88; border-color: rgba(0, 255, 136, 0.5); padding: 12px 28px; font-size: 1rem; cursor: pointer;">
+              Submit for Validation
+            </button>
+            <a href="javascript:history.back()" class="btn-view" style="background: rgba(255, 51, 92, 0.2); color: #ff335c; border-color: rgba(255, 51, 92, 0.5);">
+              Cancel
+            </a>
+          </div>
+        </form>
+
+        <!-- AIDE -->
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 1.5rem; border-radius: 12px; margin-top: 2rem; border: 1px solid rgba(0, 255, 136, 0.2);">
+          <h3 style="color: #00ff88; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);">Need Help?</h3>
+          <p style="color: #ccc; line-height: 1.8;">
+            📧 <a href="mailto:support@gamehubpro.com" style="color: #00ffea; text-decoration: none;">support@gamehubpro.com</a><br>
+            📖 <a href="guide-soumission.html" target="_blank" style="color: #00ffea; text-decoration: none;">Submission Guide</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section about">
+        <h3>GameHub Pro</h3>
+        <p>The platform that connects independent developers with players from around the world.</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="index.php#new-games">Recent Games</a></li>
+          <li><a href="#" class="dashboard-link" id="dashboardFooterBtn">Dashboard</a></li>
+          <li><a href="collaborations.php"> Collaborations</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 GameHub Pro | All rights reserved | Tunis, Tunisia</p>
+    </div>
+  </footer>
+
+  <!-- Chatbot HTML -->
+  <?php include '../backoffice/collabcrud/chatbot.html'; ?>
+  
+  <script src="c.js"></script>
+  <script src="validation.js"></script>
+  <script src="collaborations.js"></script>
+  <script src="../backoffice/collabcrud/chatbot.js"></script>
+  <script>
+  // Dashboard button management in footer
+  document.addEventListener('DOMContentLoaded', function() {
+    const dashboardFooterBtn = document.getElementById('dashboardFooterBtn');
+    
+    if (dashboardFooterBtn) {
+      dashboardFooterBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Display alert indicating admin login
+        alert('You are logged in as administrator.\n\nTo access the Dashboard, please enter the access code.');
+        
+        // Request the code
+        const code = prompt('Enter the Dashboard access code:');
+        
+        // Verify the code
+        if (code === '0000') {
+          // Correct code, redirect to collaboration dashboard
+          window.location.href = '../backoffice/projectscrud/projectlist.php';
+        } else if (code === null) {
+          // User cancelled
+          return;
+        } else {
+          // Incorrect code
+          alert('Incorrect code. Access denied.');
+        }
+      });
+    }
+  });
+
+  // Handle success/error messages and placeholder removal
+  (function() {
+  // Handle success/error messages from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const messageContainer = document.getElementById('message-container');
+  const messageContent = document.getElementById('message-content');
+  
+  if (urlParams.get('success') === '1') {
+    messageContainer.style.display = 'block';
+    messageContainer.style.background = 'rgba(0, 255, 234, 0.1)';
+    messageContainer.style.border = '1px solid rgba(0, 255, 234, 0.5)';
+    messageContent.style.color = '#00ffea';
+    messageContent.innerHTML = '<strong>✓ Project submitted successfully!</strong><br>Your project is pending validation by the administrator. You will be notified once it is approved.';
+    
+    // Clear URL parameters after showing message
+    setTimeout(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }, 5000);
+  } else if (urlParams.get('error')) {
+    const errorMsg = decodeURIComponent(urlParams.get('error'));
+    messageContainer.style.display = 'block';
+    messageContainer.style.background = 'rgba(255, 51, 92, 0.1)';
+    messageContainer.style.border = '1px solid rgba(255, 51, 92, 0.5)';
+    messageContent.style.color = '#ff6b81';
+    messageContent.innerHTML = '<strong>✗ Error:</strong> ' + errorMsg;
+    
+    // Clear URL parameters after showing message
+    setTimeout(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }, 5000);
+  }
+
+  // Force placeholder removal when typing
+  const inputs = document.querySelectorAll('.form-group input, .form-group textarea');
+  
+  inputs.forEach(input => {
+    // Remove placeholder on focus
+    input.addEventListener('focus', function() {
+      if (this.placeholder) {
+        this.setAttribute('data-placeholder-backup', this.placeholder);
+        this.placeholder = '';
+        this.setAttribute('data-has-value', 'true');
+      }
+    });
+    
+    // Remove placeholder during input
+    input.addEventListener('input', function() {
+      if (this.value && this.value.trim() !== '') {
+        if (this.placeholder) {
+          this.setAttribute('data-placeholder-backup', this.placeholder);
+          this.placeholder = '';
+          this.setAttribute('data-has-value', 'true');
+        }
+      } else {
+        // Restore if empty
+        if (this.hasAttribute('data-placeholder-backup')) {
+          this.placeholder = this.getAttribute('data-placeholder-backup');
+          this.removeAttribute('data-placeholder-backup');
+          this.removeAttribute('data-has-value');
+        }
+      }
+    });
+    
+    // Restore on blur only if empty
+    input.addEventListener('blur', function() {
+      if (this.value === '' || this.value.trim() === '') {
+        if (this.hasAttribute('data-placeholder-backup')) {
+          this.placeholder = this.getAttribute('data-placeholder-backup');
+          this.removeAttribute('data-placeholder-backup');
+          this.removeAttribute('data-has-value');
+        }
+      }
+    });
+    
+    // Check if input already has a value on load
+    if (input.value && input.value.trim() !== '') {
+      if (input.placeholder) {
+        input.setAttribute('data-placeholder-backup', input.placeholder);
+        input.placeholder = '';
+        input.setAttribute('data-has-value', 'true');
+      }
+    }
+  });
+  })();
+</script>
+
+
+</body>
+</html>
