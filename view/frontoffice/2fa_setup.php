@@ -12,7 +12,6 @@ $ga = new GoogleAuthenticator();
 $uc = new UserController();
 $user = $uc->getUserById($_SESSION['user_id']);
 
-// ken yheb inahi 2fa
 if (isset($_GET['disable'])) {
     config::getConnexion()
            ->prepare("UPDATE user SET totp_secret = NULL WHERE id_user = ?")
@@ -21,7 +20,6 @@ if (isset($_GET['disable'])) {
     exit;
 }
 
-// generati el qr code wel seceret code
 if (empty($user['totp_secret'])) {
     $secret = $ga->createSecret();                                    
     $qrCodeUrl = $ga->getQRCodeGoogleUrl('GameHub - '.$user['email'], $secret);
