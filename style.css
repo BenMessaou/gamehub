@@ -1,0 +1,482 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* GLOBAL */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #fff;
+    background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* BACKGROUND EFFECT RGB */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(255,0,150,0.10), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,255,150,0.10), transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(150,0,255,0.10), transparent 50%);
+    animation: rgbShift 12s infinite alternate;
+    z-index: -1;
+}
+
+@keyframes rgbShift {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
+}
+
+/* CONTAINER */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+/* HEADER */
+header {
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,255,136,0.3);
+    padding: 1rem 0;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGO */
+.logo {
+    font-size: 2rem;
+    color: #00ff88;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 15px #00ff88;
+}
+
+/* SUPER BUTTON (RGB) */
+.super-button {
+    position: relative;
+    padding: 12px 24px;
+    border-radius: 40px;
+    background: #0a0a0a;
+    border: 2px solid rgba(255,255,255,0.2);
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    transition: .3s;
+    backdrop-filter: blur(4px);
+}
+.super-button::before {
+    content: "";
+    position: absolute;
+    inset: -100%;
+    background: conic-gradient(#00ffff, #ff00ff, #00ffff);
+    animation: rotate 4s linear infinite;
+    z-index: -1;
+}
+.super-button::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: #000;
+    border-radius: inherit;
+    z-index: -1;
+}
+.super-button:hover {
+    transform: scale(1.05);
+    color: #00ff88;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* HERO */
+.hero {
+    margin-top: 90px;
+    padding: 5rem 0;
+    background: linear-gradient(135deg, rgba(15,15,35,0.8), rgba(26,26,46,0.8)),
+                url('https://images.unsplash.com/photo-1511512578047-dfb367046420')
+                center/cover no-repeat;
+    text-align: center;
+}
+.hero h2 {
+    font-size: 3rem;
+    text-shadow: 0 0 25px #00ff88;
+}
+.hero p {
+    font-size: 1.2rem;
+    opacity: .9;
+}
+
+/* SECTION JEUX */
+.deals h3 {
+    font-size: 2.7rem;
+    margin: 2rem 0;
+    text-align: center;
+    text-shadow: 0 0 20px #00ff88;
+}
+
+#games-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+/* CARTE DE JEU */
+.game-card {
+    background: rgba(0,0,0,0.8);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,255,136,0.25);
+    transition: .3s;
+}
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 45px rgba(0,255,136,0.45);
+}
+.game-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.price {
+    font-size: 1.3rem;
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.add-to-cart {
+    margin-top: 1rem;
+    background: linear-gradient(45deg,#ff0096,#00ff88,#8a2be2);
+    padding: .9rem;
+    font-weight: bold;
+    border-radius: 40px;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* RATING */
+.rating {
+    margin: 0.8rem 0;
+    color: #ffd700;
+}
+
+/* ============================================================
+   🟩 GRAND PANIER PRO — VERSION FINALE
+   ============================================================ */
+.cart-dropdown {
+    position: absolute;
+    top: 90px;
+    right: 10px;
+    width: 480px !important;
+    max-height: 600px !important;
+    background: rgba(0,0,0,0.92);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 1.2rem;
+    box-shadow: 0 0 45px rgba(0,255,136,0.35);
+    backdrop-filter: blur(12px);
+    display: none;
+    overflow-y: auto;
+}
+
+/* ITEMS DANS PANIER */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 0;
+    border-bottom: 1px solid rgba(0,255,136,0.25);
+}
+.cart-item img {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+}
+
+/* TEXTE */
+.item-details h5 {
+    font-size: 1rem;
+}
+.item-details p {
+    font-size: 0.9rem;
+}
+
+/* INPUT QUANTITÉ */
+.quantity-input {
+    width: 60px;
+    height: 36px;
+    font-size: 1rem;
+    border-radius: 6px;
+}
+
+/* TOTAL */
+.total strong,
+.final-total strong {
+    font-size: 1.15rem;
+}
+.total span,
+.final-total span {
+    font-size: 1.15rem;
+    color: #00ff88;
+}
+
+/* BOUTONS PANIER */
+.clear-cart-btn,
+.checkout-btn {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-top: .6rem;
+}
+.clear-cart-btn {
+    background: linear-gradient(45deg,#ff0096,#8a2be2);
+    color:white;
+}
+.checkout-btn {
+    background: linear-gradient(45deg,#00ff88,#00ffaa);
+    color:black;
+}
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+    width: auto;
+}
+
+.cart-icon {
+    cursor: pointer;
+    position: relative;
+}
+/* ============================================================
+   🟩 BACKOFFICE PRO STYLES
+   ============================================================ */
+
+.backoffice-wrapper {
+    margin-top: 120px;
+    padding-bottom: 100px;
+    background: linear-gradient(180deg, rgba(15,15,35,0.85), rgba(22,22,44,0.85));
+    min-height: 100vh;
+}
+
+/* Form Container */
+.form-container {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 0 30px rgba(0,255,136,0.25);
+    margin: auto;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Labels */
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0,255,136,0.4);
+}
+
+/* Inputs */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: .3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0,255,136,0.4);
+}
+
+/* Add Button */
+.form-container button.super-button {
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* Gestion Cards */
+#games-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap: 2rem;
+}
+
+/* Fix card inside backoffice */
+#games-container .card {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* Delete button */
+.delete-btn {
+    background: linear-gradient(45deg, #ff0033, #ff3355);
+    color: #fff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: .2s;
+}
+.delete-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255,0,51,0.5);
+}
+.orders-wrapper {
+    margin-top: 120px;
+    padding-bottom: 100px;
+    background: linear-gradient(180deg, rgba(15,15,35,0.92), rgba(20,20,40,0.92));
+    min-height: 100vh;
+}
+
+
+/* cartes de commandes */
+.order-card,
+.game-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 0 25px rgba(0,255,136,0.25);
+    backdrop-filter: blur(8px);
+}
+/* ====== CARTES COMMANDES PRO ====== */
+.order-card-container {
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,255,136,0.2);
+    backdrop-filter: blur(8px);
+}
+
+/* ====== Bouton PRO pour commandes ====== */
+.super-button-small {
+    position: relative;
+    display: inline-block;
+    padding: 10px 22px;
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+    background: rgba(0,0,0,0.85);
+    border: 2px solid rgba(0,255,136,0.4);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Retirer le GROS dégradé de super-button */
+.super-button-small::before,
+.super-button-small::after {
+    display: none !important;
+}
+
+.super-button-small:hover {
+    color: #00ff88;
+    background: rgba(0,0,0,0.95);
+    box-shadow: 0 0 15px #00ff88;
+}
+#orders-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 20px;
+}
+
+.order-card-container {
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,255,136,0.2);
+    backdrop-filter: blur(8px);
+}
+/* ====== Bouton PRO sans effet RGB explosif ====== */
+.super-button-clean {
+    position: relative;
+    display: inline-block;
+    padding: 12px 26px;
+    color: white;
+    background: rgba(0,0,0,0.85);
+    border: 2px solid rgba(0,255,136,0.4);
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    backdrop-filter: blur(6px);
+}
+
+.super-button-clean:hover {
+    background: rgba(0,0,0,1);
+    box-shadow: 0 0 15px #00ff88;
+    color: #00ff88;
+}
+
+/* Désactive complètement le fond RGB animé */
+.super-button-clean::before,
+.super-button-clean::after {
+    display: none !important;
+}
+
+
+
+
+
+
+
+
