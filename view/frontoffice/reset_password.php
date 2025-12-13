@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 if (!isset($_SESSION['reset_user_id'])) {
     header("Location: verif.php");

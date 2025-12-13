@@ -1,6 +1,6 @@
 
 <?php
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 

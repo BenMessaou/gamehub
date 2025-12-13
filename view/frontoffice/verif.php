@@ -2,7 +2,7 @@
 
 <?php
 session_start();
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 $error = "";
 $userController = new UserController();

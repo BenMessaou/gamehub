@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../../config/config.php";
-require_once __DIR__ . "/../../models/collab/CollabMessage.php";
+require_once __DIR__ . "/../../model/collab/CollabMessage.php";
 
 class CollabMessageController {
 

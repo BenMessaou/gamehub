@@ -1,6 +1,6 @@
 <?php
 include(__DIR__ . '/../config/config.php');
-include(__DIR__ . '/../models/Event.php');
+include(__DIR__ . '/../model/Event.php');
 
 class EventController {
 

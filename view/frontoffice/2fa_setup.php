@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     exit; 
 }
 
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 require_once "googleauth.php";          
 
 $ga = new GoogleAuthenticator();

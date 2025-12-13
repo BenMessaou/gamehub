@@ -1,6 +1,6 @@
 <?php
 include(__DIR__ . '/../config/config.php');
-include(__DIR__ . '/../models/Project.php');
+include(__DIR__ . '/../model/Project.php');
 
 class ProjectController {
 

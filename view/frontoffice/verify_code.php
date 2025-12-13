@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../config.php';
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 if (!isset($_SESSION['reset_email'])) {
     header("Location: verif.php");

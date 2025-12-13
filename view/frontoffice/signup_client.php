@@ -2,8 +2,8 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/../../controllers/userController.php';
-require_once __DIR__ . '/../../models/User.php';
+require_once __DIR__ . '/../../controller/userController.php';
+require_once __DIR__ . '/../../model/User.php';
 
 $userController = new UserController();
 $error = '';

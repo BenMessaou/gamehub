@@ -1,5 +1,5 @@
 <?php
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 $uc = new UserController();
 $allowCredentials = [];

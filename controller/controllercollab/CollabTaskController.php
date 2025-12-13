@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../../models/collab/CollabTask.php";
+require_once __DIR__ . "/../../model/collab/CollabTask.php";
 require_once __DIR__ . "/../../config/config.php";
 
 class CollabTaskController {

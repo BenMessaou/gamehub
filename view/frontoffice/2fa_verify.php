@@ -4,7 +4,7 @@ if (!isset($_SESSION['pending_2fa_user_id'])) {
     header("Location: login_client.php"); exit;
 }
 
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 require_once "googleauth.php";
 $ga = new GoogleAuthenticator();
 $uc = new UserController();

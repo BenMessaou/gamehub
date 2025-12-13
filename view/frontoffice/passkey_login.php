@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../../controllers/userController.php";
+require_once "../../controller/userController.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST" || empty($_POST['credential'])) {
     header("Location: login_client.php"); exit;
