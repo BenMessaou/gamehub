@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . '/../models/config.php';
 require_once __DIR__ . '/../models/auto_migration.php';
