@@ -2,7 +2,7 @@
 // config.php
 
 $host = 'localhost';
-$dbname = 'gamehub_db';
+$dbname = 'bdgamehub';
 $username = 'root';
 $password = '';
 

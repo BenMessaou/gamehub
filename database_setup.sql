@@ -30,7 +30,7 @@ UPDATE games SET
     rating = 5.0
 WHERE name LIKE '%Zelda%';
 
--- Update the new game "Valorant" if it exists
+
 UPDATE games SET
     image = 'https://cdn.arstechnica.net/wp-content/uploads/2020/04/valorant-listing-800x450.jpg',
     category = 'action',
