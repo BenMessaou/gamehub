@@ -17,68 +17,6 @@ if (!$user) {
     exit;
 }
 
-
-$user['verified']               = $user['verified'] ?? 0;
-$user['verification_requested'] = $user['verification_requested'] ?? 0;
-$user['address']                = $user['address'] ?? 'Not set yet';
-
-$message = '';
-$messageType = '';
-
-// Handle verification request
-if (isset($_POST['request_verification'])) {
-    try {
-        $db = config::getConnexion();
-
-        // Auto-create columns if missing
-        $db->exec("ALTER TABLE user ADD COLUMN IF NOT EXISTS verified TINYINT(1) DEFAULT 0");
-        $db->exec("ALTER TABLE user ADD COLUMN IF NOT EXISTS verification_requested TINYINT(1) DEFAULT 0");
-
-        $sql = "UPDATE user SET verification_requested = 1 WHERE id_user = :id AND verification_requested = 0";
-        $req = $db->prepare($sql);
-        $req->execute([':id' => $userId]);
-
-        if ($req->rowCount() > 0) {
-            $message = "Verification request sent! Waiting for admin approval.";
-            $messageType = "success";
-            $user['verification_requested'] = 1;
-        } else {
-            $message = "You have already requested verification.";
-            $messageType = "warning";
-        }
-    } catch (Exception $e) {
-        $message = "Error sending request. Please try again.";
-        $messageType = "error";
-    }
-}
-
-function e($value) {
-    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
-}
-?>
-
-
-    
-
-<?php
-session_start();
-require_once __DIR__ . '/../../controller/userController.php';
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login_client.php');
-    exit;
-}
-
-$userController = new UserController();
-$userId = $_SESSION['user_id'];
-$user = $userController->getUserById($userId);
-
-if (!$user) {
-    session_destroy();
-    header('Location: login_client.php');
-    exit;
-}
-
 $user['verified']               = $user['verified'] ?? 0;
 $user['verification_requested'] = $user['verification_requested'] ?? 0;
 $user['address']                = $user['address'] ?? 'Not set yet';
@@ -108,6 +46,10 @@ if (isset($_POST['request_verification'])) {
         $message = "Error sending request.";
         $messageType = "error";
     }
+}
+
+function e($value) {
+    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 ?>
 
@@ -140,9 +82,9 @@ if (isset($_POST['request_verification'])) {
         <nav>
             <ul>
                 <li><a href="index.php" class="super-button">Projects</a></li>
-                <li><a href="user_project/view/" class="super-button">Events
+                <li><a href="#deals" class="super-button">Events
                 </a></li>
-                <li><a href="user_project/view/shop.php" class="super-button">Shop </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
                 <li><a href="#contact" class="super-button">Article</a></li><li><a class="super-button" href="logout.php">feedback</a></li>
                 <li><a class="super-button" href="profile.php">Profile</a></li>
                 
