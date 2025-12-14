@@ -1,4 +1,5 @@
 <?php
+// models/CommentShare.php
 
 class CommentShare {
     private $db;
@@ -46,14 +47,14 @@ class CommentShare {
                 cs.shared_at,
                 c.content AS comment_content, 
                 a.title AS article_title, 
-                a.id, 
+                a.id AS article_id_lien, 
                 s.nom AS sender_username 
             FROM 
                 comment_share cs
             INNER JOIN 
                 comments c ON cs.id_comment = c.id
             INNER JOIN 
-                articles a ON c.article_id = a.id -- ✅ CORRECTION FINALE (Hypothèse)
+                articles a ON c.article_id = a.id 
             INNER JOIN 
                 users s ON cs.id_user_emetteur = s.id_user 
             WHERE 
@@ -76,7 +77,7 @@ class CommentShare {
         $query = "
             DELETE cs FROM comment_share cs
             INNER JOIN comments c ON cs.id_comment = c.id
-            WHERE c.article_id = :article_id -- ✅ CORRECTION FINALE (Hypothèse)
+            WHERE c.article_id = :article_id
         ";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':article_id', $article_id, PDO::PARAM_INT);

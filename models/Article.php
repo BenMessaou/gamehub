@@ -128,12 +128,8 @@ class Article {
         return $result['total'] ?? 0;
     }
 
-    /**
-     * Correction : Utilise le nom de table correct 'comments'.
-     * Ceci résout Fatal error: ... Table 'gamehub.commentaires' doesn't exist.
-     */
     public function countTotalComments() {
-        $comment_table_name = 'comments'; // ✅ CORRECTION
+        $comment_table_name = 'comments'; // Correction du nom de table
         
         $query = 'SELECT COUNT(*) as total FROM ' . $comment_table_name; 
         $stmt = $this->conn->prepare($query);
