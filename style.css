@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 /* RESET */
+=======
+/* Reset and base styles */
+>>>>>>> feed_back
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+<<<<<<< HEAD
 /* GLOBAL */
 body {
     font-family: 'Arial', sans-serif;
@@ -48,12 +53,60 @@ header {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 1000;
+=======
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(150, 0, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: rgbShift 10s ease-in-out infinite alternate;
+}
+
+@keyframes rgbShift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+>>>>>>> feed_back
 }
 
 header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+<<<<<<< HEAD
 }
 
 /* LOGO */
@@ -480,3 +533,855 @@ header .container {
 
 
 
+=======
+    padding: 1rem 20px;
+}
+
+.logo {
+    color: #00ff88;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88; }
+    to { text-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88, 0 0 40px #00ff88; }
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 2rem;
+}
+
+/* From Uiverse.io by jawad_8494 */
+.super-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 1;
+}
+
+.super-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+  animation: rotate 4s linear infinite;
+  z-index: -2;
+}
+
+.super-button::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.super-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+  color: #90EE90;
+}
+
+.super-button:hover .arrow {
+  transform: translateX(6px);
+}
+
+.arrow {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease-in-out;
+  color: #00ffff;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rainbow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9), rgba(26, 26, 46, 0.9));
+    padding: 10rem 0 4rem; /* Augmenté le padding-top pour compenser le header fixe */
+    text-align: center;
+    color: #fff;
+    position: relative;
+}
+
+.hero .container {
+    max-width: 800px;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Deals Section - Utilisé pour les cartes de jeux */
+.deals {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9), rgba(26, 26, 46, 0.9));
+    position: relative;
+}
+
+.deals .container {
+    max-width: 1200px;
+}
+
+.deals h3 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.deal-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+    max-width: 350px; /* Ajusté pour la largeur de l'iframe */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+    animation: rotate 4s linear infinite;
+    z-index: -1;
+    opacity: 0.1;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+}
+
+.card img {
+    width: 100%;
+    height: auto; /* Maintient le ratio d'aspect */
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    cursor: pointer; /* Indique que l'image est cliquable */
+}
+
+.card iframe {
+    width: 100%;
+    height: 169px; /* Hauteur fixe en fonction de la largeur */
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.card h4 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.card .rating {
+    color: #ffd700; /* Jaune pour les étoiles */
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.card .streamer {
+    color: #aaa;
+    font-style: italic;
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.card .comments {
+    text-align: left;
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.card .comments h5 {
+    color: #00ff88;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.card .comments p {
+    margin: 3px 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 15, 35, 0.9));
+    padding: 3rem 0 2rem;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+footer .container {
+    position: relative;
+    z-index: 1;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h2 {
+        font-size: 2rem;
+    }
+
+    .deal-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+    }
+
+    nav ul.show {
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 1rem 0;
+    }
+}
+/* --- Styles spécifiques pour la page Avis --- */
+
+.feedback-section {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  max-width: 800px;
+  margin: 0 auto; /* Centre la section */
+}
+
+.feedback-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feedback-section label {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-section input,
+.feedback-section textarea {
+  background-color: #222;
+  color: white;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.feedback-section input:focus,
+.feedback-section textarea:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.feedback-item {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #00ff88;
+}
+
+.feedback-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: #00ff88;
+}
+
+.feedback-item p {
+  margin: 0;
+  color: #ccc;
+}
+
+/* --- Styles spécifiques pour la page Contact --- */
+
+.contact-section {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  max-width: 600px;
+  margin: 0 auto; /* Centre la section */
+}
+
+.contact-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-section label {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.contact-section input,
+.contact-section textarea {
+  background-color: #222;
+  color: white;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.contact-section input:focus,
+.contact-section textarea:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+/* --- Style pour le bouton actif dans la navigation --- */
+nav ul li a.super-button.active {
+  background: linear-gradient(145deg, #00ff88, #0f0f0f);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+nav ul li a.super-button.active:hover {
+  background: linear-gradient(145deg, #00ff88, #1c1c1c);
+  color: #000;
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.7);
+}
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(150, 0, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: rgbShift 10s ease-in-out infinite alternate;
+}
+
+@keyframes rgbShift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 20px;
+}
+
+.logo {
+    color: #00ff88;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88; }
+    to { text-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88, 0 0 40px #00ff88; }
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 2rem;
+}
+
+/* From Uiverse.io by jawad_8494 */
+.super-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 1;
+}
+
+.super-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
+  animation: rotate 4s linear infinite;
+  z-index: -2;
+}
+
+.super-button::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #0a0a0a;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.super-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+  color: #90EE90;
+}
+
+.super-button:hover .arrow {
+  transform: translateX(6px);
+}
+
+.arrow {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease-in-out;
+  color: #00ffff;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rainbow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9), rgba(26, 26, 46, 0.9));
+    padding: 10rem 0 4rem; /* Augmenté le padding-top pour compenser le header fixe */
+    text-align: center;
+    color: #fff;
+    position: relative;
+}
+
+.hero .container {
+    max-width: 800px;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Deals Section - Utilisé pour les sections de la page Avis */
+.deals {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9), rgba(26, 26, 46, 0.9));
+    position: relative;
+}
+
+.deals .container {
+    max-width: 1200px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.deals h3 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+/* --- Styles spécifiques pour la page Avis --- */
+
+.feedback-section, .contact-section {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  flex: 1;
+  min-width: 300px; /* Largeur minimale pour qu'elles soient côte à côte */
+  max-width: 500px; /* Largeur maximale pour chaque section */
+}
+
+.feedback-section form, .contact-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feedback-section label, .contact-section label {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-section input,
+.feedback-section textarea,
+.contact-section input,
+.contact-section textarea {
+  background-color: #222;
+  color: white;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.feedback-section input:focus,
+.feedback-section textarea:focus,
+.contact-section input:focus,
+.contact-section textarea:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.feedback-item {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #00ff88;
+}
+
+.feedback-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: #00ff88;
+}
+
+.feedback-item p {
+  margin: 0;
+  color: #ccc;
+}
+
+/* --- Style pour le système de notation étoilé --- */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 0.2rem;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input[type="radio"]:checked + label,
+.star-rating input[type="radio"]:checked + label ~ label {
+  color: #ffd700;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 15, 35, 0.9));
+    padding: 3rem 0 2rem;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+footer .container {
+    position: relative;
+    z-index: 1;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h2 {
+        font-size: 2rem;
+    }
+
+    .deals .container {
+      flex-direction: column; /* Sur mobile, les sections s'empilent */
+      align-items: center;
+    }
+
+    .feedback-section, .contact-section {
+      max-width: 100%; /* Prend toute la largeur sur mobile */
+    }
+
+    nav ul {
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+    }
+
+    nav ul.show {
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 1rem 0;
+    }
+}
+/* --- Style pour la barre de recherche --- */
+.hero .search-bar {
+  margin-top: 1.5rem;
+  display: flex;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero .search-bar input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border-radius: 50px 0 0 50px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.hero .search-bar input:focus {
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.hero .search-bar button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(45deg, #ff0096, #00ff88);
+  color: #fff;
+  border: none;
+  border-radius: 0 50px 50px 0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.hero .search-bar button:hover {
+  background: linear-gradient(45deg, #00ff88, #9600ff);
+  transform: translateY(-2px);
+}
+
+/* --- Style pour le lien "Regarder la réaction" --- */
+.card .watch-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(180, 40, 255, 0.3); /* Violet foncé */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  border: 1px solid rgba(180, 40, 255, 0.5);
+}
+
+.card .watch-link:hover {
+  background: rgba(180, 40, 255, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(180, 40, 255, 0.5);
+}
+>>>>>>> feed_back

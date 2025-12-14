@@ -1,8 +1,9 @@
+
 <?php
 // config.php
 
 $host = 'localhost';
-$dbname = 'bdgamehub';
+$dbname = 'dbgamehub';
 $username = 'root';
 $password = '';
 
