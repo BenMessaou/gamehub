@@ -1,4 +1,6 @@
+/* Fichier : assets/css/style.css - Version Corrigée (Sans Rose) */
 
+/* Reset and base styles */
 * {
     margin: 0;
     padding: 0;
@@ -75,49 +77,6 @@ nav ul li {
     margin-left: 20px;
 }
 
-/* Super button from template */
-.super-button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px 28px;
-  background: linear-gradient(145deg, #0f0f0f, #1c1c1c);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 100px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.4s ease-in-out;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  z-index: 1;
-  text-decoration: none;
-}
-
-.super-button::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, #00ffff, #ff00ff, #00ffff);
-  animation: rotate 4s linear infinite;
-  z-index: -2;
-}
-
-.super-button::after {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  background: #0a0a0a;
-  border-radius: inherit;
-  z-index: -1;
 .super-button {
     background: #222;
     color: #00ff88;
@@ -136,16 +95,6 @@ nav ul li {
     box-shadow: 0 0 15px #00ff88;
 }
 
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Sidebar */
 /* Sidebar Toggle (Mobile) */
 .sidebar-toggle {
     display: none; /* Masqué sur desktop */
@@ -183,11 +132,11 @@ nav ul li {
 
 .sidebar nav ul {
     flex-direction: column;
-};
+}
 
 .sidebar nav ul li {
     margin: 0;
-};
+}
 
 .sidebar a {
     display: block;
@@ -218,20 +167,12 @@ nav ul li {
     background-color: #00ff88;
 }
 
-.dashboard h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
 /* MESSAGE.ERROR CORRIGÉ (couleur #ff0096 remplacée par #dc3545 (rouge classique)) */
 .message.error {
     background-color: #dc3545; 
     color: #fff;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    nav ul {
-        display: none;
 /* Section Stats */
 .stats-section {
     margin-bottom: 40px;
@@ -513,7 +454,7 @@ nav ul li {
     }
     .widget.wide-widget {
         grid-column: 1 / 2;
-    };
+    }
     
     .stats-grid {
         grid-template-columns: 1fr;
@@ -525,17 +466,5 @@ nav ul li {
     .data-table th:nth-child(3), .data-table td:nth-child(3), /* Auteur */
     .data-table th:nth-child(4), .data-table td:nth-child(4) { /* Date */
         display: none; /* Cache colonnes secondaires sur mobile */
-    };
-
-    .sidebar {
-        left: -250px;
-    }
-
-    .sidebar.show {
-        left: 0;
     }
 }
-
-
-};
-}}}
