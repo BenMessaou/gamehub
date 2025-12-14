@@ -1,9 +1,11 @@
 <?php
 session_start();
 
-// Mode développeur : permettre l'accès même sans connexion
-$isLoggedIn = isset($_SESSION['user_id']);
-$defaultUserId = 1; // ID par défaut pour le développeur
+// Exiger que l'utilisateur soit connecté
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../frontoffice/login_client.php?redirect=" . urlencode($_SERVER['HTTP_REFERER'] ?? ''));
+    exit;
+}
 
 require_once __DIR__ . "/../../../controller/controllercollab/CollabMemberController.php";
 require_once __DIR__ . "/../../../controller/controllercollab/CollabProjectController.php";
@@ -19,8 +21,8 @@ if (!isset($_POST['collab_id'])) {
 
 $collab_id = $_POST['collab_id'];
 
-// Utiliser l'ID de session s'il existe, sinon utiliser celui du formulaire ou l'ID par défaut
-$user_id = $isLoggedIn ? $_SESSION['user_id'] : (isset($_POST['user_id']) ? intval($_POST['user_id']) : $defaultUserId);
+// Utiliser l'ID de session utilisateur
+$user_id = $_SESSION['user_id'];
 
 // Récupérer le projet collaboratif
 $collab = $projectController->getById($collab_id);

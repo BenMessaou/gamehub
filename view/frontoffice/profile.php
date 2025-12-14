@@ -232,10 +232,6 @@ if (isset($_POST['request_verification'])) {
         $messageType = "error";
     }
 }
-
-function e($value) {
-    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
-}
 ?>
 
 <!DOCTYPE html>

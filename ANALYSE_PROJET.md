@@ -401,3 +401,4 @@ Une fois ces éléments en place, le projet sera prêt pour un environnement de 
 *Version du projet analysée: Structure actuelle*
 
 
+

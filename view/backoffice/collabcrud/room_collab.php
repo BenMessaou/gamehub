@@ -34,6 +34,24 @@ function getUserAvatar($db, $userId) {
     }
 }
 
+// Fonction pour récupérer le nom d'un utilisateur
+function getUserName($db, $userId) {
+    try {
+        $sql = "SELECT name, lastname FROM user WHERE id_user = ? LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result && $result['name'] && $result['lastname']) {
+            return trim($result['name'] . ' ' . $result['lastname']);
+        }
+        return null;
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la récupération du nom utilisateur: " . $e->getMessage());
+        return null;
+    }
+}
+
 // Fonction pour récupérer l'image de profil d'un utilisateur
 function getUserProfileImage($db, $userId) {
     try {
@@ -61,8 +79,27 @@ function getUserProfileImage($db, $userId) {
     }
 }
 
+// Utiliser l'ID de session pour currentUserId
+$currentUserId = $isLoggedIn ? $userId : null;
+
 // Récupérer l'image de profil de l'utilisateur actuel
-$currentUserProfileImage = getUserProfileImage($db, $currentUserId);
+$currentUserProfileImage = null;
+if ($currentUserId) {
+    $currentUserProfileImage = getUserProfileImage($db, $currentUserId);
+}
+
+// Récupérer les informations de l'utilisateur connecté
+$currentUserInfo = null;
+if ($isLoggedIn && $userId) {
+    try {
+        $sql = "SELECT name, lastname, email FROM user WHERE id_user = ? LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId]);
+        $currentUserInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la récupération des infos utilisateur: " . $e->getMessage());
+    }
+}
 
 // Vérifier si ID est passé
 if (!isset($_GET['id'])) {
@@ -84,6 +121,12 @@ if (!$collab) {
 // Récupérer tous les membres du collab
 $members = $memberController->getMembers($collab_id);
 
+// Enrichir les membres avec leurs noms
+foreach ($members as &$member) {
+    $member['user_name'] = getUserName($db, $member['user_id']);
+}
+unset($member); // Libérer la référence
+
 // Vérifier si le collab est complet
 $isComplete = count($members) >= $collab['max_membres'];
 
@@ -92,15 +135,15 @@ $messages = $messageController->getMessages($collab_id);
 
 // Vérifier si l'utilisateur est membre (pour le chat)
 $isMember = false;
-$currentUserId = $isLoggedIn ? $userId : 1; // ID par défaut pour le développeur
-foreach ($members as $m) {
-    if ($m['user_id'] == $currentUserId) {
-        $isMember = true;
-        break;
+if ($isLoggedIn && $userId) {
+    foreach ($members as $m) {
+        if ($m['user_id'] == $userId) {
+            $isMember = true;
+            break;
+        }
     }
 }
-// En mode développeur, permettre l'accès au chat même sans être membre
-$canViewChat = $isMember || !$isLoggedIn;
+$canViewChat = $isMember;
 
 // Fonction pour traduire le rôle
 function translateRole($role) {
@@ -113,7 +156,7 @@ function translateRole($role) {
 }
 
 // Récupérer le nom d'utilisateur pour l'assistant IA
-$userName = 'Membre #' . $currentUserId;
+$userName = $currentUserInfo ? trim($currentUserInfo['name'] . ' ' . $currentUserInfo['lastname']) : ('Member #' . $currentUserId);
 if (isset($_SESSION['username'])) {
     $userName = $_SESSION['username'];
 } elseif (isset($_SESSION['user_name'])) {
@@ -1907,6 +1950,7 @@ if (isset($_SESSION['username'])) {
                         // Afficher d'abord le owner
                         if ($ownerMember):
                             $ownerAvatar = getUserAvatar($db, $ownerMember['user_id']);
+                            $ownerName = getUserName($db, $ownerMember['user_id']);
                         ?>
                             <div class="member-card owner">
                                 <div class="member-avatar-container">
@@ -1916,7 +1960,7 @@ if (isset($_SESSION['username'])) {
                                         <div class="member-avatar">👑</div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="member-name">Propriétaire</div>
+                                <div class="member-name"><?php echo $ownerName ? htmlspecialchars($ownerName) : 'Owner'; ?></div>
                                 <div class="member-role"><?php echo translateRole($ownerMember['role']); ?></div>
                                 <div class="member-id">User ID: <?php echo htmlspecialchars($ownerMember['user_id']); ?></div>
                             </div>
@@ -1952,6 +1996,7 @@ if (isset($_SESSION['username'])) {
                         // Afficher les autres membres
                         foreach ($otherMembers as $member):
                             $memberAvatar = getUserAvatar($db, $member['user_id']);
+                            $memberName = getUserName($db, $member['user_id']);
                         ?>
                             <div class="member-card">
                                 <div class="member-avatar-container">
@@ -1961,7 +2006,7 @@ if (isset($_SESSION['username'])) {
                                         <div class="member-avatar"><?php echo 'U' . substr($member['user_id'], 0, 1); ?></div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="member-name">Membre #<?php echo htmlspecialchars($member['user_id']); ?></div>
+                                <div class="member-name"><?php echo $memberName ? htmlspecialchars($memberName) : ('Member #' . htmlspecialchars($member['user_id'])); ?></div>
                                 <div class="member-role"><?php echo translateRole($member['role']); ?></div>
                                 <div class="member-id">User ID: <?php echo htmlspecialchars($member['user_id']); ?></div>
                             </div>
@@ -2027,16 +2072,22 @@ if (isset($_SESSION['username'])) {
                                 $messageDate = date('d/m/Y H:i', strtotime($msg['date_message']));
                                 
                                 // Trouver le nom du membre
-                                $memberName = 'Membre #' . $msg['user_id'];
+                                $memberName = null;
                                 foreach ($members as $m) {
                                     if ($m['user_id'] == $msg['user_id']) {
                                         if ($m['role'] == 'owner') {
-                                            $memberName = '👑 Propriétaire';
+                                            $userNameFromDb = getUserName($db, $msg['user_id']);
+                                            $memberName = $userNameFromDb ? ('👑 ' . $userNameFromDb) : '👑 Owner';
                                         } else {
-                                            $memberName = 'Membre #' . $msg['user_id'];
+                                            $userNameFromDb = getUserName($db, $msg['user_id']);
+                                            $memberName = $userNameFromDb ? $userNameFromDb : ('Member #' . $msg['user_id']);
                                         }
                                         break;
                                     }
+                                }
+                                if (!$memberName) {
+                                    $userNameFromDb = getUserName($db, $msg['user_id']);
+                                    $memberName = $userNameFromDb ? $userNameFromDb : ('Member #' . $msg['user_id']);
                                 }
                             ?>
                                 <div class="message-item <?php echo $isOwnMessage ? 'own-message' : ''; ?>" data-message-id="<?php echo $msg['id']; ?>">
@@ -2294,13 +2345,13 @@ if (isset($_SESSION['username'])) {
                     });
                     
                     // Trouver le nom du membre
-                    let memberName = 'Membre #' + msg.user_id;
+                    let memberName = 'Member #' + msg.user_id;
                     members.forEach(function(m) {
                         if (m.user_id == msg.user_id) {
                             if (m.role == 'owner') {
-                                memberName = '👑 Propriétaire';
+                                memberName = m.user_name ? ('👑 ' + m.user_name) : '👑 Owner';
                             } else {
-                                memberName = 'Membre #' + msg.user_id;
+                                memberName = m.user_name ? m.user_name : ('Member #' + msg.user_id);
                             }
                         }
                     });
@@ -3029,19 +3080,29 @@ if (isset($_SESSION['username'])) {
                 </p>
             </div>
             <div class="profile-info-section">
+                <?php if ($currentUserInfo): ?>
+                <div class="profile-info-item">
+                    <div class="profile-info-label">Name</div>
+                    <div class="profile-info-value"><?php echo htmlspecialchars(trim($currentUserInfo['name'] . ' ' . $currentUserInfo['lastname'])); ?></div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-label">Email</div>
+                    <div class="profile-info-value"><?php echo htmlspecialchars($currentUserInfo['email']); ?></div>
+                </div>
+                <?php endif; ?>
                 <div class="profile-info-item">
                     <div class="profile-info-label">User ID</div>
                     <div class="profile-info-value"><?php echo htmlspecialchars($currentUserId); ?></div>
                 </div>
                 <div class="profile-info-item">
-                    <div class="profile-info-label">Collaboration Actuelle</div>
+                    <div class="profile-info-label">Current Collaboration</div>
                     <div class="profile-info-value"><?php echo htmlspecialchars($collab['titre']); ?></div>
                 </div>
                 <div class="profile-info-item">
-                    <div class="profile-info-label">Rôle</div>
+                    <div class="profile-info-label">Role</div>
                     <div class="profile-info-value">
                         <?php
-                        $userRole = 'Membre';
+                        $userRole = 'Member';
                         foreach ($members as $m) {
                             if ($m['user_id'] == $currentUserId) {
                                 $userRole = translateRole($m['role']);

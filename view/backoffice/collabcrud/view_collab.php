@@ -1,9 +1,14 @@
 <?php
 session_start();
 
-// Mode développeur : permettre l'accès même sans connexion
-$isLoggedIn = isset($_SESSION['user_id']);
-$userId = $isLoggedIn ? $_SESSION['user_id'] : null;
+// Exiger que l'utilisateur soit connecté
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../frontoffice/login_client.php?redirect=" . urlencode($_SERVER['REQUEST_URI']));
+    exit;
+}
+
+$isLoggedIn = true;
+$userId = $_SESSION['user_id'];
 
 // Charger controllers
 require_once __DIR__ . "/../../../controller/controllercollab/CollabProjectController.php";
@@ -84,37 +89,24 @@ foreach ($members as $m) {
     $isOwner = ($collab['owner_id'] == $userId);
 }
 
-// Récupérer les tâches (seulement si l'utilisateur est membre ou en mode développeur)
+// Récupérer les tâches (seulement si l'utilisateur est membre ou propriétaire)
 $tasks = [];
-$canViewTasks = false;
-if ($isLoggedIn) {
-    $canViewTasks = $isMember || $isOwner;
-} else {
-    // Mode développeur : permettre de voir les tâches
-    $canViewTasks = true;
-}
+$canViewTasks = $isMember || $isOwner;
 
 if ($canViewTasks) {
     $tasks = $taskController->getTasks($collab_id);
 }
 
-// Récupérer les messages (seulement si l'utilisateur est membre ou en mode développeur)
+// Récupérer les messages (seulement si l'utilisateur est membre ou propriétaire)
 $messages = [];
-$canViewChat = false;
-if ($isLoggedIn) {
-    $canViewChat = $isMember || $isOwner;
-} else {
-    // Mode développeur : permettre de voir le chat
-    $canViewChat = true;
-}
+$canViewChat = $isMember || $isOwner;
 
 if ($canViewChat) {
     $messages = $messageController->getMessages($collab_id);
 }
 
-// En mode développeur, permettre la suppression si l'utilisateur n'est pas connecté
-// (on considère que le développeur peut supprimer n'importe quelle collaboration)
-$canDelete = $isOwner || !$isLoggedIn;
+// Seul le propriétaire peut supprimer la collaboration
+$canDelete = $isOwner;
 
 // Fonction pour traduire le statut en anglais
 function translateStatus($statut) {
@@ -817,7 +809,7 @@ if (isset($_GET['status_error'])) {
 
 <div class="info-box">
     <b>Status:</b> 
-    <?php if ($isOwner || !$isLoggedIn): ?>
+    <?php if ($isOwner): ?>
         <form action="update_status.php" method="POST" style="display: inline-block; margin-left: 10px;">
             <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
             <select name="statut" onchange="this.form.submit()" style="padding: 5px 10px; border-radius: 5px; background: rgba(0, 0, 0, 0.5); color: #00ff88; border: 2px solid rgba(0, 255, 136, 0.5); font-weight: 600; cursor: pointer;">
@@ -862,7 +854,7 @@ foreach ($members as $m) {
         
         // Bouton supprimer visible seulement pour le propriétaire de la collaboration
         // Ne pas permettre de supprimer le propriétaire lui-même
-        if (($isOwner || !$isLoggedIn) && !$isOwnerMember) {
+        if ($isOwner && !$isOwnerMember) {
             echo "<form action=\"delete_member.php\" method=\"POST\" style=\"display: inline; margin-left: 10px;\">";
             echo "<input type=\"hidden\" name=\"member_id\" value=\"" . $m['id'] . "\">";
             echo "<input type=\"hidden\" name=\"collab_id\" value=\"" . $collab_id . "\">";
@@ -947,7 +939,7 @@ foreach ($members as $m) {
                                         ✓ Mark as done
                                     </a>
                                 <?php endif; ?>
-                                <?php if ($isOwner || !$isLoggedIn): ?>
+                                <?php if ($isOwner): ?>
                                     <a href="task_delete.php?id=<?php echo $t['id']; ?>&collab_id=<?php echo $collab_id; ?>" 
                                        onclick="return confirm('Are you sure you want to delete this task?');"
                                        style="padding: 6px 12px; background: rgba(255, 51, 92, 0.2); color: #ff335c; text-decoration: none; border-radius: 5px; border: 1px solid rgba(255, 51, 92, 0.5); font-size: 0.85rem; transition: all 0.3s ease;"
@@ -976,56 +968,46 @@ foreach ($members as $m) {
     </a>
 
 <?php
-    // Actions disponibles seulement si l'utilisateur est connecté
-    if ($isLoggedIn) {
-        // Le user n'est pas membre → bouton "Rejoindre"
-        if (!$isMember && !$isOwner && count($members) < $collab['max_membres']) {
+    // Le user n'est pas membre → bouton "Rejoindre"
+    if (!$isMember && !$isOwner && count($members) < $collab['max_membres']) {
 ?>
-            <form action="join_collab.php" method="POST" class="join-collab-form-dev" style="display: inline;">
+            <form action="join_collab.php" method="POST" style="display: inline;">
                 <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-                <input type="hidden" name="user_id" value="">
                 <button type="submit" class="action-btn action-btn-join">
                     ➕ Join this project
                 </button>
             </form>
         <?php 
-        } elseif ($isMember) {
-            echo "<span class=\"action-btn-status\">✓ Déjà membre</span>";
-        } elseif (count($members) >= $collab['max_membres']) {
-            echo "<span class=\"action-btn-full\">✗ Complet</span>";
-        }
+    } elseif ($isMember) {
+        echo "<span class=\"action-btn-status\">✓ Already a member</span>";
+    } elseif (count($members) >= $collab['max_membres']) {
+        echo "<span class=\"action-btn-full\">✗ Full</span>";
     }
     
-    // Bouton Supprimer - Visible pour le propriétaire connecté ou en mode développeur
+    // Bouton Supprimer - Visible uniquement pour le propriétaire
     if ($canDelete) {
     ?>
         <form action="delete_collab.php" method="POST" style="display: inline;">
             <input type="hidden" name="id" value="<?php echo $collab_id; ?>">
-            <?php if (!$isLoggedIn): ?>
-                <input type="hidden" name="dev_mode" value="1">
-            <?php endif; ?>
-            <button type="submit" onclick="return confirm('Are you sure you want to delete this collaboration?<?php echo !$isLoggedIn ? ' (Developer mode)' : ''; ?>');" class="action-btn action-btn-delete" title="<?php echo !$isLoggedIn ? 'Mode développeur - Suppression autorisée' : 'Seul le propriétaire peut supprimer'; ?>">
-                🗑️ Supprimer<?php echo !$isLoggedIn ? ' (Dev)' : ''; ?>
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this collaboration?');" class="action-btn action-btn-delete" title="Only the owner can delete this collaboration">
+                🗑️ Delete
             </button>
     </form>
 <?php 
 }
 
-    if (!$isLoggedIn) {
-        // Mode développeur - permettre de rejoindre même sans connexion
-        if (count($members) < $collab['max_membres']) {
+    // Bouton pour rejoindre la collaboration (si l'utilisateur n'est pas déjà membre)
+    if (!$isMember && !$isOwner && count($members) < $collab['max_membres']) {
         ?>
-            <form action="join_collab.php" method="POST" class="join-collab-form-dev" style="display: inline;">
-                <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
-                <input type="hidden" name="user_id" value="">
-                <button type="submit" class="action-btn action-btn-join" title="Mode développeur - choisir un ID">
-                    ➕ Join (Dev mode)
-                </button>
-    </form>
-<?php
-        } else {
-            echo "<span class=\"action-btn-full\">✗ Complet</span>";
-        }
+        <form action="join_collab.php" method="POST" style="display: inline;">
+            <input type="hidden" name="collab_id" value="<?php echo $collab_id; ?>">
+            <button type="submit" class="action-btn action-btn-join" title="Join this collaboration">
+                ➕ Join this project
+            </button>
+        </form>
+        <?php
+    } elseif (count($members) >= $collab['max_membres']) {
+        echo "<span class=\"action-btn-full\">✗ Full</span>";
     }
     ?>
 </div>
@@ -1062,16 +1044,9 @@ foreach ($members as $m) {
                 // Vérifier si l'utilisateur peut modifier/supprimer ce message
                 $canEditMessage = false;
                 $canDeleteMessage = false;
-                $currentUserId = $isLoggedIn ? $userId : 1;
-                
-                if ($isLoggedIn) {
-                    $canEditMessage = ($m['user_id'] == $currentUserId || $isOwner);
-                    $canDeleteMessage = ($m['user_id'] == $currentUserId || $isOwner);
-                } else {
-                    // Mode développeur : peut tout modifier/supprimer
-                    $canEditMessage = true;
-                    $canDeleteMessage = true;
-                }
+                $currentUserId = $userId;
+                $canEditMessage = ($m['user_id'] == $currentUserId || $isOwner);
+                $canDeleteMessage = ($m['user_id'] == $currentUserId || $isOwner);
             ?>
                 <div class="message-item">
                     <div class="message-header">
@@ -1393,30 +1368,7 @@ function deleteMessage(messageId, collabId) {
 
     <script src="emoji_picker.js"></script>
     <script>
-    // Mode admin (non connecté) : demander un ID avant de rejoindre
-    document.addEventListener('DOMContentLoaded', function() {
-        const devJoinForms = document.querySelectorAll('.join-collab-form-dev');
-        devJoinForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const userIdInput = form.querySelector('input[name="user_id"]');
-                let chosenId = prompt("Entrez l'ID utilisateur à utiliser (mode admin) :", "1");
-                if (!chosenId) {
-                    e.preventDefault();
-                    return false;
-                }
-                chosenId = chosenId.trim();
-                if (!/^[0-9]+$/.test(chosenId)) {
-                    e.preventDefault();
-                    alert("ID invalide. Merci de saisir uniquement des chiffres.");
-                    return false;
-                }
-                if (userIdInput) {
-                    userIdInput.value = chosenId;
-                }
-                return true;
-            });
-        });
-    });
+    // Le formulaire de join utilise maintenant directement l'ID de session utilisateur
     </script>
 </body>
 </html>

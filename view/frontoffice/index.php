@@ -683,7 +683,7 @@ $placeholderImage = 'assests/game1.png';
                     <li><a href="index.php" class="super-button">Home</a></li>
                     <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
                     <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
-                    <li><a href="index.php#about" class="super-button">About</a></li>
+                    <li><a href="role.html" class="super-button">Profil</a></li>
                 </ul>
             </nav>
             
@@ -697,7 +697,7 @@ $placeholderImage = 'assests/game1.png';
                 <li><a href="index.php">Home</a></li>
                 <li><a href="index.php#new-games">Recent Games</a></li>
                 <li><a href="collaborations.php"> Collaborations</a></li>
-                <li><a href="index.php#about">About</a></li>
+                <li><a href="role.html">Profil</a></li>
             </ul>
         </nav>
     </aside>
