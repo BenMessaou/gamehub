@@ -85,7 +85,7 @@ function e($value) {
                 <li><a href="#deals" class="super-button">Events
                 </a></li>
                 <li><a href="../shop.php" class="super-button">Shop </a></li>
-                <li><a href="#contact" class="super-button">Article</a></li><li><a class="super-button" href="logout.php">feedback</a></li>
+                <li><a href="#contact" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
                 <li><a class="super-button" href="profile.php">Profile</a></li>
                 
             </ul>
