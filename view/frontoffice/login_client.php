@@ -38,17 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <header>
     <div class="container">
-        <h1 class="logo">Gamehub</h1>
-        <img src="logo.png" class="logo1" alt="" >
-
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
         <nav>
             <ul>
-                <li><a href="#home" class="super-button">Home</a></li>
-                    <li><a href="#deals" class="super-button">Deals</a></li>
-                    <li><a href="#deals" class="super-button">Shop Now</a></li>
-                    <li><a href="#contact" class="super-button">Contact</a></li>
-                    <li><a href="role.html" class="super-button">Back</a></li>
-                    
+                <li><a href="index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
+                <li><a href="#contact" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="profile.php">Profile</a></li><a href="role.html" class="super-button">Back</a></li>
                 
             </ul>
         </nav>

@@ -13,7 +13,7 @@
   $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
   $currentPath = $_SERVER['PHP_SELF'];
   $basePath = str_replace('/views', '', dirname($currentPath));
-  $siteUrl = $baseUrl . $basePath . '/views/index.php';
+  $siteUrl = $baseUrl . $basePath . '/views/index1.php';
   $imageUrl = $baseUrl . $basePath . '/public/assets/logo.png';
   ?>
   <meta property="og:type" content="website" />
@@ -25,7 +25,7 @@
   <meta property="og:locale" content="fr_FR" />
 
   <!-- CHEMIN CORRECT vers le CSS -->
-  <link rel="stylesheet" href="/feeeed_backkkkkkkkk/public/assets/style.css">
+  <link rel="stylesheet" href="public/assets/style.css">
 
 </head>
 <body>
@@ -33,15 +33,15 @@
     <div class="container header-inner">
       <!-- LOGO avec image dans le HTML -->
       <div class="logo">
-        <img src="/feeeed_backkkkkkkkk/public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
+        <img src="public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
         <span>🎮 Feedback Games</span>
       </div>
 
       <nav>
         <ul>
-          <li><a href="index.php" class="super-button active">Accueil <span class="arrow">➡️</span></a></li>
-          <li><a href="avis.php" class="super-button">Avis <span class="arrow">➡️</span></a></li>
-          <li><a href="admin.php" class="super-button">Dashboard <span class="arrow">➡️</span></a></li>
+          <li><a href="../view/frontoffice/index.php" class="super-button ">Accueil </a></li>
+          <li><a href="avis.php" class="super-button">Avis </a></li>
+          <li><a href="frontoffice/profile.php" class="super-button">profile </a></li>
         </ul>
       </nav>
     </div>
@@ -96,7 +96,7 @@
     const games = [
       {
         name: 'Fortnite',
-        image: '/feeeed_backkkkkkkkk/public/assets/fortnite.jpg',
+        image: 'public/assets/fortnite.jpg',
         rating: 4.5,
         ratingStars: '⭐⭐⭐⭐☆',
         streamer: 'TwitchStreamer1',
@@ -106,7 +106,7 @@
       },
       {
         name: 'Minecraft',
-        image: '/feeeed_backkkkkkkkk/public/assets/minecraft.jpg',
+        image: 'public/assets/minecraft.jpg',
         rating: 5,
         ratingStars: '⭐⭐⭐⭐⭐',
         streamer: 'BlockMaster',
@@ -116,7 +116,7 @@
       },
       {
         name: 'Call of Duty',
-        image: '/feeeed_backkkkkkkkk/public/assets/cod.jpg',
+        image: 'public/assets/cod.jpg',
         rating: 4,
         ratingStars: '⭐⭐⭐⭐',
         streamer: 'WarriorGamer',
@@ -126,7 +126,7 @@
       },
       {
         name: 'Valorant',
-        image: '/feeeed_backkkkkkkkk/public/assets/valorant.jpg',
+        image: 'public/assets/valorant.jpg',
         rating: 4.5,
         ratingStars: '⭐⭐⭐⭐☆',
         streamer: 'ProShooter',
@@ -136,7 +136,7 @@
       },
       {
         name: 'League of Legends',
-        image: '/feeeed_backkkkkkkkk/public/assets/lol.jpg',
+        image: 'public/assets/lol.jpg',
         rating: 4.8,
         ratingStars: '⭐⭐⭐⭐⭐',
         streamer: 'LoLMaster',
@@ -146,7 +146,7 @@
       },
       {
         name: 'Apex Legends',
-        image: '/feeeed_backkkkkkkkk/public/assets/apex.jpg',
+        image: '/public/assets/apex.jpg',
         rating: 4.3,
         ratingStars: '⭐⭐⭐⭐☆',
         streamer: 'ApexPro',
@@ -156,7 +156,7 @@
       },
       {
         name: 'GTA V',
-        image: '/feeeed_backkkkkkkkk/public/assets/gta5.jpg',
+        image: 'public/assets/gta5.jpg',
         rating: 5,
         ratingStars: '⭐⭐⭐⭐⭐',
         streamer: 'GTAStreamer',
@@ -166,7 +166,7 @@
       },
       {
         name: 'Among Us',
-        image: '/feeeed_backkkkkkkkk/public/assets/amongus.jpg',
+        image: 'public/assets/amongus.jpg',
         rating: 4.2,
         ratingStars: '⭐⭐⭐⭐☆',
         streamer: 'ImpostorKing',
@@ -176,7 +176,7 @@
       },
       {
         name: 'Rocket League',
-        image: '/feeeed_backkkkkkkkk/public/assets/rocketleague.jpg',
+        image: 'public/assets/rocketleague.jpg',
         rating: 4.6,
         ratingStars: '⭐⭐⭐⭐⭐',
         streamer: 'RocketPro',
@@ -186,7 +186,7 @@
       },
       {
         name: 'Counter-Strike 2',
-        image: '/feeeed_backkkkkkkkk/public/assets/cs2.jpg',
+        image: 'public/assets/cs2.jpg',
         rating: 4.7,
         ratingStars: '⭐⭐⭐⭐⭐',
         streamer: 'CS2Elite',
@@ -196,7 +196,7 @@
       },
       {
         name: 'FIFA 24',
-        image: '/feeeed_backkkkkkkkk/public/assets/fifa24.jpg',
+        image: 'public/assets/fifa24.jpg',
         rating: 4.4,
         ratingStars: '⭐⭐⭐⭐☆',
         streamer: 'FifaMaster',

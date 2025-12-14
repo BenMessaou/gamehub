@@ -40,7 +40,7 @@ if (!empty($_GET['sort'])) {
             <a class="super-button">Accueil</a>
             <a class="super-button">Jeux</a>
             <a class="super-button">Promos</a>
-            <a class="super-button">Contact</a>
+            <a href="frontoffice/profile.php"class="super-button" >Profile</a>
         </nav>
 
         <div class="cart-icon" id="cartIcon">

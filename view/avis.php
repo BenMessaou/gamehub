@@ -34,7 +34,7 @@ $feedbacks = $stmt ? $stmt->fetch_all(MYSQLI_ASSOC) : [];
   <meta property="og:url" content="<?= $pageUrl ?>" />
   <meta property="og:site_name" content="Feedback Games" />
   
-  <link rel="stylesheet" href="/feeeed_backkkkkkkkk/public/assets/style.css">
+  <link rel="stylesheet" href="public/assets/style.css">
   <style>
     /* Styles pour les formulaires professionnels */
     .form-container {
@@ -344,14 +344,14 @@ $feedbacks = $stmt ? $stmt->fetch_all(MYSQLI_ASSOC) : [];
   <header>
     <div class="container header-inner">
       <div class="logo">
-        <img src="/feeeed_backkkkkkkkk/public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
+        <img src="public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
         <span>🎮 Feedback Games</span>
       </div>
       <nav>
         <ul>
-          <li><a href="index.php" class="super-button">Accueil <span class="arrow">➡️</span></a></li>
-          <li><a href="avis.php" class="super-button active">Avis <span class="arrow">➡️</span></a></li>
-          <li><a href="admin.php" class="super-button">Dashboard <span class="arrow">➡️</span></a></li>
+          <li><a href="index.php" class="super-button">Accueil <span class="arrow"></span></a></li>
+          <li><a href="avis.php" class="super-button active">Avis <span class="arrow"></span></a></li>
+          <li><a href="frontoffice/profile.php" class="super-button">profile <span class="arrow"></span></a></li>
         </ul>
       </nav>
     </div>

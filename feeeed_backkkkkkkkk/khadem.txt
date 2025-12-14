@@ -1,2 +1,0 @@
-http://localhost/feeeed_backkkkkkkkk/views/index.php
-http://localhost/feeeed_backkkkkkkkk/views/test_jointures.php?query=stats
