@@ -18,7 +18,7 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Derniers Articles</title>
-    <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
+    <link rel="stylesheet" href="../frontoffice/index.css"> 
     <style>
         /* Styles simples pour les messages et le formulaire de recherche */
         .message-box {
@@ -96,18 +96,23 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1 class="logo">GameHub</h1> 
-            <nav>
-                <ul>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Accueil</a></li>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Articles</a></li>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Admin (Back Office)</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+  <header>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
+                <li><a href="../article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="../frontoffice/profile.php">Profile</a></li>
+                
+            </ul>
+        </nav>
+    </div>
+</header>
 
     <section id="home" class="hero">
         <div class="container">

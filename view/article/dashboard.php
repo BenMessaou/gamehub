@@ -37,7 +37,7 @@ $base_path = '/gamehub';
             <h1 class="logo">GameHub Admin</h1>
             <nav>
                 <ul>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Dashboard</a></li>
+                    <li><a href="dashboard.php" class="super-button">Dashboard</a></li>
                     <li><a href="ArticleController.php?action=create" class="super-button">+ Créer un Article</a></li>
                     <li><a href="CommentController.php?action=index" class="super-button">Modérer Commentaires</a></li>
                     <li><a href="ArticleController.php?action=list" class="super-button">Retour Front Office</a></li>
