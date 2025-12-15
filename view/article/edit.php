@@ -11,7 +11,7 @@ unset($_SESSION['article_errors'], $_SESSION['article_input'], $_SESSION['error'
 
 // $article est censé être passé par ArticleController::edit()
 if (!isset($article) || empty($article)) {
-    header('Location: ArticleController.php?action=dashboard');
+    header('Location: dashboard.php');
     exit;
 }
 
@@ -36,8 +36,8 @@ $content_value = $input['content'] ?? $article['content'];
             <h1 class="logo">GameHub Admin</h1>
             <nav>
                 <ul>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Front Office</a></li>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Dashboard</a></li>
+                    <li><a href="list.php" class="super-button">Front Office</a></li>
+                    <li><a href="dashboard.php" class="super-button">Dashboard</a></li>
                 </ul>
             </nav>
         </div>
@@ -52,7 +52,7 @@ $content_value = $input['content'] ?? $article['content'];
                     <p class="message error-global"><?php echo $global_error; ?></p>
                 <?php endif; ?>
                 
-                <form action="ArticleController.php?action=update" method="POST" novalidate>
+                <form action="dashboard.php?action=update" method="POST" novalidate>
                     
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($article['id']); ?>">
                     
@@ -76,7 +76,7 @@ $content_value = $input['content'] ?? $article['content'];
                     <button type="submit" class="submit-btn super-button">Mettre à jour l'Article</button>
                 </form>
 
-                <a href="ArticleController.php?action=dashboard" class="back-link">← Retour au Dashboard</a>
+                <a href="dashboard.php" class="back-link">← Retour au Dashboard</a>
             </div>
         </div>
     </div>

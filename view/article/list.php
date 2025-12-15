@@ -172,7 +172,7 @@ unset($_SESSION['success'], $_SESSION['error'], $_SESSION['article_error']);
                             Publié le: <?php echo date('d/m/Y', strtotime($article['created_at'])); ?>
                         </p>
                         
-                        <a href="ArticleController.php?action=show&id=<?php echo $article['id']; ?>" class="super-button">Lire l'Article</a>
+                        <a href="show.php?id=<?php echo $article['id']; ?>" class="super-button">Lire l'Article</a>
                     </div>
                 <?php 
                     endforeach; 

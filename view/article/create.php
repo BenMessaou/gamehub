@@ -30,8 +30,8 @@ $base_path = '/gamehub';
             <h1 class="logo">GameHub Admin</h1>
             <nav>
                 <ul>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Front Office</a></li>
-                    <li><a href="ArticleController.php?action=dashboard" class="super-button">Dashboard</a></li>
+                    <li><a href="list.php" class="super-button">Front Office</a></li>
+                    <li><a href="dashboard.php" class="super-button">Dashboard</a></li>
                 </ul>
             </nav>
         </div>
@@ -46,7 +46,7 @@ $base_path = '/gamehub';
                     <p class="message error-global"><?php echo $global_error; ?></p>
                 <?php endif; ?>
                 
-                <form action="ArticleController.php?action=store" method="POST" novalidate enctype="multipart/form-data">
+                <form action="dashboard.php" method="POST" novalidate enctype="multipart/form-data">
                     
                     <div class="form-group">
                         <label for="title">Titre :</label>
@@ -78,7 +78,7 @@ $base_path = '/gamehub';
                     <button type="submit" class="submit-btn super-button">Enregistrer l'Article</button>
                 </form>
 
-                <a href="ArticleController.php?action=dashboard" class="back-link">← Retour au Dashboard</a>
+                <a href="dashboard.php" class="back-link">← Retour au Dashboard</a>
             </div>
         </div>
     </div>
