@@ -100,7 +100,7 @@ $base_path = '/gamehub';
         <ul>
             <li><a href="#">Dashboard</a></li>
             <li><a href="../article/create.php">Créer un Article</a></li>
-            <li><a href="article/edit.php">Modérer Commentaires</a></li>
+            <li><a href="../comment/index.php">Modérer Commentaires</a></li>
             <li><a href="ArticleController.php?action=list">Retour Front Office</a></li>
         </ul>
     </nav>
@@ -264,7 +264,7 @@ $base_path = '/gamehub';
                     <div class="stat-card stat-comments widget">
                         <h3>Total Commentaires</h3>
                         <p class="stat-number"><?php echo htmlspecialchars($stats['totalComments'] ?? '0'); ?></p> 
-                        <a href="CommentController.php?action=index" class="sub-link">Modérer les Commentaires →</a>
+                        <a href="../comment/index.php" class="sub-link">Modérer les Commentaires →</a>
                     </div>
                 </div>
             </div>

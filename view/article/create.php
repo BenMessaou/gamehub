@@ -20,8 +20,8 @@ $base_path = '/gamehub';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub Admin | Créer Article</title>
-    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/style.css"> 
-    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/frontstyle.css"> 
+    <link rel="stylesheet" href="../assets/css/style.css"> 
+    <link rel="stylesheet" href="../assets/css/frontstyle.css"> 
     <style>.error-message { color: #ff0055; margin-top: 5px; font-size: 0.9em; }</style>
 </head>
 <body>

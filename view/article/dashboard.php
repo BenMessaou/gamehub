@@ -29,34 +29,54 @@ $base_path = '/gamehub';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - GameHub Articles</title>
     
-    <link rel="stylesheet" href="<?php echo $base_path; ?>/assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../frontoffice/index.css">
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1 class="logo">GameHub Admin</h1>
-            <nav>
-                <ul>
-                    <li><a href="dashboard.php" class="super-button">Dashboard</a></li>
-                    <li><a href="ArticleController.php?action=create" class="super-button">+ Créer un Article</a></li>
-                    <li><a href="CommentController.php?action=index" class="super-button">Modérer Commentaires</a></li>
-                    <li><a href="ArticleController.php?action=list" class="super-button">Retour Front Office</a></li>
-                </ul>
-            </nav>
-            <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
-        </div>
-    </header>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="../frontoffice/index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
+                <li><a href="../article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="../frontoffice/profile.php">Profile</a></li>
+                <li><a href="avis.php" class="super-button">Avis </a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
     
     <aside id="sidebar" class="sidebar">
         <nav>
             <ul>
-                <li><a href="ArticleController.php?action=dashboard">Dashboard</a></li>
-                <li><a href="ArticleController.php?action=create">Créer un Article</a></li>
-                <li><a href="CommentController.php?action=index">Modérer Commentaires</a></li>
-                <li><a href="ArticleController.php?action=list">Retour Front Office</a></li>
+                <li><a href="">Dashboard</a></li>
+                <li><a href="create.php">Create an Article</a></li>
+                <li><a href="index.php">Modify Comments</a></li>
+                <li><a href="list.php">Back Front Office</a></li>
             </ul>
         </nav>
     </aside>
+    <style>
+        .stats-grid { 
+            display:grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); 
+            gap:20px; 
+            margin:40px 0; 
+        }
+        .stat-card { 
+            background:rgba(0,255,136,0.1); 
+            padding:25px; 
+            border-radius:15px; 
+            text-align:center; 
+            border:2px solid #00ff88; 
+            box-shadow:0 0 20px rgba(0,255,136,0.2);
+        }
+    </style>
 
     <main id="main-content">
         <?php if (!empty($success)): ?>
@@ -68,28 +88,28 @@ $base_path = '/gamehub';
         
         <section id="stats" class="stats-section">
             <div class="container">
-                <h2>Statistiques du Dashboard</h2>
+                <h2> Dashboard statistics</h2>
                 <div class="stats-grid">
-                    
+
                     <div class="stat-card widget">
-                        <h3>Total Articles</h3>
-                        <p class="stat-number"><?php echo htmlspecialchars($stats['totalArticles'] ?? '0'); ?></p>
+                        <h3>Total Article</h3>
+                        <p class="stat-number"><?php echo htmlspecialchars($stats['totalArticles'] ?? '0'); ?></p></p>
                     </div>
                     
                     <div class="stat-card widget">
-                        <h3>Auteurs Uniques</h3>
+                        <h3>unique authors</h3>
                         <p class="stat-number"><?php echo htmlspecialchars($stats['uniqueAuthors'] ?? '0'); ?></p>
                     </div>
 
                     <div class="stat-card widget">
-                        <h3>Articles Aujourd'hui</h3>
+                        <h3>Today's Articles</h3>
                         <p class="stat-number"><?php echo htmlspecialchars($stats['publishedToday'] ?? '0'); ?></p>
                     </div>
                     
                     <div class="stat-card stat-comments widget">
-                        <h3>Total Commentaires</h3>
+                        <h3>Total Comments</h3>
                         <p class="stat-number"><?php echo htmlspecialchars($stats['totalComments'] ?? '0'); ?></p> 
-                        <a href="CommentController.php?action=index" class="sub-link">Modérer les Commentaires →</a>
+                        <a href="../comment/index.php" class="sub-link">Modify Comments</a>
                     </div>
                     
                 </div>
@@ -123,9 +143,9 @@ $base_path = '/gamehub';
                                             <td>" . htmlspecialchars($article['author_name']) . " (" . htmlspecialchars($article['author_role']) . ")</td> 
                                             <td>" . date('d/m/Y', strtotime($article['created_at'])) . "</td> 
                                             <td>
-                                                <a href='ArticleController.php?action=show&id={$article['id']}' class='action-btn view'>Voir</a> | 
-                                                <a href='ArticleController.php?action=edit&id={$article['id']}' class='action-btn edit'>Edit</a> |
-                                                <a href='ArticleController.php?action=delete&id={$article['id']}' class='action-btn delete' onclick=\"return confirm('Êtes-vous sûr de vouloir supprimer cet article et tous ses commentaires ?');\">Delete</a>
+                                                <a href='show.php?id={$article['id']}' class='action-btn view'>Voir</a> | 
+                                                <a href='edit.php?id={$article['id']}' class='action-btn edit'>Edit</a> |
+                                                <a href='delete.php?id={$article['id']}' class='action-btn delete' onclick=\"return confirm('Êtes-vous sûr de vouloir supprimer cet article et tous ses commentaires ?');\">Delete</a>
                                             </td>
                                         </tr>";
                                     }
@@ -136,7 +156,7 @@ $base_path = '/gamehub';
                             </tbody>
                         </table>
                         <div style="margin-top: 20px; text-align: right;">
-                             <a href="ArticleController.php?action=create" class="super-button">+ Créer un nouvel article</a>
+                             <a href="create.php" class="super-button">create a new article</a>
                         </div>
                     </div>
 
