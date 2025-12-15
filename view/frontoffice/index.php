@@ -22,7 +22,7 @@ $placeholderImage = 'assests/game1.png';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub Pro - Independent Games Platform</title>
+    <title>GameHub </title>
     <link rel="stylesheet" href="collaborations.css">
     <link rel="stylesheet" href="c.css">
     <!-- Chatbot IA -->
@@ -686,6 +686,16 @@ $placeholderImage = 'assests/game1.png';
                     <li><a href="role.html" class="super-button">Profil</a></li>
                 </ul>
             </nav>
+             <aside id="sidebar" class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="index.php" class="super-button">Home</a></li>
+                    <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
+                    <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
+                    <li><a href="role.html" class="super-button">Profil</a></li>
+            </ul>
+        </nav>
+    </aside>
             
             <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
         </div>

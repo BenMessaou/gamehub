@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $userController->getUserByEmail($email);
     if ($user && $user['password'] === $password && $user['role'] === 'admin') {
         $_SESSION['admin_id'] = $user['id_user'];
-        header('Location: ../backoffice/index.php');
+        header('Location: ../backoffice/dashboardmain.html');
         exit;
     } else {
         $error = 'Invalid credentials or you are not an admin.';
