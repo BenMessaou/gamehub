@@ -30,22 +30,22 @@
 </head>
 <body>
   <header>
-    <div class="container header-inner">
-      <!-- LOGO avec image dans le HTML -->
-      <div class="logo">
-        <img src="public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
-        <span>🎮 Feedback Games</span>
-      </div>
-
-      <nav>
-        <ul>
-          <li><a href="../view/frontoffice/index.php" class="super-button ">Accueil </a></li>
-          <li><a href="avis.php" class="super-button">Avis </a></li>
-          <li><a href="frontoffice/profile.php" class="super-button">profile </a></li>
-        </ul>
-      </nav>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
+                <li><a href="../article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="profile.php">Profile</a></li>
+                <li><a href="avis.php" class="super-button">Avis </a></li>
+            </ul>
+        </nav>
     </div>
-  </header>
+</header>
 
   <main>
     <section class="hero">

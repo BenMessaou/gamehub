@@ -1,5 +1,6 @@
 <?php
 // models/Comment.php
+require_once 'Database.php';
 
 class Comment {
     private $conn;

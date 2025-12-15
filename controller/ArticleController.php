@@ -10,6 +10,7 @@ require_once '../model/CommentShare.php';
 require_once '../model/User.php'; 
 require_once '../model/Database.php'; 
 
+
 class ArticleController {
     private $db;
     private $articleModel;
@@ -53,7 +54,7 @@ class ArticleController {
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         
         if (!$id) {
-            header('Location: ArticleController.php?action=list');
+            header('Location: ../views/article/show.php');
             exit;
         }
 
@@ -61,7 +62,7 @@ class ArticleController {
         
         if (!$article) {
              $_SESSION['article_error'] = "L'article demandé n'existe pas.";
-             header('Location: ArticleController.php?action=list');
+             header('Location: ../views/article/show.php');
              exit;
         }
 
@@ -103,7 +104,7 @@ class ArticleController {
     // Traite la soumission du formulaire de création (C - Create/Store)
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             header('Location: ArticleController.php?action=create'); 
+             header('Location: ../views/article/create.php'); 
              exit;
         }
         
@@ -168,11 +169,10 @@ class ArticleController {
             $_SESSION['article_input'] = $_POST;
             $_SESSION['error'] = "Erreur de validation. Veuillez corriger les champs.";
             
-            header('Location: ArticleController.php?action=create');
+            header('Location: ../views/article/create.php');
             exit;
         }
-        
-        // 4. Succès: Création de l'article
+        // 4. Succès: Création
         if ($this->articleModel->create($title, $content, $user_id, $imagePath)) {
             $_SESSION['success'] = "✅ NOUVEL ARTICLE! L'article '{$title}' vient d'être publié" . ($imagePath ? " avec une photo ! " : ".") . " Découvrez-le !";
         } else {
@@ -182,7 +182,7 @@ class ArticleController {
             }
         }
         
-        header('Location: ArticleController.php?action=list'); 
+        header('Location: ../views/article/list.php'); 
         exit;
     }
     
@@ -191,7 +191,7 @@ class ArticleController {
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         
         if (!$id) {
-            header('Location: ArticleController.php?action=dashboard');
+            header('Location: ../views/article/dashboard.php');
             exit;
         }
         
@@ -199,7 +199,7 @@ class ArticleController {
         
         if (!$article) {
              $_SESSION['success'] = "L'article à éditer n'existe pas.";
-             header('Location: ArticleController.php?action=dashboard');
+             header('Location: ../views/article/dashboard.php');
              exit;
         }
         
@@ -209,7 +209,7 @@ class ArticleController {
     // Traite la soumission du formulaire d'édition (U - Update).
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             header('Location: ArticleController.php?action=dashboard');
+             header('Location: ../views/article/dashboard.php');
              exit;
         }
         
@@ -220,7 +220,7 @@ class ArticleController {
         
         if (!$id) {
             $_SESSION['success'] = "Erreur: ID de l'article à modifier est invalide.";
-            header('Location: ArticleController.php?action=dashboard');
+            header('Location: ../views/article/dashboard.php');
             exit;
         }
         
@@ -245,7 +245,7 @@ class ArticleController {
             $_SESSION['article_input'] = $_POST;
             $_SESSION['error'] = "Erreur de validation. Veuillez corriger les champs.";
             
-            header("Location: ArticleController.php?action=edit&id=" . $id);
+            header("Location: ../views/article/edit.php?id=" . $id);
             exit;
         }
         
@@ -255,8 +255,8 @@ class ArticleController {
         } else {
             $_SESSION['error'] = "Erreur lors de la mise à jour de l'article ID {$id}.";
         }
-        
-        header('Location: ArticleController.php?action=dashboard');
+
+        header('Location: ../views/article/dashboard.php');
         exit;
     }
     
@@ -284,8 +284,8 @@ class ArticleController {
                 $_SESSION['error'] = "Erreur lors de la suppression de l'article ID {$id}.";
             }
         }
-        
-        header('Location: ArticleController.php?action=dashboard');
+
+        header('Location: ../views/article/dashboard.php');
         exit;
     }
     
@@ -301,7 +301,7 @@ class ArticleController {
         }
         
         if (isset($_SESSION['error'])) {
-            header('Location: ArticleController.php?action=list');
+            header('Location: ../views/article/list.php');
             exit;
         }
 
@@ -313,8 +313,8 @@ class ArticleController {
             $_SESSION['searched_articles'] = $articles;
             $_SESSION['success'] = "Affichage des articles pour la date du " . htmlspecialchars($search_date) . ".";
         }
-        
-        header('Location: ArticleController.php?action=list');
+
+        header('Location: ../views/article/list.php');
         exit;
     }
 
@@ -334,7 +334,7 @@ class ArticleController {
     // Metier Avancé : Traite la soumission du formulaire de partage de commentaire
     public function shareComment() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ArticleController.php?action=list'); 
+            header('Location: ../views/article/list.php'); 
             exit;
         }
         
@@ -386,9 +386,9 @@ class ArticleController {
 
         // Redirection vers l'article du commentaire
         if ($article_id) {
-            header("Location: ArticleController.php?action=show&id=" . $article_id);
+            header("Location: ../views/article/show.php?id=" . $article_id);
         } else {
-            header('Location: ArticleController.php?action=list'); 
+            header('Location: ../views/article/list.php'); 
         }
         exit;
     }

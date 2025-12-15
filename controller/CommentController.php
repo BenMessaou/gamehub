@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../model/Comment.php';
-// require_once '../models/Article.php'; // Utile si vous avez besoin des méthodes de Article ici, sinon pas obligatoire
+// require_once '../model/Article.php'; // Utile si vous avez besoin des méthodes de Article ici, sinon pas obligatoire
 
 class CommentController {
     
@@ -43,7 +43,7 @@ class CommentController {
      */
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             header('Location: ArticleController.php?action=list');
+             header('Location: ../views/article/list.php');
              exit;
         }
         
@@ -63,8 +63,8 @@ class CommentController {
         } elseif (strlen($content) < 10) { 
             $errors['content'] = "Le commentaire doit contenir au moins 10 caractères.";
         }
-        
-        $redirect_url = 'ArticleController.php?action=show&id=' . ($article_id ?: 0);
+
+        $redirect_url = '../views/article/show.php?id=' . ($article_id ?: 0);
 
         if (count($errors) > 0) {
             $_SESSION['comment_errors'] = $errors;
@@ -92,7 +92,7 @@ class CommentController {
         
         if (!$id) {
             $_SESSION['error'] = "ID de commentaire invalide.";
-            header('Location: ArticleController.php?action=list');
+            header('Location: ../views/article/list.php');
             exit;
         }
 
@@ -100,7 +100,7 @@ class CommentController {
         
         if (!$comment) {
              $_SESSION['error'] = "Le commentaire demandé n'existe pas.";
-             header('Location: ArticleController.php?action=list');
+             header('Location: ../views/article/list.php');
              exit;
         }
         
@@ -130,15 +130,15 @@ class CommentController {
         } elseif (strlen($content) < 10) { 
             $errors['content'] = "Le commentaire doit contenir au moins 10 caractères.";
         }
-        
-        $redirect_url = 'ArticleController.php?action=show&id=' . ($article_id ?: 0);
+
+        $redirect_url = '../views/article/show.php?id=' . ($article_id ?: 0);
 
         if (count($errors) > 0) {
             $_SESSION['comment_errors'] = $errors;
             $_SESSION['comment_input'] = $_POST;
             $_SESSION['error'] = "Erreur de validation lors de la modification.";
             // Redirection vers le formulaire d'édition
-            header('Location: CommentController.php?action=edit&id=' . ($id ?: 0));
+            header('Location: ../views/comment/edit.php?id=' . ($id ?: 0));
             exit;
         }
 
@@ -166,7 +166,7 @@ class CommentController {
                       ?: filter_input(INPUT_POST, 'article_id', FILTER_VALIDATE_INT); 
         
         // Redirection par défaut (Dashboard modération)
-        $redirect_url = 'CommentController.php?action=index'; 
+        $redirect_url = '../views/comment/index.php'; 
 
         if (!$id) {
             $_SESSION['error'] = "Erreur: ID du commentaire à supprimer est invalide.";
@@ -181,7 +181,7 @@ class CommentController {
 
             // Si l'article_id est connu, on redirige vers l'article (Front Office), sinon vers le Dashboard (Back Office)
             if ($article_id) {
-                $redirect_url = 'ArticleController.php?action=show&id=' . $article_id;
+                $redirect_url = '../views/article/show.php?id=' . $article_id;
             }
 
             if ($this->commentModel->delete($id)) {
@@ -201,7 +201,7 @@ class CommentController {
 ## ROUTAGE ET INITIALISATION
 
 // ⚠️ INCLUSION DE LA CLASSE DATABASE POUR L'INITIALISATION
-require_once '../models/Database.php'; 
+require_once '../model/Database.php'; 
 
 try {
     // ⭐️ Récupération de l'instance PDO via votre classe Singleton
