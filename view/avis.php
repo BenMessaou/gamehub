@@ -344,7 +344,6 @@ $feedbacks = $stmt ? $stmt->fetch_all(MYSQLI_ASSOC) : [];
   <header>
     <div class="container header-inner">
       <div class="logo">
-        <img src="public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
         <span>🎮 Feedback Games</span>
       </div>
       <nav>

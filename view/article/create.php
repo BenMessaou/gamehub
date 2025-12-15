@@ -46,7 +46,7 @@ $base_path = '/gamehub';
                     <p class="message error-global"><?php echo $global_error; ?></p>
                 <?php endif; ?>
                 
-                <form action="dashboard.php" method="POST" novalidate enctype="multipart/form-data">
+                <form action="../controller/ArticleController.php?action=store" method="POST" novalidate enctype="multipart/form-data">
                     
                     <div class="form-group">
                         <label for="title">Titre :</label>
