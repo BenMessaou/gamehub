@@ -74,7 +74,7 @@ if (!empty($_GET['sort'])) {
         <div class="cart-footer">
             <div class="total">
                 <strong>Sous-total :</strong>
-                <span id="cartTotal">0,00 €</span>
+                <span id="cartTotal">0,00 tnd</span>
             </div>
 
             <div class="promo-section">
@@ -83,16 +83,16 @@ if (!empty($_GET['sort'])) {
             </div>
 
             <div class="discount" id="discountDisplay" style="display:none;">
-                Réduction : -<span id="discountAmount">0,00</span> €
+                Réduction : -<span id="discountAmount">0,00</span> tnd
             </div>
 
             <div class="final-total">
                 <strong>Total :</strong>
-                <span id="finalTotal">0,00 €</span>
+                <span id="finalTotal">0,00 tnd</span>
             </div>
 
-            <button class="clear-cart-btn" id="clearCartBtn">Vider le panier</button>
-            <button class="checkout-btn" id="checkoutBtn">PASSER À LA CAISSE</button>
+            <button class="clear-cart-btn" id="clearCartBtn">EMPTY CART</button>
+            <button class="checkout-btn" id="checkoutBtn">ORDER</button>
 
         </div>
     </div>
@@ -113,26 +113,26 @@ if (!empty($_GET['sort'])) {
 
         <div style="text-align:center;margin-bottom:2rem;">
             <select id="sortPrice" class="super-button" style="width:260px;">
-                <option value="">Trier par prix</option>
-                <option value="asc">Prix : du moins cher</option>
-                <option value="desc">Prix : du plus cher</option>
+                <option value="">ORDER BY</option>
+                <option value="asc">PRICE: LESS EXPENSIVE</option>
+                <option value="desc">PRICE: MORE EXPENSIVE</option>
             </select>
         </div>
 
         <div style="text-align:center;margin-bottom:2rem;">
             <input type="text" id="searchInput" class="super-button" 
-                   style="width:300px;" placeholder="Rechercher un jeu...">
+                   style="width:300px;" placeholder="SEARCH A GAME...">
         </div>
 
         <div style="text-align:center;margin-bottom:2rem;">
-            <button class="filter-btn super-button active" data-category="all">Tous</button>
+            <button class="filter-btn super-button active" data-category="all">ALL</button>
             <button class="filter-btn super-button" data-category="sport">Sport</button>
             <button class="filter-btn super-button" data-category="rpg">RPG</button>
             <button class="filter-btn super-button" data-category="aventure">Aventure</button>
             <button class="filter-btn super-button" data-category="action">Action</button>
         </div>
 
-        <div id="games-container">
+        <div id="games-container" class="deal-cards">
             <?php foreach ($games as $index => $game): ?>
             <div class="card game-card"
                  data-id="<?= $game['id'] ?>"
@@ -151,7 +151,7 @@ if (!empty($_GET['sort'])) {
                 </div>
 
                 <p class="price"><?= number_format($game['price'],2) ?> €</p>
-                <button class="super-button add-to-cart">Ajouter au panier</button>
+                <button class="super-button add-to-cart">Add to cart</button>
             </div>
             <?php endforeach; ?>
         </div>
