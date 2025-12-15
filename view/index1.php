@@ -26,6 +26,7 @@
 
   <!-- CHEMIN CORRECT vers le CSS -->
   <link rel="stylesheet" href="public/assets/style.css">
+  <link rel="stylesheet" href="frontoffice/index.css">
 
 </head>
 <body>
@@ -48,29 +49,24 @@
 </header>
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <h2>Réactions des Streamers</h2>
-        <p>Découvre les réactions et avis avant de jouer — regarde les streams et réactions.</p>
-
-        <div class="search-bar" style="margin-top:1.5rem;">
-          <input id="game-search" type="text" placeholder="Rechercher un jeu..." />
-          <button onclick="rechercherJeu()">🔍 Rechercher</button>
-        </div>
-      </div>
-    </section>
+    
+   
 
     <section class="deals">
       <div class="container">
+        
         <h3>🎙️ Réactions des Streamers</h3>
+
+        </div>
 
         <div id="deal-cards-container" class="deal-cards" style="margin-top:1.5rem;">
           <!-- Les cartes seront générées dynamiquement par JavaScript -->
         </div>
       </div>
+      
     </section>
   </main>
-
+ </section>
   <footer>
     <div class="container">
       <p>© 2025 Feedback Games - Créé par Mohamed Amine Nasri</p>

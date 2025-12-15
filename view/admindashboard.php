@@ -28,6 +28,7 @@ if (!$lastOrder) $lastOrder = "Aucune commande";
     <meta charset="UTF-8">
     <title>Dashboard - GameHub Admin</title>
     <link rel="stylesheet" href="../style.css?v=9999">
+    <link rel="stylesheet" href="frontoffice/index.css">
 
     <style>
         /* ======= DASHBOARD WRAPPER ======= */
@@ -97,20 +98,20 @@ if (!$lastOrder) $lastOrder = "Aucune commande";
 
 <!-- HEADER STYLE GAMEHUB -->
 <header>
-    <div class="container header-flex">
-
-        <div class="logo">
-            <img src="https://scontent-pmo1-1.xx.fbcdn.net/v/t1.15752-9/582645474_3853735594931532_6197179205393523828_n.png?_nc_cat=108&ccb=1-7&_nc_sid=0024fc&_nc_ohc=QA5GaGx5snsQ7kNvwGxQbKD&_nc_oc=Adl9hAnh5bAG2-ilhkY6lhoY82g7D66Wv-URxXgT3DDsXdOscrg0Ifr9e7p4Pg77Zh4&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-pmo1-1.xx&oh=03_Q7cD3wGcL5fTt3cl3B-oNfMu8m4S6E2aUOmWih8aJZdhhHUuOQ&oe=69540D11" alt="logo">
-            <span>GameHub Admin</span>
-        </div>
-
-        <nav class="nav-links">
-            <a href="admindashboard.php" class="super-button-clean">Dashboard</a>
-            <a href="backoffice.php" class="super-button-clean">Jeux</a>
-            <a href="orders.php" class="super-button-clean">Commandes</a>
-            <a href="shop.php" class="super-button-clean">Voir le site</a>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="frontoffice/index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="shop.php" class="super-button">Shop </a></li>
+                <li><a href="article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="backoffice/dashboardmain.html">Dashboard</a></li>
+                
+            </ul>
         </nav>
-
     </div>
 </header>
 
@@ -123,7 +124,8 @@ if (!$lastOrder) $lastOrder = "Aucune commande";
 
             <h2>📊 Dashboard Administrateur</h2>
             <p style="color:#ccc;margin-top:10px;">Vue d’ensemble de votre plateforme GameHub</p>
-
+          <a href="backoffice.php" class="shop-now-btn">Jeux</a>
+            <a href="orders.php" class="shop-now-btn">Commandes</a>
             <!-- ======= GRID STATISTIQUES ======= -->
             <div class="dashboard-grid">
 

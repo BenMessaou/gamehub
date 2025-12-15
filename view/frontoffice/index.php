@@ -27,6 +27,8 @@ $placeholderImage = 'assests/game1.png';
     <link rel="stylesheet" href="c.css">
     <!-- Chatbot IA -->
     <link rel="stylesheet" href="../backoffice/collabcrud/chatbot.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+
     <style>
     /* Animation Spot Publicitaire */
     .ad-spot-container {
@@ -54,6 +56,55 @@ $placeholderImage = 'assests/game1.png';
             transform: translateY(0) scale(1);
         }
     }
+    .sidebar {
+  position: fixed;
+  top: 80px;
+  left: -250px;
+  width: 250px;
+  height: calc(100vh - 80px);
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(0, 255, 136, 0.3);
+  transition: left 0.3s ease;
+  z-index: 90;
+}
+
+.sidebar.show {
+  left: 0;
+}
+
+.sidebar nav ul {
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.sidebar nav ul li {
+  margin: 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+}
+
+.sidebar nav ul li a {
+  display: block;
+  padding: 1rem 2rem;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.sidebar nav ul li a:hover {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+/* Sidebar Toggle */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #00ff88;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
 
     @keyframes borderGlow {
         0%, 100% {
@@ -672,48 +723,26 @@ $placeholderImage = 'assests/game1.png';
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="assests/logo.png" alt="Logo GameHub Pro" class="header-logo">
-                <h1 class="logo">GameHub Pro</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php" class="super-button">Home</a></li>
-                    <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
-                    <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
-                    <li><a href="role.html" class="super-button">Profil</a></li>
-                </ul>
-            </nav>
-             <aside id="sidebar" class="sidebar">
+       <header>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
         <nav>
             <ul>
-                <li><a href="index.php" class="super-button">Home</a></li>
-                    <li><a href="index.php#new-games" class="super-button">Recent Games</a></li>
-                    <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
-                    <li><a href="role.html" class="super-button">Profil</a></li>
+                <li><a href="index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="../shop.php" class="super-button">Shop </a></li>
+                <li><a href="../article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="index1.php">feedback</a></li>
+                <li><a class="super-button" href="profile.php">Profile</a></li>
+               
             </ul>
         </nav>
-    </aside>
-            
-            <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
-        </div>
-    </header>
-
-    <aside id="sidebar" class="sidebar">
-        <nav>
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="index.php#new-games">Recent Games</a></li>
-                <li><a href="collaborations.php"> Collaborations</a></li>
-                <li><a href="role.html">Profil</a></li>
-            </ul>
-        </nav>
-    </aside>
+    </div>
+</header>
 
     <main id="main-content" class="main-content">
-        <!-- Images décoratives flottantes en arrière-plan -->
+       
         <div class="decorative-images">
             <img src="assests/logo.png" alt="Decor" class="decor-img decor-img-1">
             <img src="assests/game5.png" alt="Decor" class="decor-img decor-img-2">
@@ -754,6 +783,8 @@ $placeholderImage = 'assests/game1.png';
         <!-- NEW GAMES SECTION -->
         <div class="collabs-container">
             <div class="collabs-header">
+                                    <li><a href="collaborations.php" class="super-button">Collaborations</a></li>
+
                 <h1>Recent Games</h1>
                 <a href="addgame.html" class="super-button">
                     ➕ Add your game

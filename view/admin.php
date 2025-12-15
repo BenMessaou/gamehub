@@ -95,7 +95,8 @@ $dupContactEmails = $dupContactEmailsRes ? $dupContactEmailsRes->fetch_all(MYSQL
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Admin - Feedback Games</title>
-<link rel="stylesheet" href="/feeeed_backkkkkkkkk/public/assets/style.css">
+<link rel="stylesheet" href="public/assets/style.css">
+<link rel="stylesheet" href="frontoffice/index.css">
 <style>
   .admin-container { max-width: 1400px; margin: 0 auto; padding: 20px; padding-top: 40px; }
   
@@ -153,33 +154,34 @@ $dupContactEmails = $dupContactEmailsRes ? $dupContactEmailsRes->fetch_all(MYSQL
 </head>
 <body>
   <header>
-    <div class="container header-inner">
-      <div class="logo">
-        <img src="/feeeed_backkkkkkkkk/public/assets/logo.png" alt="Logo Feedback Games" class="logo-img">
-        <span>🎮 Feedback Games</span>
-      </div>
-
-      <nav>
-        <ul>
-          <li><a href="index.php" class="super-button">Accueil <span class="arrow">➡️</span></a></li>
-          <li><a href="avis.php" class="super-button">Avis <span class="arrow">➡️</span></a></li>
-          <li><a href="admin.php" class="super-button active">Dashboard <span class="arrow">➡️</span></a></li>
-        </ul>
-      </nav>
+    <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="frontoffice/index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="shop.php" class="super-button">Shop </a></li>
+                <li><a href="article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="../index1.php">feedback</a></li>
+                <li><a class="super-button" href="backoffice/dashboardmain.html">Dashboard</a></li>
+                
+            </ul>
+        </nav>
     </div>
-  </header>
+</header>
 
   <main>
     <section class="hero">
       <div class="container">
-        <h2>🔐 Dashboard Admin</h2>
+        <h2>🔐 Dashboard Feedback</h2>
         <p>Gérez les avis, contacts et analysez les données en temps réel</p>
-      </div>
+      </div><li><a href="avis.php" class="super-button">Avis <span class="arrow">➡️</span></a></li>
     </section>
 
     <section class="deals">
       <div class="container">
-        <div class="admin-container">
+        <div class="container">
     <!-- Stats Cards -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -253,7 +255,7 @@ $dupContactEmails = $dupContactEmailsRes ? $dupContactEmailsRes->fetch_all(MYSQL
     </div>
 
     <!-- Feedbacks Table -->
-    <div class="table-section">
+    <div class="usersTablen">
       <h2>📋 Avis des Joueurs</h2>
       <div class="table-wrapper">
         <table>

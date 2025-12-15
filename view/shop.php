@@ -36,12 +36,21 @@ if (!empty($_GET['sort'])) {
             <span>GameHub</span>
         </div>
 
-        <nav class="nav-links">
-            <a class="super-button">Accueil</a>
-            <a class="super-button">Jeux</a>
-            <a class="super-button">Promos</a>
-            <a href="frontoffice/profile.php"class="super-button" >Profile</a>
+       <div class="container">
+        <h1 class="logo">gamehub</h1>
+        <img src="logo.png" class="logo1" alt="">
+        <nav>
+            <ul>
+                <li><a href="frontoffice/index.php" class="super-button">Projects</a></li>
+                <li><a href="#deals" class="super-button">Events
+                </a></li>
+                <li><a href="shop.php" class="super-button">Shop </a></li>
+                <li><a href="article/list.php" class="super-button">Article</a></li><li><a class="super-button" href="index1.php">feedback</a></li>
+                <li><a class="super-button" href="frontoffice/profile.php">Profile</a></li>
+               
+            </ul>
         </nav>
+    </div>
 
         <div class="cart-icon" id="cartIcon">
             <svg width="26" height="26" stroke="#00ff88">
@@ -94,6 +103,8 @@ if (!empty($_GET['sort'])) {
         <h2>🎮 Plonge dans l’univers du jeu vidéo</h2>
         <p>Découvre les meilleures offres du moment.</p>
     </div>
+    <a class="super-button">Jeux</a>
+            <a class="super-button">Promos</a>
 </section>
 
 <section class="deals">
