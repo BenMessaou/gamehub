@@ -116,12 +116,12 @@ $base_path = '/gamehub';
             </div>
         </section>
 
-        <section id="articles-list" class="content-section">
+        <section id="usersTable" class="content-section">
             <div class="container">
                 <h2>Gestion des Articles</h2>
                 
                 <div class="widget-grid">
-                    <div class="widget wide-widget">
+                    <div class="">
                         <h3>Liste des Articles</h3>
                         <table class="data-table article-table">
                             <thead>
@@ -156,7 +156,7 @@ $base_path = '/gamehub';
                             </tbody>
                         </table>
                         <div style="margin-top: 20px; text-align: right;">
-                             <a href="create.php" class="super-button">create a new article</a>
+                             <a href="create.php" class="shop-now-btn">create a new article</a>
                         </div>
                     </div>
 
